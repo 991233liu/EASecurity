@@ -1,10 +1,10 @@
-# EASecurity-framework
+# EASecurity
 
 #### 介绍
 
-
 #### 软件架构
-外围嵌入代码层面，支持多种开发框架的集成（如spring boot）。 
+软件架构说明
+处理核心
 
 #### 安装教程
 
