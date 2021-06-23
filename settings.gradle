@@ -24,6 +24,10 @@ file('core').eachDir { dir ->
 	     project(":${dir.name}").projectDir = dir
 	}
 }
+/*
+	     include ':core-test1'
+	     project(':core-test1').projectDir = file('core/core-test2')
+*/
 
 include(':framework')
 file('framework').eachDir { dir ->
