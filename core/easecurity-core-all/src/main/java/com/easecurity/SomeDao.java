@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.easecurity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.easecurity.core.basis.User;
+import com.easecurity.core.authorization.MenuService;
+import com.easecurity.core.basis.b.User;
 
 @Service
 public class SomeDao {
@@ -17,12 +18,11 @@ public class SomeDao {
     JdbcTemplate jdbcTemplate;
     
     @SuppressWarnings("unchecked")
-	public <T> List<T> queryForList(String sql){
-    	List<T> re = null;
-    	re = (List<T>) jdbcTemplate
-                .query("SELECT * FROM b_user", new BeanPropertyRowMapper<>(User.class));
+    public <T> List<T> queryForList(String sql) {
+	List<T> re = null;
+	re = (List<T>) jdbcTemplate.query("SELECT * FROM b_user", new BeanPropertyRowMapper<>(User.class));
 //    	re = (List<T>) jdbcTemplate
 //    			.queryForList("SELECT user FROM b_user", String.class);
-		return re;
+	return re;
     }
 }

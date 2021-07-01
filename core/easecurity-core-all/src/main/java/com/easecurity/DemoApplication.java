@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.easecurity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,27 +14,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @SpringBootApplication
-//@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
+//@MapperScan
 public class DemoApplication implements CommandLineRunner {
-	
-	private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
-	
-	@Autowired
+
+    private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
+
+    @Autowired
     DataSource dataSource;
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+	SpringApplication.run(DemoApplication.class, args);
+    }
 
-	@Override
+    @Override
     public void run(String... args) throws Exception {
-        System.out.println(">>>>>>>>>>>>>>>>>服务启动执行");
-        showConnection();
+	System.out.println(">>>>>>>>>>>>>>>>>服务启动执行");
+	showConnection();
     }
 
     private void showConnection() throws SQLException {
-        logger.info(">>>>>>>>>>>>>>>>>dataSource:{}", dataSource.getClass().getName());
-        Connection connection = dataSource.getConnection();
-        logger.info(">>>>>>>>>>>>>>>>>connection:{}", connection.toString());
+	logger.info(">>>>>>>>>>>>>>>>>dataSource:{}", dataSource.getClass().getName());
+	Connection connection = dataSource.getConnection();
+	logger.info(">>>>>>>>>>>>>>>>>connection:{}", connection.toString());
     }
 }
