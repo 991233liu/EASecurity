@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    username: easuser
+    password: easuser
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
+    
+logging:
+   level:
+      root: INFO
+      com:
+         easecurity:
+            core: DEBUG    
+   pattern:
+      console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){faint}%clr([%F:%L]){cyan} %clr(:){faint} %m%n%wex'
+
