@@ -22,11 +22,14 @@ import com.easecurity.core.basis.re.Menu;
 @Service
 public class MenuService {
     
-    private static final Logger logger = LoggerFactory.getLogger(MenuService.class);
+    private static final Logger log = LoggerFactory.getLogger(MenuService.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    /**
+     * 初始化菜单信息，存入Redis
+     */
     public List<MenuDo> loadAll() {
 	List<MenuDo> mdoAll = new ArrayList<>();
 	List<Menu> all = jdbcTemplate.query("SELECT * FROM re_menu", new BeanPropertyRowMapper<>(Menu.class));
@@ -36,7 +39,7 @@ public class MenuService {
 	    mdo.menuOrg = jdbcTemplate.query("SELECT * FROM au_menu_org where menuid = ?", new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
 	    mdoAll.add(mdo);
 	}
-	logger.info("-------## 加载的MenuDo有：", mdoAll);
+	log.info("-------## 加载的MenuDo有：{}", mdoAll);
 	return mdoAll;
     }
 }

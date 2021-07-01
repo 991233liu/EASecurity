@@ -4,7 +4,7 @@ package com.easecurity.core.basis.b;
 import java.io.Serializable;
 
 /**
- * user表，用户账号信息
+ * b_user表，用户账号信息
  *
  */
 public class User implements Serializable {
