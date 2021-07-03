@@ -30,4 +30,9 @@ public class UserDo implements Serializable {
      * 所在组织、职务信息
      */
     public List<OrgUser> orgUsers;
+    
+    public String getAllIdentities() {
+	// TODO 初始化？
+	return user.identities;
+    }
 }

@@ -27,7 +27,7 @@ spring:
 # 支持自定义，自定义类需要实现com.easecurity.core.redis.OemRedisSerializer接口
       serializer:
          key: StringRedisSerializer
-         value: Jackson2JsonRedisSerializer
+#         value: Jackson2JsonRedisSerializer
          hashkey: StringRedisSerializer
          hashvalue: GenericJackson2JsonRedisSerializer
 

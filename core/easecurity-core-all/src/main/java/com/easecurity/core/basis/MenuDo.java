@@ -24,6 +24,11 @@ public class MenuDo implements Serializable {
      * 有菜单权限的组织
      */
     public List<MenuOrg> menuOrg;
+    
+    /**
+     * 子菜单ID，按显示顺序排序。
+     */
+    public List<String> childMenuIds;
 
     private String _auOrgStr;
 
@@ -46,6 +51,4 @@ public class MenuDo implements Serializable {
 	} else
 	    return false;
     }
-
-//	Menu 
 }

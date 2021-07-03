@@ -32,6 +32,11 @@ public class User implements Serializable {
      * 密码状态
      */
     public String pStatus;
+    
+    /**
+     * 身份串
+     */
+    public String identities;
 
     public String getId() {
 	return id;
@@ -71,6 +76,14 @@ public class User implements Serializable {
 
     public void setpStatus(String pStatus) {
 	this.pStatus = pStatus;
+    }
+
+    public String getIdentities() {
+        return identities;
+    }
+
+    public void setIdentities(String identities) {
+        this.identities = identities;
     }
 
 }

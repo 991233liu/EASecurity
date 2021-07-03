@@ -3,13 +3,9 @@ package com.easecurity.core.authentication;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.b.OrgUser;
 import com.easecurity.core.basis.b.User;
+import com.easecurity.core.redis.RedisUtil;
 
 /**
  * 登录相关服务
@@ -29,10 +26,8 @@ public class LoginService {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
-    @Resource
-    RedisTemplate<String, Object> redisTemplate;
-//    RedisTemplate<String, Object> redisTemplate;
-//    StringRedisTemplate redisTemplate;
+    @Autowired
+    RedisUtil redisUtil;
 
     /**
      * 登录，用户名+密码
@@ -40,28 +35,29 @@ public class LoginService {
      * @param user 账号
      * @param pd   密码
      */
-    public void login(String user, String pd) {
+    public UserDo login(String user, String pd) {
 	log.debug("-----## 登录信息：user={} pd={}", user, pd);
 	List<User> us = jdbcTemplate.query("SELECT * FROM b_user where user = ? and pd = ?", new BeanPropertyRowMapper<>(User.class), user, pd);
 	if (us.size() == 1) {
 	    // TODO 账号状态
 	    // TODO 密码状态
-	    
+
 	    UserDo userDo = new UserDo();
 	    userDo.user = us.get(0);
 	    userDo.orgUsers = jdbcTemplate.query("SELECT * FROM b_org_user where userid = ?", new BeanPropertyRowMapper<>(OrgUser.class), userDo.user.id);
-	    
+
 	    // TODO 存入session
 	    // TODO 存入Redis
-	    ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-	        ops.set("k1", userDo);
-	        Object k1 = ops.get("k1");
-	        System.out.println(k1);
-	    
+	    redisUtil.set("k2", userDo, 20);
+	    System.out.println(redisUtil.get("k2"));
+
 	    // TODO 更新登录信息
 	    // TODO 记录登录日志
+	    
+	    return userDo;
 	} else {
 	    // TODO 登录失败：账号或密码错误
 	}
+	return null;
     }
 }
