@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.easecurity.core.basis.au.MenuOrg;
-import com.easecurity.core.basis.b.Org;
 import com.easecurity.core.basis.re.Menu;
 
 /**

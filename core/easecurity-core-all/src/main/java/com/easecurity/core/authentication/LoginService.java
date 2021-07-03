@@ -3,9 +3,13 @@ package com.easecurity.core.authentication;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,10 @@ public class LoginService {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
+//    RedisTemplate<String, Object> redisTemplate;
+//    StringRedisTemplate redisTemplate;
 
     /**
      * 登录，用户名+密码
@@ -45,6 +53,10 @@ public class LoginService {
 	    
 	    // TODO 存入session
 	    // TODO 存入Redis
+	    ValueOperations<String, Object> ops = redisTemplate.opsForValue();
+	        ops.set("k1", userDo);
+	        Object k1 = ops.get("k1");
+	        System.out.println(k1);
 	    
 	    // TODO 更新登录信息
 	    // TODO 记录登录日志

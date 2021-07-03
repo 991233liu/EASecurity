@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.authorization.MenuService;
 import com.easecurity.core.basis.MenuDo;
 
@@ -19,6 +20,8 @@ public class DataOperationController {
     
     @Autowired
     MenuService menuService;
+    @Autowired
+    LoginService loginService;
 
     @RequestMapping("/queryData")
     public List<Object> queryData() {
@@ -28,6 +31,11 @@ public class DataOperationController {
     @RequestMapping("/queryData2")
     public List<MenuDo> queryData2() {
 	return menuService.loadAll();
+    }
+    
+    @RequestMapping("/queryData3")
+    public void queryData3() {
+	loginService.login("liulufeng", "1");
     }
 
 //    @PostMapping("/api/addData")
