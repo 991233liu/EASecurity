@@ -48,12 +48,12 @@ public class LoginService {
 
 	    // TODO 存入session
 	    // TODO 存入Redis
-	    redisUtil.set("k2", userDo, 20);
-	    System.out.println(redisUtil.get("k2"));
+	    redisUtil.set("userdo:" + userDo.user.id, userDo, 3600);
+	    System.out.println(redisUtil.get("userdo:" + userDo.user.id));
 
 	    // TODO 更新登录信息
 	    // TODO 记录登录日志
-	    
+
 	    return userDo;
 	} else {
 	    // TODO 登录失败：账号或密码错误

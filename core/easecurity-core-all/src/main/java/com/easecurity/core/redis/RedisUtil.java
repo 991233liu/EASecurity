@@ -86,7 +86,8 @@ public class RedisUtil {
      * @return 值
      */
     public Object get(String key){
-	redisTemplate.getValueSerializer().canSerialize(getClass());
+//	redisTemplate.getValueSerializer().canSerialize(getClass());
+//	((LettuceConnectionFactory)redisTemplate.getConnectionFactory()).getDatabase()
         return key==null?null:redisTemplate.opsForValue().get(key);
     }
 

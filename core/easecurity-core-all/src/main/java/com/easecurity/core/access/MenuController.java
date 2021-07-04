@@ -3,6 +3,8 @@ package com.easecurity.core.access;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,11 +31,12 @@ public class MenuController {
      * 当前登录人的菜单
      */
     @RequestMapping("/myMenu")
-    public List<MenuDo> myMenu() {
+    public List<MenuDo> myMenu(HttpServletRequest request) {
 	menuService.loadAll();
 	// TODO 获取当前登录人
 	// TODO 获取身份
 	UserDo userDo = loginService.login("liulufeng", "1");
+	request.getSession(true).setAttribute("userdo", userDo);
 	// TODO 获取有权限的菜单
 	return menuService.getMenuByUser(userDo);
     }

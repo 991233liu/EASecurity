@@ -49,8 +49,8 @@ public class MenuService {
     @SuppressWarnings("unchecked")
     public List<MenuDo> loadAll() {
 	// 有效期内直接返回内存缓存的数据
-//	if (System.currentTimeMillis() < validTime)
-//	    return allMenuDoList;
+	if (System.currentTimeMillis() < validTime)
+	    return allMenuDoList;
 	
 	// TODO Redis使用json序列化后，反序列化时不能自动转换为bean!!!!
 
