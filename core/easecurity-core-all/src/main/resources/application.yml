@@ -28,6 +28,7 @@ spring:
       serializer:
          key: StringRedisSerializer
 #         value: Jackson2JsonRedisSerializer
+         value: Jackson2JsonRedisSerializer
          hashkey: StringRedisSerializer
          hashvalue: GenericJackson2JsonRedisSerializer
 

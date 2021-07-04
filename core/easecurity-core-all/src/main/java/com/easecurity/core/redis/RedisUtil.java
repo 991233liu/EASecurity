@@ -86,6 +86,7 @@ public class RedisUtil {
      * @return 值
      */
     public Object get(String key){
+	redisTemplate.getValueSerializer().canSerialize(getClass());
         return key==null?null:redisTemplate.opsForValue().get(key);
     }
 

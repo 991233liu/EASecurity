@@ -18,7 +18,13 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 
 /**
  * 定制化缓存配置
@@ -46,12 +52,24 @@ public class RedisConfig extends CachingConfigurerSupport {
 
 //    @Bean
 //    public ObjectMapper objectMapper() {
-//        ObjectMapper om = new ObjectMapper();
-//        om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-//        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-//        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); //补上
-//        return om;
+//	ObjectMapper om = new ObjectMapper();
+//	om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+//	om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+////        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); //补上
+////        om.activateDefaultTyping(PolymorphicTypeValidator,DefaultTyping);
+//	om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+//	om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//	return om;
 //    }
+    
+    private ObjectMapper objectMapper() {
+	ObjectMapper om = new ObjectMapper();
+	om.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+	om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+	om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+	om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	return om;
+    }
 
     @SuppressWarnings("unchecked")
     @Bean
@@ -59,6 +77,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 	log.debug("----## spring.redis.serializer.key={}", serializerKey);
 
 	HashMap<String, RedisSerializer<Object>> redisSerializer = new HashMap<String, RedisSerializer<Object>>();
+	om = objectMapper();
 	RedisSerializer<Object> rs = null;
 	rs = getRedisSerializer(serializerKey, om);
 	if (rs != null)
