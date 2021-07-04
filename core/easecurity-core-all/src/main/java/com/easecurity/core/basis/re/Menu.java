@@ -4,7 +4,7 @@ package com.easecurity.core.basis.re;
 import java.io.Serializable;
 
 /**
- * menu表：菜单
+ * re_menu表：菜单
  *
  */
 public class Menu implements Serializable {
