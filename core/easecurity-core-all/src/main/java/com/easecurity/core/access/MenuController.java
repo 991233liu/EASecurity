@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.authentication.LoginService;
-import com.easecurity.core.authorization.MenuService;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.UserDo;
 
