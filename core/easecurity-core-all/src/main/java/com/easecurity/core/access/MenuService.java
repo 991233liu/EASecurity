@@ -22,7 +22,7 @@ import com.easecurity.core.redis.RedisUtil;
 import com.easecurity.util.JsonUtils;
 
 /**
- * 菜单授权服务。
+ * 菜单访问控制服务。
  *
  */
 @Service

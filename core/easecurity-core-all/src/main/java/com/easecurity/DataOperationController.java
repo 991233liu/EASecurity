@@ -2,14 +2,18 @@ package com.easecurity;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.easecurity.core.access.MenuService;
+import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.Org;
 import com.easecurity.core.authentication.LoginService;
-import com.easecurity.core.authorization.MenuService;
 import com.easecurity.core.basis.MenuDo;
+import com.easecurity.core.basis.UserDo;
 
 @RestController
 @RequestMapping("/demo")
@@ -34,8 +38,12 @@ public class DataOperationController {
     }
     
     @RequestMapping("/queryData3")
-    public void queryData3() {
-	loginService.login("liulufeng", "1");
+//    @EaSecured(org = @Org(id= {"1","4"}))
+    @EaSecured(org = "{id:['1','4']}")
+    public void queryData3(HttpServletRequest request) {
+//	loginService.login("liulufeng", "1");
+	UserDo userDo = loginService.login("liulufeng", "1");
+	request.getSession(true).setAttribute("userdo", userDo);
     }
 
 //    @PostMapping("/api/addData")
