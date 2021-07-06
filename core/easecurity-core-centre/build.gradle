@@ -16,7 +16,7 @@ group = 'com.easecurity.core'
 version = '0.0.1-SNAPSHOT'
 
 dependencies {
-    implementation project(":easecurity-core-api")
+    implementation project(":easecurity-core")
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
