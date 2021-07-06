@@ -12,12 +12,12 @@ plugins {
 
 apply from: "../common.gradle"
 
-group = 'com.easecurity.core'
+group = 'com.easecurity.framework'
 version = '0.0.1-SNAPSHOT'
 
 dependencies {
-    implementation project(":easecurity-core-api")
-
+    implementation project(":easecurity-framework-all")
+    
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'

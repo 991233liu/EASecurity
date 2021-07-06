@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.MenuService;
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.Org;
 import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.UserDo;
@@ -31,10 +32,10 @@ public class DataOperationController {
 	return service.queryForList(null);
     }
     
-    @RequestMapping("/queryData2")
-    public List<MenuDo> queryData2() {
-	return menuService.loadAll();
-    }
+//    @RequestMapping("/queryData2")
+//    public List<MenuDo> queryData2() {
+//	return menuService.loadAll();
+//    }
     
     @RequestMapping("/queryData3")
 //    @EaSecured(org = @Org(id= {"1","4"}))
