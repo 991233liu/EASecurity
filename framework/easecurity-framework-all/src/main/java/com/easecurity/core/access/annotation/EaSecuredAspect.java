@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.security.Signature;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.aspectj.bridge.SourceLocation;
 import org.aspectj.lang.JoinPoint;
@@ -13,10 +14,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.easecurity.core.access.UriService;
 import com.easecurity.core.basis.UserDo;
 
 /**
@@ -26,58 +30,78 @@ import com.easecurity.core.basis.UserDo;
 @Aspect
 @Component
 public class EaSecuredAspect {
+    
+    @Autowired
+    UriService uriService;
 
     @Pointcut("@annotation(EaSecured)")
     private void controllerMethod() {
 	// @Pointcut定义的是切点
+	System.out.println("这是自定义的切点");
     }
 
     /**
      * 检查是否有权限执行
      */
+    // TODO 开发模式/生产模式
     @Around("controllerMethod()")
     public Object controllerMethodAround(ProceedingJoinPoint pjp) {
 	System.out.println("自定义注解生效了");
-	if (validation(pjp)) { // 有执行权限
-	    try {
-		return pjp.proceed();
-	    } catch (Throwable e) {
-		e.printStackTrace();
+	Object result = null;
+	try {
+	    MethodSignature signature = (MethodSignature) pjp.getSignature();
+	    Method method = signature.getMethod();
+	    String classFullName = method.toString();
+	    String methodName = method.getName();
+	    String methodSignature = method.toString();
+	    EaSecured eas = method.getAnnotation(EaSecured.class);
+	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+	    String uri = request.getRequestURI();
+	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
+	    
+	    uriService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
+	    
+	    if (uriService.validation(eas, uri, userDo)) { // 有执行权限
+		result = pjp.proceed();
+	    } else { // 无执行权限
+		HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+		httpServletResponse.setStatus(403);
+		result = null;
 	    }
-	    return null;
-	} else { // 无执行权限
-	    return null;
+	} catch (Throwable e) {
+	    e.printStackTrace();
 	}
+	return result;
     }
 
-    private boolean validation(ProceedingJoinPoint pjp) {
-	Object[] args = pjp.getArgs();
-	Object target = pjp.getTarget();
-	MethodSignature signature = (MethodSignature) pjp.getSignature();
-	Method method = signature.getMethod();
-	String methodSignature = method.toString();
-	String classFullName = method.toString();
-	String methodName = method.getName();
-	EaSecured eas = method.getAnnotation(EaSecured.class);
-	String org = eas.org();
-	String kind = pjp.getKind();
-//	SourceLocation sourceLocation = (SourceLocation) pjp.getSourceLocation();
-	JoinPoint.StaticPart staticPart = pjp.getStaticPart();
-	// attributes可以获取request信息 session信息等
-	ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-	HttpServletRequest request = attributes.getRequest();
-	UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
-	String uri = request.getRequestURI();
-	boolean[] flag = { false };
-	if (userDo != null)
-	    userDo.orgUsers.forEach(ou -> {
-//		if (org.length == 0)
-//		    return;
-//		if (ou.id == Integer.parseInt(org[0]) || ou.id == Integer.parseInt(org[1]))
-//		    flag[0] = true;
-	    });
-	return flag[0];
-    }
+//    private boolean validation(ProceedingJoinPoint pjp) {
+//	Object[] args = pjp.getArgs();
+//	Object target = pjp.getTarget();
+//	MethodSignature signature = (MethodSignature) pjp.getSignature();
+//	Method method = signature.getMethod();
+//	String methodSignature = method.toString();
+//	String classFullName = method.toString();
+//	String methodName = method.getName();
+//	EaSecured eas = method.getAnnotation(EaSecured.class);
+//	String org = eas.org();
+//	String kind = pjp.getKind();
+////	SourceLocation sourceLocation = (SourceLocation) pjp.getSourceLocation();
+//	JoinPoint.StaticPart staticPart = pjp.getStaticPart();
+//	// attributes可以获取request信息 session信息等
+//	ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//	HttpServletRequest request = attributes.getRequest();
+//	UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
+//	String uri = request.getRequestURI();
+//	boolean[] flag = { false };
+//	if (userDo != null)
+//	    userDo.orgUsers.forEach(ou -> {
+////		if (org.length == 0)
+////		    return;
+////		if (ou.id == Integer.parseInt(org[0]) || ou.id == Integer.parseInt(org[1]))
+////		    flag[0] = true;
+//	    });
+//	return flag[0];
+//    }
 
 //    @Before(value = "pointCut()")
 //    public void before(JoinPoint joinPoint) {

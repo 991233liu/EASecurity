@@ -3,6 +3,8 @@ package com.easecurity.core.basis.re;
 
 import java.io.Serializable;
 
+import com.easecurity.core.access.annotation.EasType;
+
 /**
  * re_uri表：接口（服务）
  *
@@ -20,15 +22,23 @@ public class Uri implements Serializable {
     /**
      * 类的全称
      */
-    String classFullName;
+    public String classFullName;
     /**
      * 方法名称
      */
-    String methodName;
+    public String methodName;
     /**
      * 方法的Signature
      */
-    String methodSignature;
+    public String methodSignature;
+    /**
+     * 授权（控制）方式
+     */
+    public EasType easType;
+    /**
+     * 来源，1人工、2程序源代码。如果是来着程序源代码，则只能禁用，不能删除
+     */
+    public String fromTo;
 
     public Integer getId() {
 	return id;

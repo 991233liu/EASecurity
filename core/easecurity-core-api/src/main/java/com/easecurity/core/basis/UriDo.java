@@ -32,8 +32,8 @@ public class UriDo implements Serializable {
      * @return true 有权限；false 无权限。
      */
     // TODO 需要优化，临时凑合着写的
-    public boolean havePermissionThroughOrg(String orgId) {
-	if (uriOrg != null) {
+    public boolean havePermissionThroughOrgById(int orgId) {
+	if (uriOrg != null&&!uriOrg.isEmpty()) {
 	    if (_auOrgStr == null) {
 		_auOrgStr = ",";
 		for (UriOrg uo : uriOrg) {

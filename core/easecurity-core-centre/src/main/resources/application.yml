@@ -1,3 +1,8 @@
+server:
+   port: 80
+   servlet:
+      context-path: /SecurityCentre
+
 spring:
 # 数据库配置
    datasource:

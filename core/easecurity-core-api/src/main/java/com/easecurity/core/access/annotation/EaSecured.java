@@ -28,4 +28,9 @@ public @interface EaSecured {
      * 基于组织的访问控制。格式：{id : ['1','2'], code : ['gongsi', 'abumen']}。 支持的属性：id、code
      */
     String org() default "";
+    
+    /**
+     * 授权方式，详见{@link EasType}
+     */
+    EasType type() default EasType.DATABASE_AND_SOURCE;
 }
