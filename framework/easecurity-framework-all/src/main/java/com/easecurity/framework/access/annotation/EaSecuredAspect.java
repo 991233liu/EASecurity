@@ -22,7 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.basis.UserDo;
-import com.easecurity.framework.access.UriService;
+import com.easecurity.framework.access.UriAccessService;
 
 /**
  * 控制方法访问权限。 多条件时默认使用“or”关系。
@@ -33,7 +33,7 @@ import com.easecurity.framework.access.UriService;
 public class EaSecuredAspect {
     
     @Autowired
-    UriService uriService;
+    UriAccessService uriService;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {

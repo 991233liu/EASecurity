@@ -27,8 +27,8 @@ import com.easecurity.framework.access.AccessRegister;
  */
 // TODO 转成纯java的
 @Service
-public class UriService {
-    private static final Logger log = LoggerFactory.getLogger(UriService.class);
+public class UriAccessService {
+    private static final Logger log = LoggerFactory.getLogger(UriAccessService.class);
 
 //    @Autowired
 //    JdbcTemplate jdbcTemplate;

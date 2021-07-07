@@ -42,12 +42,12 @@ public class AccessRegister {
 	new Thread("AccessRegisterThread") {
 	    public void run() {
 		while (true) {
-		    getAllEas();
 		    try {
 			Thread.sleep(threadSleepTime);
 		    } catch (InterruptedException e) {
 			log.error("定时拉取控制列表时出现异常:", e);
 		    }
+		    getAllEas();
 		}
 	    }
 	}.start();
