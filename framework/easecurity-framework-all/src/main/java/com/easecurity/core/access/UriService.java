@@ -15,6 +15,7 @@ import com.easecurity.core.basis.UriDo;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.au.UriOrg;
 import com.easecurity.core.basis.re.Uri;
+import com.easecurity.framework.access.AccessRegister;
 
 //import com.easecurity.core.redis.RedisUtil;
 
@@ -30,6 +31,8 @@ public class UriService {
 //    JdbcTemplate jdbcTemplate;
 //    @Autowired
 //    RedisUtil redisUtil;
+    
+    AccessRegister accessRegister = AccessRegister.getInstance("http://127.0.0.1/SecurityCentre");
 
     /**
      * 更新URI的授权信息。如果URI已经存在，则更新状态以外其它信息；如果不存在则新建
@@ -66,6 +69,7 @@ public class UriService {
 	uriDo.uriOrg.add(uo);
 	uriDo.uriOrg.add(uo2);
 	uriDos.put(uriDo.uri.uri, uriDo);
+	
     }
 
     /**
@@ -93,5 +97,8 @@ public class UriService {
     }
 
     private static volatile Map<String, UriDo> uriDos = new HashMap<>();
+    private static volatile long lastModifyTime = -1;
 //    private static volatile Map<String, List<String>> allEas
+    // TODO 内存强制失效?
+    private static volatile long validTime = -1;
 }
