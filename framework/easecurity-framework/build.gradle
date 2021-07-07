@@ -7,8 +7,6 @@
  */
 plugins {
     id 'java-library'
-	id 'org.springframework.boot' version '2.5.1'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 apply from: "../common.gradle"
@@ -17,10 +15,8 @@ group = 'com.easecurity.framework'
 version = '0.0.1-SNAPSHOT'
 
 dependencies {
-    api project(":easecurity-framework")
+    api project(":easecurity-core-api")
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.slf4j:slf4j-api:1.7.30'
 	
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'

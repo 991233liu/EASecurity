@@ -9,7 +9,7 @@
 
 rootProject.name = 'EASecurity'
 
-include(':admin')
+//include(':admin')
 file('admin').eachDir { dir ->
 	if(!dir.name.startsWith('.')){
 	     include dir.name
@@ -17,7 +17,7 @@ file('admin').eachDir { dir ->
 	}
 }
 
-include(':core')
+//include(':core')
 file('core').eachDir { dir ->
 	if(!dir.name.startsWith('.')){
 	     include dir.name
@@ -29,7 +29,7 @@ file('core').eachDir { dir ->
 	     project(':core-test1').projectDir = file('core/core-test2')
 */
 
-include(':framework')
+//include(':framework')
 file('framework').eachDir { dir ->
 	if(!dir.name.startsWith('.')){
 	     include dir.name
