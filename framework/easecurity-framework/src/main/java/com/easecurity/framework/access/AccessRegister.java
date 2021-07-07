@@ -54,7 +54,7 @@ public class AccessRegister {
     }
 
     public static synchronized final AccessRegister getInstance(String easCentreUrl) {
-	if (instance == null)
+	if (instance == null && easCentreUrl != null && !easCentreUrl.isEmpty())
 	    instance = new AccessRegister(easCentreUrl);
 	return instance;
     }
@@ -121,7 +121,7 @@ public class AccessRegister {
 
     @SuppressWarnings("unchecked")
     public Map<String, UriDo> getAllUriDos() {
-	if (allEas == null) {	// 如果它不存在，先初始化一下
+	if (allEas == null) { // 如果它不存在，先初始化一下
 	    getAllEas();
 	}
 	return allEas == null ? null : (Map<String, UriDo>) allEas.get("allUriDos");

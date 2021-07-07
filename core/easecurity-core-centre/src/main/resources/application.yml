@@ -1,7 +1,14 @@
 server:
+   name: SecurityCentre
    port: 80
    servlet:
       context-path: /SecurityCentre
+      session:
+         timeout: PT2H
+
+easecurity:
+   server:
+      url: http://127.0.0.1/SecurityCentre
 
 spring:
 # 数据库配置
