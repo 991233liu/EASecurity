@@ -35,7 +35,7 @@ public class MenuService {
     @Autowired
     RedisUtil redisUtil;
 
-    private static final Long MENU_TIMEOUT = (long) (10 * 60 * 60); // 8小时Redis缓存失效
+    private static final Long MENU_TIMEOUT = (long) (10 * 60 * 60); // 10小时Redis缓存失效
 
     private static volatile Map<String, MenuDo> allMenuDoMap = null;
     private static volatile List<MenuDo> allMenuDoList = null;
@@ -52,8 +52,6 @@ public class MenuService {
 	if (System.currentTimeMillis() < validTime)
 	    return allMenuDoList;
 	
-	// TODO Redis使用json序列化后，反序列化时不能自动转换为bean!!!!
-
 	// 如果Redis中有缓存，则使用Redis中；如果没有，则加载数据库并缓存到Redis
 	if (redisUtil.hasKey("menu:rootList")) {
 	    allMenuDoMap = (Map<String, MenuDo>) redisUtil.get("menu:all");
@@ -85,31 +83,6 @@ public class MenuService {
 	validTime = System.currentTimeMillis() + (5 * 60 * 1000); // 内存中5分钟内有效
 	log.info("-------## 加载的MenuDo有：{}", allMenuDoList);
 	return allMenuDoList;
-    }
-
-    /**
-     * 从core初始化菜单信息。5分钟内使用内存中的数据，降低core的压力
-     */
-    // TODO 强制清除？
-    // TODO 菜单功能不需要，先写这吧，哈哈，怕以后忘了
-    public List<MenuDo> loadAllFromCore() {
-	Map<String, MenuDo> amdoAllMap = new HashMap<String, MenuDo>();
-	List<MenuDo> mdoAll = new ArrayList<>();
-//	List<Menu> all = jdbcTemplate.query("SELECT * FROM re_menu order by sort", new BeanPropertyRowMapper<>(Menu.class));
-//	for (Menu menu : all) {
-//	    MenuDo mdo = new MenuDo();
-//	    mdo.menu = menu;
-//	    mdo.menuOrg = jdbcTemplate.query("SELECT * FROM au_menu_org where menuid = ?", new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
-//	    mdo.childMenuIds = jdbcTemplate.queryForList("SELECT id FROM re_menu where parentid = ? order by sort", String.class, menu.id);
-//	    mdoAll.add(mdo);
-//	    amdoAllMap.put("menu:" + menu.id, mdo);
-//	    redisUtil.set("menu:" + menu.id, mdo, MENU_TIMEOUT);
-//	}
-	validTime = System.currentTimeMillis() + (5 * 60 * 1000); // 内存中5分钟内有效
-	allMenuDoMap = amdoAllMap;
-	allMenuDoList = mdoAll;
-	log.info("-------## 加载的MenuDo有：{}", mdoAll);
-	return mdoAll;
     }
 
     @SuppressWarnings("unchecked")

@@ -16,15 +16,15 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableRedisHttpSession
 //@MapperScan
-public class DemoApplication implements CommandLineRunner {
+public class SecurityCentreApplication implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityCentreApplication.class);
 
     @Autowired
     DataSource dataSource;
 
     public static void main(String[] args) {
-	SpringApplication.run(DemoApplication.class, args);
+	SpringApplication.run(SecurityCentreApplication.class, args);
     }
 
     @Override

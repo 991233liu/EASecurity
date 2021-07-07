@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.access.annotation;
+package com.easecurity.framework.access.annotation;
 
 import java.lang.reflect.Method;
 import java.security.Signature;
@@ -20,8 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.easecurity.core.access.UriService;
+import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.basis.UserDo;
+import com.easecurity.framework.access.UriService;
 
 /**
  * 控制方法访问权限。 多条件时默认使用“or”关系。
@@ -34,7 +35,7 @@ public class EaSecuredAspect {
     @Autowired
     UriService uriService;
 
-    @Pointcut("@annotation(EaSecured)")
+    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {
 	// @Pointcut定义的是切点
 	System.out.println("这是自定义的切点");

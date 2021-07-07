@@ -6,9 +6,12 @@ import java.io.ObjectInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.easecurity.core.basis.UriDo;
 
 /**
  * 控制列表加载方法。每分钟从远端拉取一次最新控制列表，如果无变化，则不重载。
@@ -18,9 +21,9 @@ public class AccessRegister {
     private static final Logger log = LoggerFactory.getLogger(AccessRegister.class);
 
     private static AccessRegister instance = null;
-    private long threadSleepTime = 60 * 1000l;	// 线程沉睡时间
-    private int connectTimeout = 30 * 1000;	// 链接超时时间
-    
+    private long threadSleepTime = 60 * 1000l; // 线程沉睡时间
+    private int connectTimeout = 30 * 1000; // 链接超时时间
+
     /**
      * 企业安全中心服务地址
      */
@@ -39,7 +42,7 @@ public class AccessRegister {
 	new Thread("AccessRegisterThread") {
 	    public void run() {
 		while (true) {
-		    getEasList();
+		    getAllEas();
 		    try {
 			Thread.sleep(threadSleepTime);
 		    } catch (InterruptedException e) {
@@ -59,7 +62,7 @@ public class AccessRegister {
     /**
      * 检查并更新控制列表（从SecurityCentre拉取）
      */
-    public void getEasList() {
+    private void getAllEas() {
 	if (easCentreUrl != null) { // 类没有初始化完成时，不能拉！
 	    checkAndUpdate();
 	    // TODO 做点什么呢？
@@ -114,5 +117,13 @@ public class AccessRegister {
 	}
 
 	return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, UriDo> getAllUriDos() {
+	if (allEas == null) {	// 如果它不存在，先初始化一下
+	    getAllEas();
+	}
+	return allEas == null ? null : (Map<String, UriDo>) allEas.get("allUriDos");
     }
 }

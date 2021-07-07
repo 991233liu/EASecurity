@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/data")
 public class DataController {
     private static final Logger log = LoggerFactory.getLogger(DataController.class);
+
+    @Autowired
+    UriService uriService;
 
     /**
      * 最后修改时间，"0"标示不存在
@@ -38,8 +42,13 @@ public class DataController {
     public void getAllEas(HttpServletRequest request, HttpServletResponse response) {
 	String lm = request.getParameter("lastModified");
 	if (!lastModified.equals(lm)) {
+	    // TODO 加载？？？肯定不是这个地方的，哈哈。
 	    allEas = new HashMap<>();
+	    // TODO 每次从缓存中获取后，hashCode都会发生变化！！！
+	    allEas.put("allUriDos", uriService.getAllUriDos());
+	    lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
 	    allEas.put("lastModified", lastModified);
+	    
 	    ObjectOutputStream oos = null;
 	    try {
 		oos = new ObjectOutputStream(response.getOutputStream());

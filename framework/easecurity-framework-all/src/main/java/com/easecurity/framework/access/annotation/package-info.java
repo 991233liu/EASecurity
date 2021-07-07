@@ -3,4 +3,4 @@
  * 访问控制的注解群
  *
  */
-package com.easecurity.core.access.annotation;
+package com.easecurity.framework.access.annotation;

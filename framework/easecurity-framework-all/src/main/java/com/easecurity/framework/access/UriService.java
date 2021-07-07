@@ -1,10 +1,12 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.access;
+package com.easecurity.framework.access;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,13 @@ import com.easecurity.framework.access.AccessRegister;
 // TODO 转成纯java的
 @Service
 public class UriService {
+    private static final Logger log = LoggerFactory.getLogger(UriService.class);
 
 //    @Autowired
 //    JdbcTemplate jdbcTemplate;
 //    @Autowired
 //    RedisUtil redisUtil;
-    
+
     AccessRegister accessRegister = AccessRegister.getInstance("http://127.0.0.1/SecurityCentre");
 
     /**
@@ -69,7 +72,8 @@ public class UriService {
 	uriDo.uriOrg.add(uo);
 	uriDo.uriOrg.add(uo2);
 	uriDos.put(uriDo.uri.uri, uriDo);
-	
+	// TODO 每次都取一次吗？？？
+	uriDos = accessRegister.getAllUriDos();
     }
 
     /**
@@ -85,12 +89,16 @@ public class UriService {
 	} else { // 其它模式
 	    if (userDo != null) {
 		UriDo uriDo = uriDos.get(uri);
-		userDo.orgUsers.forEach(ou -> {
-		    if (uriDo.havePermissionThroughOrgById(ou.orgid)) {
-			flag[0] = true;
-			return;
-		    }
-		});
+		if (uriDo != null) {
+		    userDo.orgUsers.forEach(ou -> {
+			if (uriDo.havePermissionThroughOrgById(ou.orgid)) {
+			    flag[0] = true;
+			    return;
+			}
+		    });
+		} else {
+		    log.error("---## 发现了一个不存在数据库的URI，请联系管理员，URI为：{}",uri);
+		}
 	    }
 	}
 	return flag[0];
@@ -98,7 +106,4 @@ public class UriService {
 
     private static volatile Map<String, UriDo> uriDos = new HashMap<>();
     private static volatile long lastModifyTime = -1;
-//    private static volatile Map<String, List<String>> allEas
-    // TODO 内存强制失效?
-    private static volatile long validTime = -1;
 }
