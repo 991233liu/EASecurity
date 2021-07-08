@@ -15,18 +15,18 @@ public class AccessServiceFactory {
     private AccessServiceFactory() {
     }
 
-    public static synchronized UriService getUriService(String easCentreUrl) {
+    public static synchronized UriService getUriService(EaSecurityConfiguration eaSecurityConfiguration) {
 	if (uriService == null)
-	    uriService = new UriService(getAccessRegister(easCentreUrl));
+	    uriService = new UriService(getAccessRegister(eaSecurityConfiguration));
 	return uriService;
     }
 
-    private static AccessRegister getAccessRegister(String easCentreUrl) {
+    private static AccessRegister getAccessRegister(EaSecurityConfiguration eaSecurityConfiguration) {
 	if (accessRegister == null) { // 初始化
-	    accessRegister = AccessRegister.getInstance(easCentreUrl);
+	    accessRegister = AccessRegister.getInstance(eaSecurityConfiguration);
 	}
 	if (accessRegister == null)
-	    throw new RuntimeException("---## 初始化AccessRegister时失败，easCentreUrl=" + easCentreUrl);
+	    throw new RuntimeException("---## 初始化AccessRegister时失败，easCentreUrl=" + eaSecurityConfiguration.getEasCentreUrl());
 	return accessRegister;
     }
 }

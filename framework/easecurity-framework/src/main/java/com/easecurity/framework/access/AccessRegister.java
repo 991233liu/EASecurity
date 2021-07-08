@@ -21,13 +21,8 @@ public class AccessRegister {
     private static final Logger log = LoggerFactory.getLogger(AccessRegister.class);
 
     private static AccessRegister instance = null;
-    private long threadSleepTime = 60 * 1000l; // 线程沉睡时间
-    private int connectTimeout = 30 * 1000; // 链接超时时间
 
-    /**
-     * 企业安全中心服务地址
-     */
-    private String easCentreUrl = null;
+    private EaSecurityConfiguration eaSecurityConfiguration = null;
     /**
      * 最后修改时间，"0"标示不存在
      */
@@ -37,13 +32,13 @@ public class AccessRegister {
      */
     private static volatile HashMap<String, Object> allEas = null;
 
-    private AccessRegister(String easCentreUrl) {
-	this.easCentreUrl = easCentreUrl;
+    private AccessRegister(EaSecurityConfiguration securityConfiguration) {
+	this.eaSecurityConfiguration = securityConfiguration;
 	new Thread("AccessRegisterThread") {
 	    public void run() {
 		while (true) {
 		    try {
-			Thread.sleep(threadSleepTime);
+			Thread.sleep(eaSecurityConfiguration.getThreadSleepTime());
 		    } catch (InterruptedException e) {
 			log.error("定时拉取控制列表时出现异常:", e);
 		    }
@@ -53,9 +48,9 @@ public class AccessRegister {
 	}.start();
     }
 
-    public static synchronized final AccessRegister getInstance(String easCentreUrl) {
-	if (instance == null && easCentreUrl != null && !easCentreUrl.isEmpty())
-	    instance = new AccessRegister(easCentreUrl);
+    public static synchronized final AccessRegister getInstance(EaSecurityConfiguration eaSecurityConfiguration) {
+	if (instance == null)
+	    instance = new AccessRegister(eaSecurityConfiguration);
 	return instance;
     }
 
@@ -63,7 +58,7 @@ public class AccessRegister {
      * 检查并更新控制列表（从SecurityCentre拉取）
      */
     private void getAllEas() {
-	if (easCentreUrl != null) { // 类没有初始化完成时，不能拉！
+	if (eaSecurityConfiguration != null) { // 类没有初始化完成时，不能拉！
 	    checkAndUpdate();
 	    // TODO 做点什么呢？
 	}
@@ -77,10 +72,10 @@ public class AccessRegister {
 	ObjectInputStream ois = null;
 	HashMap<String, Object> map = null;
 	try {
-	    String uri = easCentreUrl + "/data/alleas?lastModified=" + lastModified;
+	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/alleas?lastModified=" + lastModified;
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-	    connection.setConnectTimeout(connectTimeout);
-	    connection.setReadTimeout(connectTimeout);
+	    connection.setConnectTimeout(eaSecurityConfiguration.getConnectTimeout());
+	    connection.setReadTimeout(eaSecurityConfiguration.getConnectTimeout());
 	    connection.setDoInput(true);
 	    connection.setDoOutput(true);
 	    connection.setRequestMethod("GET");

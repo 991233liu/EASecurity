@@ -2,27 +2,23 @@
 package com.easecurity.framework.access.annotation;
 
 import java.lang.reflect.Method;
-import java.security.Signature;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.aspectj.bridge.SourceLocation;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.basis.UserDo;
-import com.easecurity.framework.access.UriAccessService;
+import com.easecurity.framework.access.UriService;
 
 /**
  * 控制方法访问权限。 多条件时默认使用“or”关系。
@@ -32,8 +28,8 @@ import com.easecurity.framework.access.UriAccessService;
 @Component
 public class EaSecuredAspect {
     
-    @Autowired
-    UriAccessService uriService;
+    @Resource
+    UriService uriAccessService;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {
@@ -60,9 +56,9 @@ public class EaSecuredAspect {
 	    String uri = request.getRequestURI();
 	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
 	    
-	    uriService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
+	    uriAccessService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
 	    
-	    if (uriService.validation(eas, uri, userDo)) { // 有执行权限
+	    if (uriAccessService.validation(eas, uri, userDo)) { // 有执行权限
 		result = pjp.proceed();
 	    } else { // 无执行权限
 		HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
