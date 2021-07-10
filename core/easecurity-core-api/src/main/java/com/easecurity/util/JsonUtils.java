@@ -536,7 +536,7 @@ public class JsonUtils {
     private static String getKey(JsonBean jsonBean) {
 	// 鼠标移动到key的开始位置
 	getValueFirstChar(jsonBean);
-	return to_String(jsonBean).trim();
+	return to_String(jsonBean, false).trim();
     }
 
     /**
@@ -777,9 +777,24 @@ public class JsonUtils {
      * 解析String
      */
     private static String to_String(JsonBean jsonBean) {
+	return to_String(jsonBean, true);
+    }
+
+    /**
+     * 解析String
+     */
+    /**
+     * @param jsonBean
+     * @param needSep  是否需要开始符
+     */
+    private static String to_String(JsonBean jsonBean, boolean needSep) {
 	char c = getValueFirstChar(jsonBean);
-	if ('"' != c && '\'' != c)
-	    throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + c);
+	if ('"' != c && '\'' != c) {
+	    if (needSep)
+		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + c);
+	    else
+		jsonBean.back();
+	}
 	StringBuffer ret = new StringBuffer();
 
 	// 指针后移，跳过开始字符
@@ -796,6 +811,9 @@ public class JsonUtils {
 	    } else if (c == '\\' && jsonBean.getNextChar() == '\'') { // value中间含有特殊字符"'"
 		ret.append('\'');
 		jsonBean.next();
+	    } else if (!needSep && c == ':') { // 当有些特殊情况，没有开始和结束符号时，找到“:”时结束。
+		jsonBean.back();
+		break;
 	    } else
 		ret.append(c);
 	    jsonBean.next();
@@ -1018,6 +1036,13 @@ public class JsonUtils {
 	public void next() {
 	    cursor++;
 	}
+
+	/**
+	 * 游标向后移一位
+	 */
+	public void back() {
+	    cursor--;
+	}
     }
 
     // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ json2Object 相关方法 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
@@ -1106,7 +1131,7 @@ public class JsonUtils {
 
     /**
      * @Title: converChar @Description: Json中特殊字符转换 @param @param value
-     * json @param @return 设定文件 @return Object 返回类型 @throws
+     *         json @param @return 设定文件 @return Object 返回类型 @throws
      */
     private static Object converChar(String value) {
 	value = value.replace("\\\"", "&quot;");

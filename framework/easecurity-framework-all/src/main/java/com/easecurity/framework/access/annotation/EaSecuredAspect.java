@@ -50,7 +50,6 @@ public class EaSecuredAspect {
      */
     @Around("controllerMethod()")
     public Object controllerMethodAround(ProceedingJoinPoint pjp) {
-	System.out.println("自定义注解生效了");
 	Object result = null;
 	try {
 	    MethodSignature signature = (MethodSignature) pjp.getSignature();

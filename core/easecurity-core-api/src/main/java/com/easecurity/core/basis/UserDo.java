@@ -46,7 +46,7 @@ public class UserDo implements Serializable {
      */
     @SuppressWarnings("unchecked")
 //    @Cacheable
-    public final Map<String, String> allIdentitiesWithMap() {
+    public Map<String, String> allIdentitiesWithMap() {
 	if(_AllIdentitiesWithMap==null) _AllIdentitiesWithMap=(Map<String, String>) JsonUtils.jsonToObject(user.identities);
 	return _AllIdentitiesWithMap;
     }

@@ -37,7 +37,7 @@ public class DataOperationController {
     }
 
     @RequestMapping("/queryData3")
-    @EaSecured(org = "{'id':['1','4']}")
+    @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
 //	loginService.login("liulufeng", "1");
 	UserDo userDo = loginService.login("liulufeng", "1");
