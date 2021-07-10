@@ -57,10 +57,12 @@ public class AccessRegister {
     /**
      * 检查并更新控制列表（从SecurityCentre拉取）
      */
-    private void getAllEas() {
+    private synchronized void getAllEas() {
 	if (eaSecurityConfiguration != null) { // 类没有初始化完成时，不能拉！
+	    // TODO 返回false后，做点什么呢？
 	    checkAndUpdate();
-	    // TODO 做点什么呢？
+	    // 不能为null，防止后续的方法报错
+	    allEas = allEas == null ? new HashMap<>() : allEas;
 	}
     }
 
@@ -119,7 +121,7 @@ public class AccessRegister {
 	if (allEas == null) { // 如果它不存在，先初始化一下
 	    getAllEas();
 	}
-	return allEas == null ? null : (Map<String, UriDo>) allEas.get("allUriDos");
+	return (Map<String, UriDo>) allEas.get("allUriDos") == null ? new HashMap<>() : (Map<String, UriDo>) allEas.get("allUriDos");
     }
 
     public EaSecurityConfiguration getEaSecurityConfiguration() {

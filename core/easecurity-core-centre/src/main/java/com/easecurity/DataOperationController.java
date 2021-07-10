@@ -37,13 +37,12 @@ public class DataOperationController {
     }
 
     @RequestMapping("/queryData3")
-//    @EaSecured(org = @Org(id= {"1","4"}))
-    @EaSecured(org = "{id:['1','4']}")
+    @EaSecured(org = "{'id':['1','4']}")
     public void queryData3(HttpServletRequest request) {
 //	loginService.login("liulufeng", "1");
 	UserDo userDo = loginService.login("liulufeng", "1");
 	request.getSession(true).setAttribute("userdo", userDo);
-	System.out.println("----## userDo.getAllIdentities()=" + userDo.getAllIdentities());
+	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
     }
 
 //    @PostMapping("/api/addData")

@@ -88,7 +88,7 @@ public class MenuService {
     @SuppressWarnings("unchecked")
     public List<MenuDo> getMenuByUser(UserDo user) {
 	List<MenuDo> allMenuDo = new ArrayList<MenuDo>();
-	Map<String, String> allIdentities = (Map<String, String>) JsonUtils.jsonToObject(user.getAllIdentities());
+	Map<String, String> allIdentities = (Map<String, String>) JsonUtils.jsonToObject(user.allIdentities());
 	// 遍历所有根菜单，并递归每个有权限的子菜单
 	rootMenuDoList.forEach(item -> {
 	    _getMenuDoByIdentities(allIdentities, item, allMenuDo);

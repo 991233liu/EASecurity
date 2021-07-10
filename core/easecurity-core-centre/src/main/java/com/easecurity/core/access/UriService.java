@@ -70,9 +70,9 @@ public class UriService {
      */
     // TODO 强制清除？
     public Map<String, UriDo> getAllUriDos() {
-//	// 有效期内直接返回内存缓存的数据
-//	if (System.currentTimeMillis() < validTime)
-//	    return allUriDoMap;
+	// 有效期内直接返回内存缓存的数据
+	if (System.currentTimeMillis() < validTime)
+	    return allUriDoMap;
 
 	return loadAllFromCore();
     }

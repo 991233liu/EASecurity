@@ -4,7 +4,6 @@ package com.easecurity.core.basis;
 import java.io.Serializable;
 import java.util.List;
 
-import com.easecurity.core.basis.au.MenuOrg;
 import com.easecurity.core.basis.au.UriOrg;
 import com.easecurity.core.basis.re.Uri;
 
@@ -32,7 +31,7 @@ public class UriDo implements Serializable {
      * @return true 有权限；false 无权限。
      */
     // TODO 需要优化，临时凑合着写的
-    public boolean havePermissionThroughOrgById(int orgId) {
+    public boolean havePermissionThroughOrgId(String orgId) {
 	if (uriOrg != null&&!uriOrg.isEmpty()) {
 	    if (_auOrgStr == null) {
 		_auOrgStr = ",";

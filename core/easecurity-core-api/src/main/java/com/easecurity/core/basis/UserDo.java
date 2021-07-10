@@ -3,11 +3,12 @@ package com.easecurity.core.basis;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.basis.b.OrgUser;
 import com.easecurity.core.basis.b.User;
 import com.easecurity.core.basis.b.UserInfo;
+import com.easecurity.util.JsonUtils;
 
 /**
  * domain：用户
@@ -16,25 +17,39 @@ import com.easecurity.core.basis.b.UserInfo;
 public class UserDo implements Serializable {
 
     private static final long serialVersionUID = 6399575043885204917L;
-    
+
     /**
      * 账号信息
      */
     public User user;
-    
+
     /**
      * 用户基础信息
      */
     public UserInfo userinfo;
-    
+
     /**
      * 所在组织、职务信息
      */
     public List<OrgUser> orgUsers;
-    
-    @EaSecured
-    public String getAllIdentities() {
+
+    /**
+     * 获取所有的身份信息
+     */
+    public String allIdentities() {
 	// TODO 初始化？
 	return user.identities;
     }
+
+    /**
+     * 获取所有的身份信息
+     */
+    @SuppressWarnings("unchecked")
+//    @Cacheable
+    public final Map<String, String> allIdentitiesWithMap() {
+	if(_AllIdentitiesWithMap==null) _AllIdentitiesWithMap=(Map<String, String>) JsonUtils.jsonToObject(user.identities);
+	return _AllIdentitiesWithMap;
+    }
+
+    private Map<String, String> _AllIdentitiesWithMap;
 }

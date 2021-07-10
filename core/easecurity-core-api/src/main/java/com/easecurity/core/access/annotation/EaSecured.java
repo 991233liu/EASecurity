@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * 控制方法访问权限。
+ * 控制方法访问权限。使用“@EaSecured("allUser")”为所有登录用户可访问。
  * 多条件时使用“or”关系。
  */
 @Target(METHOD)
@@ -25,7 +25,7 @@ public @interface EaSecured {
     String value() default "";
 
     /**
-     * 基于组织的访问控制。格式：{id : ['1','2'], code : ['gongsi', 'abumen']}。 支持的属性：id、code
+     * 基于组织的访问控制。格式：{'id' : ['1','2'], 'code' : ['gongsi', 'abumen']}。 支持的属性：id、code、name、fullName
      */
     String org() default "";
     
