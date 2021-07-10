@@ -29,4 +29,8 @@ public class AccessServiceFactory {
 	    throw new RuntimeException("---## 初始化AccessRegister时失败，easCentreUrl=" + eaSecurityConfiguration.getEasCentreUrl());
 	return accessRegister;
     }
+    
+    public EaSecurityConfiguration getEaSecurityConfiguration() {
+	return accessRegister.getEaSecurityConfiguration();
+    }
 }

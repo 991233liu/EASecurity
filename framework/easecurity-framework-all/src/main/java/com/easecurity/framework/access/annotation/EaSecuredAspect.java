@@ -12,6 +12,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,9 +30,14 @@ import com.easecurity.framework.access.UriService;
 @Aspect
 @Component
 public class EaSecuredAspect {
-    
+    private static final Logger log = LoggerFactory.getLogger(EaSecuredAspect.class);
+
     @Resource
     UriService uriAccessService;
+
+    // 开发模式/生产模式
+    @Value("${easecurity.verification:prod}")
+    private String verification;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {
@@ -40,7 +48,6 @@ public class EaSecuredAspect {
     /**
      * 检查是否有权限执行
      */
-    // TODO 开发模式/生产模式
     @Around("controllerMethod()")
     public Object controllerMethodAround(ProceedingJoinPoint pjp) {
 	System.out.println("自定义注解生效了");
@@ -55,18 +62,36 @@ public class EaSecuredAspect {
 	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	    String uri = request.getRequestURI();
 	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
-	    
+	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={}", methodSignature, eas, userDo);
+
 	    uriAccessService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
-	    
+
 	    if (uriAccessService.validation(eas, uri, userDo)) { // 有执行权限
-		result = pjp.proceed();
+		if (verification.toLowerCase().equals("dev")) {
+		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", verification);
+		} else {
+		    result = pjp.proceed();
+		}
 	    } else { // 无执行权限
-		HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-		httpServletResponse.setStatus(403);
-		result = null;
+		if (verification.toLowerCase().equals("dev")) {
+		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, userDo, verification);
+		} else {
+		    HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+		    httpServletResponse.setStatus(403);
+		    result = null;
+		}
 	    }
+	} catch (Exception e) {
+	    log.error("controllerMethodAround 执行时出现异常：", e);
 	} catch (Throwable e) {
-	    e.printStackTrace();
+	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+	} finally {
+	    if (verification.toLowerCase().equals("dev"))
+		try {
+		    result = pjp.proceed();
+		} catch (Throwable e) {
+		    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+		}
 	}
 	return result;
     }

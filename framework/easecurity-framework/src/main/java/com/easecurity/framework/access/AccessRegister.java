@@ -121,4 +121,8 @@ public class AccessRegister {
 	}
 	return allEas == null ? null : (Map<String, UriDo>) allEas.get("allUriDos");
     }
+
+    public EaSecurityConfiguration getEaSecurityConfiguration() {
+	return eaSecurityConfiguration;
+    }
 }

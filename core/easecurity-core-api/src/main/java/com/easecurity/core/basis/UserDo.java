@@ -4,6 +4,7 @@ package com.easecurity.core.basis;
 import java.io.Serializable;
 import java.util.List;
 
+import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.basis.b.OrgUser;
 import com.easecurity.core.basis.b.User;
 import com.easecurity.core.basis.b.UserInfo;
@@ -31,6 +32,7 @@ public class UserDo implements Serializable {
      */
     public List<OrgUser> orgUsers;
     
+    @EaSecured
     public String getAllIdentities() {
 	// TODO 初始化？
 	return user.identities;

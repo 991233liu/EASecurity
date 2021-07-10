@@ -6,9 +6,15 @@ server:
       session:
          timeout: PT2H
 
+# 企业安全中心相关配置
 easecurity:
    server:
       url: http://127.0.0.1/SecurityCentre
+      connectTimeout: 30000    # 与企业安全中心通信链接超时时间（单位毫秒）。默认30秒。
+      threadSleepTime: 60000   # 与企业安全中心通信间隔（单位毫秒）。默认1分钟
+   verification: dev   # 安全校验模式：dev(development)、prod(production)。在dev模式下，安全校验标签（功能）会正常执行，
+                         # 校验结果会输出到日志中（info级别），但是，无论校验结果如何，被保护（控制）的方法仍会被执行。
+                         # 默认为prod模式。
 
 spring:
 # 数据库配置
@@ -54,8 +60,7 @@ logging:
    level:
       root: INFO
       com:
-         easecurity:
-            core: DEBUG   
+         easecurity: DEBUG
    pattern:
       console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){faint}%clr([%F:%L]){cyan} %clr(:){faint} %m%n%wex'
 

@@ -20,7 +20,7 @@ public class DataOperationController {
 
     @Autowired
     SomeDao service;
-    
+
     @Autowired
     MenuService menuService;
     @Autowired
@@ -30,12 +30,12 @@ public class DataOperationController {
     public List<Object> queryData() {
 	return service.queryForList(null);
     }
-    
+
     @RequestMapping("/queryData2")
     public List<MenuDo> queryData2() {
 	return menuService.loadAll();
     }
-    
+
     @RequestMapping("/queryData3")
 //    @EaSecured(org = @Org(id= {"1","4"}))
     @EaSecured(org = "{id:['1','4']}")
@@ -43,6 +43,7 @@ public class DataOperationController {
 //	loginService.login("liulufeng", "1");
 	UserDo userDo = loginService.login("liulufeng", "1");
 	request.getSession(true).setAttribute("userdo", userDo);
+	System.out.println("----## userDo.getAllIdentities()=" + userDo.getAllIdentities());
     }
 
 //    @PostMapping("/api/addData")
