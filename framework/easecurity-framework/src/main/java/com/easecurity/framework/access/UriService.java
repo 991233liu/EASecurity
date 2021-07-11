@@ -43,7 +43,6 @@ public class UriService {
      * @param methodName
      * @param methodSignature
      */
-    // TODO 传输、存储……好多问题
     public void saveUriPermissions(EaSecured eas, String uri, String classFullName, String methodName, String methodSignature) {
 	UriDo lUriDo = null;
 	boolean lUriDoFirst = false;
@@ -58,21 +57,23 @@ public class UriService {
 		}
 	    }
 	}
-	// TODO 每次都取一次吗？？？
 	uriDos = accessRegister.getAllUriDos();
 	if (uriDos.containsKey(uri)) {
-	    // TODO 如果已经存在了，需要更新吗？？？
-	    EasType type = eas.type();
-	    if (type != EasType.DATABASE_ONLY && System.currentTimeMillis() > lastModifyTime) { // 使用源码中的配置时，使用数据库中的状态信息，每分钟更新一次
+	    if (System.currentTimeMillis() > lastModifyTime) { // 每分钟更新一次
 		UriDo uriDo = uriDos.get(uri);
 		synchronized (this) {
-		    updateLocaleUriDoStatus(lUriDo, uriDo);
+		    updateLocaleUriDoIdAndStatus(lUriDo, uriDo);
 		    lastModifyTime = System.currentTimeMillis() + 60000;
+		}
+		if (lUriDoFirst) {
+		    // 第一次启动时更新一次
+		    accessRegister.saveUriEas(lUriDo);
 		}
 	    }
 	} else { // 不存在时，则新建配置
-	    // TODO 怎么转化好呢？还是先从查开始吧，存储应该方便查询使用
-	    // TODO 每次启动更新一次？？？
+	    // 每次启动更新一次
+	    if (lUriDoFirst)
+		accessRegister.saveUriEas(lUriDo);
 	}
     }
 
@@ -127,7 +128,10 @@ public class UriService {
 	return flag[0];
     }
 
-    // TODO 新建，遍历属性
+    /**
+     * 新建本地配置
+     */
+    // TODO 遍历属性
     @SuppressWarnings("unchecked")
     private UriDo createLocaleUriDo(EaSecured eas, String uri, String classFullName, String methodName, String methodSignature) {
 	UriDo uriDo = new UriDo();
@@ -139,6 +143,7 @@ public class UriService {
 	u.methodSignature = methodSignature;
 	u.easType = eas.type();
 	u.fromTo = "2";
+	u.status = "0";
 	uriDo.uri = u;
 	String org = eas.org();
 	if (!org.isEmpty()) {
@@ -175,8 +180,23 @@ public class UriService {
 	return uriDo;
     }
 
-    // TODO 从数据库汇总更新本地状态
-    private void updateLocaleUriDoStatus(UriDo lUriDo, UriDo uriDo) {
-
+    /**
+     * 从数据库汇总更新本地状态和ID
+     */
+    // TODO 遍历所有属性
+    private void updateLocaleUriDoIdAndStatus(UriDo lUriDo, UriDo uriDo) {
+	lUriDo.uri.id = uriDo.uri.id;
+	lUriDo.uri.status = uriDo.uri.status;
+	if (lUriDo.uriOrg != null)
+	    lUriDo.uriOrg.forEach(item -> {
+		for (UriOrg uo : uriDo.uriOrg) {
+		    if (item.orgid == uo.orgid) {
+			item.id = uo.id;
+			item.uriid = uo.uriid;
+			item.status = uo.status;
+			break;
+		    }
+		}
+	    });
     }
 }

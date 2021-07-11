@@ -2,6 +2,7 @@
 package com.easecurity.core.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.easecurity.core.basis.UriDo;
 
 /**
  * 企业安全中心数据交换服务
@@ -48,7 +51,7 @@ public class DataController {
 	    allEas.put("allUriDos", uriService.getAllUriDos());
 	    lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
 	    allEas.put("lastModified", lastModified);
-	    
+
 	    ObjectOutputStream oos = null;
 	    try {
 		oos = new ObjectOutputStream(response.getOutputStream());
@@ -68,6 +71,33 @@ public class DataController {
 	    }
 	} else {
 	    response.setStatus(304);
+	}
+    }
+
+    /**
+     * 保存UriDo配置
+     */
+    @RequestMapping("/saveurido")
+    public void saveUriDo(HttpServletRequest request, HttpServletResponse response) {
+	ObjectInputStream ois = null;
+	try {
+	    ois = new ObjectInputStream(request.getInputStream());
+	    UriDo lUriDo = (UriDo) ois.readObject();
+	    uriService.saveUriDo(lUriDo);
+	    response.setStatus(200);
+	} catch (IOException e) {
+	    log.error("从客户端保存UriDo配置时，数据流读取异常:", e);
+	    response.setStatus(500);
+	} catch (ClassNotFoundException e) {
+	    log.error("从客户端保存UriDo配置时，反序列化异常:", e);
+	    response.setStatus(500);
+	} finally {
+	    if (ois != null)
+		try {
+		    ois.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	}
     }
 }

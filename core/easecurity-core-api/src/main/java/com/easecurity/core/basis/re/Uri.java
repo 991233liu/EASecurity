@@ -39,6 +39,10 @@ public class Uri implements Serializable {
      * 来源，1人工、2程序源代码。如果是来着程序源代码，则只能禁用，不能删除
      */
     public String fromTo;
+    /**
+     * 状态，0启用、1禁用
+     */
+    public String status;
 
     public Integer getId() {
 	return id;
@@ -54,5 +58,13 @@ public class Uri implements Serializable {
 
     public void setUri(String uri) {
 	this.uri = uri;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

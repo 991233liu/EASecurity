@@ -47,7 +47,7 @@ public class MenuService {
      * 初始化菜单信息，存入Redis
      */
     @SuppressWarnings("unchecked")
-    public List<MenuDo> loadAll() {
+    public synchronized List<MenuDo> loadAll() {
 	// 有效期内直接返回内存缓存的数据
 	if (System.currentTimeMillis() < validTime)
 	    return allMenuDoList;

@@ -3,10 +3,14 @@ package com.easecurity.framework.access;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +27,7 @@ public class AccessRegister {
     private static AccessRegister instance = null;
 
     private EaSecurityConfiguration eaSecurityConfiguration = null;
+    private static ArrayBlockingQueue<UriDo> taskQueue = new ArrayBlockingQueue<UriDo>(10240, true);
     /**
      * 最后修改时间，"0"标示不存在
      */
@@ -43,6 +48,7 @@ public class AccessRegister {
 			log.error("定时拉取控制列表时出现异常:", e);
 		    }
 		    getAllEas();
+		    processQueue();
 		}
 	    }
 	}.start();
@@ -76,15 +82,7 @@ public class AccessRegister {
 	try {
 	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/alleas?lastModified=" + lastModified;
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-	    connection.setConnectTimeout(eaSecurityConfiguration.getConnectTimeout());
-	    connection.setReadTimeout(eaSecurityConfiguration.getConnectTimeout());
-	    connection.setDoInput(true);
-	    connection.setDoOutput(true);
-	    connection.setRequestMethod("GET");
-	    connection.addRequestProperty("User-Agent", "Mozilla/99.0");
-	    connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-	    connection.addRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");// "en-US,en;q=0.5");
-	    connection.addRequestProperty("Accept-Charset", "utf-8,ISO-8859-1,gbk,gb2312;q=0.7,*;q=0.7");
+	    setDefaultConfig(connection);
 	    connection.connect();
 	    int state = connection.getResponseCode();
 	    if (state == 200) { // 列表发生变化，读取新的控制列表
@@ -103,7 +101,6 @@ public class AccessRegister {
 	    log.error("拉取控制列表时，数据流读取异常:", e);
 	} catch (ClassNotFoundException e) {
 	    log.error("拉取控制列表时，反序列化异常:", e);
-	    e.printStackTrace();
 	} finally {
 	    if (ois != null)
 		try {
@@ -116,6 +113,61 @@ public class AccessRegister {
 	return false;
     }
 
+    /**
+     * 消息队列处理，发送到远端服务器
+     */
+    private void processQueue() {
+	log.debug(">>>>>>>>>>current taskQueue has " + taskQueue.size() + " tasks");
+	UriDo lUriDo = null;
+	try {
+	    while (!taskQueue.isEmpty()) { // 如果消息队列中存在消息，则循环处理，直到所有消息处理完毕。
+		lUriDo = taskQueue.poll(20, TimeUnit.MILLISECONDS);
+		// 即便前面显示有待处理的消息，仍有可能获取不到。因为已经被其它并发的线程拿走了。
+		if (lUriDo == null)
+		    continue;
+		if (!sendUriDoToServer(lUriDo)) { // 发送失败后，重新放入待发送队列
+		    taskQueue.add(lUriDo);
+		}
+	    }
+	} catch (InterruptedException e) {
+	    log.error("Process sendUriDoToServer failed: lUriDo={}", lUriDo, e);
+	}
+
+    }
+
+    private boolean sendUriDoToServer(UriDo lUriDo) {
+	ObjectOutputStream oos = null;
+	try {
+	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/saveurido?time=" + System.currentTimeMillis();
+	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
+	    setDefaultConfig(connection);
+	    connection.connect();
+	    oos = new ObjectOutputStream(connection.getOutputStream());
+	    oos.writeObject(lUriDo);
+	    oos.flush();
+	    int state = connection.getResponseCode();
+	    if (state == 200) { // 服务器处理正常
+		return true;
+	    } else { // 服务器返回错误
+		return false;
+	    }
+	} catch (IOException e) {
+	    log.error("发送UriDo到远端服务器时，数据流推送异常:", e);
+	} finally {
+	    if (null != oos) {
+		try {
+		    oos.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
+	return false;
+    }
+
+    /**
+     * 获取所有的UriDo
+     */
     @SuppressWarnings("unchecked")
     public Map<String, UriDo> getAllUriDos() {
 	if (allEas == null) { // 如果它不存在，先初始化一下
@@ -124,7 +176,38 @@ public class AccessRegister {
 	return (Map<String, UriDo>) allEas.get("allUriDos") == null ? new HashMap<>() : (Map<String, UriDo>) allEas.get("allUriDos");
     }
 
+    /**
+     * 获取当前的EasSecurity配置
+     */
     public EaSecurityConfiguration getEaSecurityConfiguration() {
 	return eaSecurityConfiguration;
+    }
+
+    /**
+     * 保存本地UriDo配置
+     */
+    public void saveUriEas(UriDo lUriDo) {
+	try {
+	    taskQueue.add(lUriDo); // 不等待情况
+	} catch (Exception ex) {
+	    log.error("保存本地UriDo配置到待发送队列异常", ex);
+	}
+    }
+
+    /**
+     * 设置HttpURLConnection的链接属性
+     * 
+     */
+    private void setDefaultConfig(HttpURLConnection connection) throws ProtocolException {
+	connection.setConnectTimeout(eaSecurityConfiguration.getConnectTimeout());
+	connection.setReadTimeout(eaSecurityConfiguration.getConnectTimeout());
+	connection.setDoInput(true);
+	connection.setDoOutput(true);
+	connection.setUseCaches(false);
+	connection.setRequestMethod("POST");
+	connection.addRequestProperty("User-Agent", "Mozilla/99.0");
+	connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+	connection.addRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");// "en-US,en;q=0.5");
+	connection.addRequestProperty("Accept-Charset", "utf-8,ISO-8859-1,gbk,gb2312;q=0.7,*;q=0.7");
     }
 }

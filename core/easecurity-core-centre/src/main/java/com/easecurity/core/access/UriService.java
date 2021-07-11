@@ -33,16 +33,15 @@ public class UriService {
     private static final Long URI_TIMEOUT = (long) (10 * 60 * 60); // 10小时Redis缓存失效
 
     private static volatile Map<String, UriDo> allUriDoMap = null;
-    // TODO 内存强制失效?
     private static volatile long validTime = -1;
 
     /**
      * 从core初始化URI信息。
      */
     @SuppressWarnings("unchecked")
-    private Map<String, UriDo> loadAllFromCore() {
+    private synchronized Map<String, UriDo> loadAllFromCore(boolean force) {
 	// 如果Redis中有缓存，则使用Redis中；如果没有，则加载数据库并缓存到Redis
-	if (redisUtil.hasKey("uri:rootList")) {
+	if (!force && redisUtil.hasKey("uri:rootList")) {
 	    allUriDoMap = (Map<String, UriDo>) redisUtil.get("uri:all");
 	} else {
 	    Map<String, UriDo> audoAllMap = new HashMap<String, UriDo>();
@@ -68,12 +67,46 @@ public class UriService {
      * 
      * @return
      */
-    // TODO 强制清除？
     public Map<String, UriDo> getAllUriDos() {
 	// 有效期内直接返回内存缓存的数据
 	if (System.currentTimeMillis() < validTime)
 	    return allUriDoMap;
 
-	return loadAllFromCore();
+	return loadAllFromCore(false);
     }
+
+    /**
+     * 保存UriDo配置。
+     */
+    // TODO 优化代码结构
+    public void saveUriDo(UriDo lUriDo) {
+	List<String> ids = jdbcTemplate.queryForList("SELECT id FROM re_uri where uri = ?", String.class, lUriDo.uri.uri);
+	if (ids.size() > 0) { // 存在则更新，不更新状态
+	    jdbcTemplate.update(sql2, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo, ids.get(0));
+	} else { // 不存在则新建
+	    jdbcTemplate.update(sql, lUriDo.uri.uri, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo,
+		    lUriDo.uri.status);
+	}
+	saveUriOrg(lUriDo.uriOrg, lUriDo.uri.uri);
+	// 强制更新缓存
+	loadAllFromCore(true);
+    }
+
+    private void saveUriOrg(List<UriOrg> uriOrgs, String uri) {
+	List<String> ids = jdbcTemplate.queryForList("SELECT id FROM re_uri where uri = ?", String.class, uri);
+	String uriId = ids.get(0);
+	uriOrgs.forEach(item -> {
+	    List<String> ids2 = jdbcTemplate.queryForList("SELECT id FROM au_uri_org where uriid = ? and orgid = ?", String.class, uriId, item.orgid);
+	    if (ids2.size() > 0) { // 更新
+		jdbcTemplate.update(sql4, item.fromTo, ids2.get(0));
+	    } else {
+		jdbcTemplate.update(sql3, uriId, item.orgid, item.fromTo, item.status);
+	    }
+	});
+    }
+
+    String sql = "INSERT INTO re_uri (uri, class_full_name, method_name, method_signature, eas_type, from_to, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql2 = "UPDATE re_uri set class_full_name=?, method_name=?, method_signature=?, eas_type=?, from_to=? where id=?";
+    String sql3 = "INSERT INTO au_uri_org (uriid, orgid, from_to, status) VALUES (?, ?, ?, ?)";
+    String sql4 = "UPDATE au_uri_org set from_to=? where id=?";
 }
