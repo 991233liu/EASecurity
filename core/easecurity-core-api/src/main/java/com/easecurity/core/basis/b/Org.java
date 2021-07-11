@@ -1,20 +1,48 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.basis.b;
 
+import java.io.Serializable;
+
 /**
  * b_org表：组织。
  *
  */
-public class Org {
+public class Org implements Serializable {
 
+    private static final long serialVersionUID = 8968703859895801527L;
+    
     public Integer id;
+    /**
+     * 组织名称
+     */
     public String name;
+    /**
+     * 组织编码（业务用）
+     */
     public String code;
+    /**
+     * 类型:0根、1机构、2公司、3办事处、4部门
+     */
     public String type;
+    /**
+     * 组织状态
+     */
     public String status;
+    /**
+     * 父节点ID
+     */
     public Integer parentid;
+    /**
+     * 全路径名称，如：/root/xx公司/xx部门/
+     */
     public String fullName;
+    /**
+     * 全路径ID，如：/0/123/456/
+     */
     public String fullPathid;
+    /**
+     * 全路径组织编码，如：/0/abc/def/
+     */
     public String fullCode;
 
     public Integer getId() {

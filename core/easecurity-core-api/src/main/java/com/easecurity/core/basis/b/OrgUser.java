@@ -12,47 +12,73 @@ public class OrgUser implements Serializable {
     private static final long serialVersionUID = 1135766150664450572L;
 
     public Integer id;
+    /**
+     * 用户ID
+     */
     public String userid;
+    /**
+     * 登录账号（冗余）
+     */
     public String user;
+    /**
+     * 组织ID
+     */
     public Integer orgid;
+    /**
+     * 职务ID
+     */
     public Integer postsid;
+    /**
+     * 是否主职
+     */
     public Integer masterPosts;
-    
+
     public Integer getId() {
-        return id;
+	return id;
     }
+
     public void setId(Integer id) {
-        this.id = id;
+	this.id = id;
     }
+
     public String getUserid() {
-        return userid;
+	return userid;
     }
+
     public void setUserid(String userid) {
-        this.userid = userid;
+	this.userid = userid;
     }
+
     public String getUser() {
-        return user;
+	return user;
     }
+
     public void setUser(String user) {
-        this.user = user;
+	this.user = user;
     }
+
     public Integer getOrgid() {
-        return orgid;
+	return orgid;
     }
+
     public void setOrgid(Integer orgid) {
-        this.orgid = orgid;
+	this.orgid = orgid;
     }
+
     public Integer getPostsid() {
-        return postsid;
+	return postsid;
     }
+
     public void setPostsid(Integer postsid) {
-        this.postsid = postsid;
+	this.postsid = postsid;
     }
+
     public Integer getMasterPosts() {
-        return masterPosts;
+	return masterPosts;
     }
+
     public void setMaster_posts(Integer masterPosts) {
-        this.masterPosts = masterPosts;
+	this.masterPosts = masterPosts;
     }
 
 }

@@ -11,4 +11,62 @@ public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = 5223521401840975133L;
 
+    public String id;
+    /**
+     * user表主键
+     */
+    public String uid;
+    /**
+     * 登录账号
+     */
+    public String user;
+    /**
+     * 姓名
+     */
+    public String name;
+    /**
+     * 用户状态
+     */
+    public String status;
+
+    public String getId() {
+	return id;
+    }
+
+    public void setId(String id) {
+	this.id = id;
+    }
+
+    public String getUid() {
+	return uid;
+    }
+
+    public void setUid(String uid) {
+	this.uid = uid;
+    }
+
+    public String getUser() {
+	return user;
+    }
+
+    public void setUser(String user) {
+	this.user = user;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    public String getStatus() {
+	return status;
+    }
+
+    public void setStatus(String status) {
+	this.status = status;
+    }
+
 }

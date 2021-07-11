@@ -8,6 +8,7 @@ public class Test {
 
     public static void main(String[] args) {
 	String jsonString = "{id:['1','4']}";
+	@SuppressWarnings("rawtypes")
 	Map map = (Map) JsonUtils.jsonToObject(jsonString);
 	System.out.println(map);
     }

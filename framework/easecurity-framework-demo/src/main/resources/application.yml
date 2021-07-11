@@ -1,6 +1,6 @@
 server:
    port: 8080
-   servlet:
+#   servlet:
 #      context-path: /demo
    session:
       timeout: PT2H
