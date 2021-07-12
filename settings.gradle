@@ -10,12 +10,14 @@
 rootProject.name = 'EASecurity'
 
 //include(':admin')
+/**/
 file('admin').eachDir { dir ->
-	if(!dir.name.startsWith('.')){
+	if(!dir.name.startsWith('.')&&!dir.name.equals('admin')){
 	     include dir.name
 	     project(":${dir.name}").projectDir = dir
 	}
 }
+
 
 //include(':core')
 file('core').eachDir { dir ->
