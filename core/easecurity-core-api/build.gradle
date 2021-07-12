@@ -6,19 +6,16 @@
  * User Manual available at https://docs.gradle.org/7.1/userguide/building_java_projects.html
  */
 plugins {
-	id 'java-library'
+    id 'java-library'
 }
 
 apply from: "../common.gradle"
 
-group = 'com.easecurity.core'
-version = '0.0.1-SNAPSHOT'
-
 dependencies {
-	implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

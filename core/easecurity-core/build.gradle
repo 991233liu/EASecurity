@@ -7,33 +7,30 @@
  */
 plugins {
     id 'java-library'
-	id 'org.springframework.boot' version '2.5.1'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.5.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 apply from: "../common.gradle"
 
-group = 'com.easecurity.core'
-version = '0.0.1-SNAPSHOT'
-
 dependencies {
     api project(":easecurity-core-api")
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.session:spring-session-data-redis'
-	implementation 'org.apache.commons:commons-pool2'
-	implementation 'mysql:mysql-connector-java'
-//	runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    //	implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.apache.commons:commons-pool2'
+    implementation 'mysql:mysql-connector-java'
+    //	runtimeOnly 'mysql:mysql-connector-java'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

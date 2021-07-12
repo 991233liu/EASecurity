@@ -11,17 +11,14 @@ plugins {
 
 apply from: "../common.gradle"
 
-group = 'com.easecurity.framework'
-version = '0.0.1-SNAPSHOT'
-
 dependencies {
     api project(":easecurity-core-api")
 
-	implementation 'org.slf4j:slf4j-api:1.7.30'
-	
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

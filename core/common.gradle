@@ -1,14 +1,17 @@
 allprojects {
     apply plugin: 'java'
-    
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
 
-	repositories {
-		maven {
-		  url 'https://maven.aliyun.com/repository/public/'
-		}
-		mavenLocal()
-		mavenCentral()
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+	maven {
+	    url 'https://maven.aliyun.com/repository/public/'
 	}
+	mavenLocal()
+	mavenCentral()
+    }
+    
+    group = 'com.easecurity'
+    version = '0.1'
 }

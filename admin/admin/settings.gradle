@@ -7,4 +7,7 @@
  * in the user manual at https://docs.gradle.org/7.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'EASecurity-admin'
+rootProject.name = 'easecurity-admin'
+
+include ':easecurity-core-api'
+project(':easecurity-core-api').projectDir = file('../../core\\easecurity-core-api')

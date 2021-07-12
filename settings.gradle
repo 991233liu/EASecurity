@@ -12,29 +12,29 @@ rootProject.name = 'EASecurity'
 //include(':admin')
 /**/
 file('admin').eachDir { dir ->
-	if(!dir.name.startsWith('.')&&!dir.name.equals('admin')){
-	     include dir.name
-	     project(":${dir.name}").projectDir = dir
-	}
+    if(!dir.name.startsWith('.')&&!dir.name.equals('admin')){
+	include dir.name
+	project(":${dir.name}").projectDir = dir
+    }
 }
 
 
 //include(':core')
 file('core').eachDir { dir ->
-	if(!dir.name.startsWith('.')){
-	     include dir.name
-	     project(":${dir.name}").projectDir = dir
-	}
+    if(!dir.name.startsWith('.')){
+	include dir.name
+	project(":${dir.name}").projectDir = dir
+    }
 }
 /*
-	     include ':core-test1'
-	     project(':core-test1').projectDir = file('core/core-test2')
-*/
+ include ':core-test1'
+ project(':core-test1').projectDir = file('core/core-test2')
+ */
 
 //include(':framework')
 file('framework').eachDir { dir ->
-	if(!dir.name.startsWith('.')){
-	     include dir.name
-	     project(":${dir.name}").projectDir = dir
-	}
+    if(!dir.name.startsWith('.')){
+	include dir.name
+	project(":${dir.name}").projectDir = dir
+    }
 }
