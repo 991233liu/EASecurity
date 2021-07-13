@@ -1,5 +1,9 @@
 package com.easecurity
 
+import com.easecurity.admin.auth.Role
+import com.easecurity.admin.auth.User
+import com.easecurity.admin.auth.UserRole
+
 class BootStrap {
 //	AnimalService animalService
 //	WeighingService weighingService
@@ -8,8 +12,13 @@ class BootStrap {
 //	LdapUserService ldapUserService
 //	@Autowired
 //	LdapUserSyncService ldapUserSyncService
-	
+
     def init = { servletContext ->
+        User user = new User(username: 'admin', password: 'admin')
+        user.save(failOnError: true)
+        Role role = new Role(authority: 'ROLE_USER')
+        role.save(failOnError: true)
+        new UserRole(user: user, role: role).save()
 //		if (Environment.current == Environment.DEVELOPMENT) {
 //			if (User.count()==0) {
 //				def adminRole = Role.findByAuthority("ROLE_ADMIN")?:new Role(authority: 'ROLE_ADMIN').save()
@@ -99,7 +108,7 @@ class BootStrap {
 //		// TODO 执行所有service、domain类的bootStrapInit方法，参见BroToolkitGrailsPlugin.groovy
 //		ldapUserSyncService.bootStrapInit()
     }
-	
+
     def destroy = {
     }
 }

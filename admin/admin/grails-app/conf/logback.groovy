@@ -13,12 +13,7 @@ appender('STDOUT', ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         charset = StandardCharsets.UTF_8
 
-        pattern =
-                '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} ' + // Date
-                        '%clr(%5p) ' + // Log level
-                        '%clr(---){faint} %clr([%15.15t]){faint} ' + // Thread
-                        '%clr(%-40.40logger{39}){faint}%clr([%F:%L]){cyan} %clr(:){faint} ' + // Logger
-                        '%m%n%wex' // Message
+        pattern = '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){faint}%clr([%F:%L]){cyan} %clr(:){faint} %m%n%wex'
     }
 }
 
@@ -32,10 +27,10 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
             pattern = "%level %logger - %msg%n"
         }
     }
-    logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
+    logger("StackTrace", INFO, ['FULL_STACKTRACE'], false)
 }
 
-root(ERROR , ['STDOUT'])
+root(INFO, ['STDOUT'])
 if (Environment.isDevelopmentMode()) {
     logger("com.framework.auth", debug, ['STDOUT'], false)
     logger("com.liulf", debug, ['STDOUT'], false)
