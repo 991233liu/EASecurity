@@ -5,7 +5,7 @@
 <meta name="layout" content="adminLTE" />
 </head>
 <body>
-	<g:render template="/themes/menu" model="['openMenu':'Dashboard']"/>
+	<g:render template="/themes/menuAll" model="['openMenu':'Home']"/>
 
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">

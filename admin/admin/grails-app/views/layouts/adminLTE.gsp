@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>成本管理系统</title>
+    <title><g:message code="default.app.title" default="default.app.title" /></title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -104,9 +104,9 @@
             <!-- Logo -->
             <a href="all-admin-index.html" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>成本</b></span>
+                <span class="logo-mini"><b><g:message code="default.app.logo-mini" default="default.app.logo-mini" /></b></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg">成本管理</span>
+                <span class="logo-lg"><g:message code="default.app.logo-lg" default="default.app.logo-lg" /></span>
             </a>
 
 
@@ -365,7 +365,7 @@
             <div class="pull-right hidden-xs">
                 <b>Version</b> <g:meta name="info.app.version"/>
             </div>
-            <strong>Copyright &copy; 2014-2037 刘路峰</a>.</strong> All rights reserved.
+            <strong><g:message code="default.app.copyright" default="default.app.copyright" />.</strong> All rights reserved.
         </footer>
         <!-- 底部导航 /-->
 
