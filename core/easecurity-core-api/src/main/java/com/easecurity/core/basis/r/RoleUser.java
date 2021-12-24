@@ -19,7 +19,7 @@ public class RoleUser implements Serializable {
     /**
      * 小角色ID
      */
-    public String roleid;
+    public String roleId;
     /**
      * 登录账号
      */
@@ -45,12 +45,12 @@ public class RoleUser implements Serializable {
 	this.usreid = usreid;
     }
 
-    public String getRoleid() {
-	return roleid;
+    public String getRoleId() {
+	return roleId;
     }
 
-    public void setRoleid(String roleid) {
-	this.roleid = roleid;
+    public void setRoleId(String roleid) {
+	this.roleId = roleid;
     }
 
     public String getUser() {

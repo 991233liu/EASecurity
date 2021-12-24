@@ -39,6 +39,7 @@ class UserAdmin implements Serializable {
     }
 
     Set<String> getAuthorities() {
+//        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.role as Set<Role>
         (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.roleCode as Set<String>
 //        (UserRole.findAllByUser(this) as List<UserRole>)*.role as Set<Role>
     }

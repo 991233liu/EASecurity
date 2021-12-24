@@ -17,7 +17,7 @@
                     "name": "\u4e8c\u7ea7\u83dc\u53551",
                     "url": "http://www.jd.com"
                 },
-                <sec:access expression="hasRole('ROLE_PMO')||hasRole('ROLE_PM')">
+                <sec:access expression="hasRole('ROLE_root#admin')||hasRole('ROLE_PM')">
                 {
                     "id": 4,
                     "name": "\u4e8c\u7ea7\u83dc\u53552",

@@ -34,8 +34,12 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
         // def roles = user.authorities.collect { it.authorities }.flatten().unique()
 
         def authorities = roles.collect {
-            new SimpleGrantedAuthority(it)
+            new SimpleGrantedAuthority('ROLE_' + it)
         }
+//        def authorities = ['ROLE_USER', 'rootadmin'].collect {
+//            new SimpleGrantedAuthority(it)
+//        }
+
 
         // TODO 密码动态处理，目前domain中写死的
         return new CustomUserDetails(user.user, user.password, true,
