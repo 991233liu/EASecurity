@@ -26,22 +26,30 @@ class UserAdmin implements Serializable {
     static transients = ['buser', 'password', 'coordinates']
 
     static constraints = {
-        id length:40
+        id length: 40
         user nullable: false, blank: false, unique: true
 //        password nullable: false, blank: false, password: true
     }
 
-    static mapping = {
-        table 'b_user_admin'
-        id generator:'assigned'
-//	    password column: '`password`'
-        version false
+    Set<String> getAuthorities() {
+        Set<String> roles = []
+        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>).each {
+            /*
+             * Role names must start with “ROLE_”. This is configurable in Spring Security, but not in the plugin. It would be possible to allow different prefixes,
+             * but it’s important that the prefix not be blank as the prefix is used to differentiate between role names and tokens such as IS_AUTHENTICATED_FULLY/IS_AUTHENTICATED_ANONYMOUSLY/etc., and SpEL expressions.
+             * The role names should be primarily an internal implementation detail; if you want to display friendlier names in a UI, it’s simple to remove the prefix first.
+             */
+            roles.add('ROLE_' + it.roleCode)
+        }
+        roles
+//        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.roleCode as Set<String>
     }
 
-    Set<String> getAuthorities() {
-//        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.role as Set<Role>
-        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.roleCode as Set<String>
-//        (UserRole.findAllByUser(this) as List<UserRole>)*.role as Set<Role>
+    static mapping = {
+        table 'b_user_admin'
+        id generator: 'assigned'
+//	    password column: '`password`'
+        version false
     }
 
     void setPassword(String password) {
@@ -49,7 +57,7 @@ class UserAdmin implements Serializable {
     }
 
     String getPassword() {
-        User.findByUser(this.user)?.pd?:''
+        User.findByUser(this.user)?.pd ?: ''
 //        def dataSource = BeanUtils.getBean('dataSource');
 //        def sql = new sql(dataSource);
 //        def sql = Sql.newInstance()

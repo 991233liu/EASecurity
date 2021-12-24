@@ -34,7 +34,7 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
         // def roles = user.authorities.collect { it.authorities }.flatten().unique()
 
         def authorities = roles.collect {
-            new SimpleGrantedAuthority('ROLE_' + it)
+            new SimpleGrantedAuthority(it)
         }
 //        def authorities = ['ROLE_USER', 'rootadmin'].collect {
 //            new SimpleGrantedAuthority(it)
