@@ -5,9 +5,9 @@ grails.plugin.springsecurity.providerNames = [
         'rememberMeAuthenticationProvider']
 
 // Added by the Spring Security Core plugin:
-grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.easecurity.admin.auth.User'
-grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.easecurity.admin.auth.UserRole'
-grails.plugin.springsecurity.authority.className = 'com.easecurity.admin.auth.Role'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.easecurity.admin.auth.UserAdmin'
+//grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.easecurity.admin.auth.UserRole'
+//grails.plugin.springsecurity.authority.className = 'com.easecurity.admin.auth.Role'
 
 //grails.plugin.springsecurity.password.algorithm = 'SHA-256'
 //grails.plugin.springsecurity.password.hash.iterations = 1

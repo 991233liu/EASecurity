@@ -1,4 +1,4 @@
-import com.easecurity.admin.auth.UserPasswordEncoderListener
+//import com.easecurity.admin.auth.UserPasswordEncoderListener
 import com.easecurity.admin.auth.CustomUserDetailsService
 import com.easecurity.admin.auth.CoordinateValidatorService
 import com.easecurity.admin.auth.TwoFactorAuthenticationDetailsSource

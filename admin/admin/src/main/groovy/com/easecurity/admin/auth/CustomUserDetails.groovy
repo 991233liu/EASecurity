@@ -12,7 +12,7 @@ class CustomUserDetails extends GrailsUser {
                   boolean accountNonExpired, boolean credentialsNonExpired,
                   boolean accountNonLocked,
                   Collection<GrantedAuthority> authorities,
-                  long id, String fullName) {
+                  String id, String fullName) {
         super(username, password, enabled, accountNonExpired,
                 credentialsNonExpired, accountNonLocked, authorities, id)
 

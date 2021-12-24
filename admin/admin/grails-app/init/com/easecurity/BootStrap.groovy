@@ -1,8 +1,8 @@
 package com.easecurity
 
-import com.easecurity.admin.auth.Role
-import com.easecurity.admin.auth.User
-import com.easecurity.admin.auth.UserRole
+//import com.easecurity.admin.auth.Role
+import com.easecurity.admin.auth.UserAdmin
+//import com.easecurity.admin.auth.UserRole
 import com.easecurity.admin.auth.SecurityCoordinate
 
 class BootStrap {
@@ -26,19 +26,19 @@ static Map<String, String> BANKCARD =
             ]
 
     def init = { servletContext ->
-        User user = new User(username: 'admin', password: 'admin')
-        user.save(failOnError: true)
-		User u = new User(username: 'sherlock', password: 'elementary')
-            BANKCARD.each { k, v ->
-                u.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u))
-            }
-        u.save(failOnError: true)
-
-        User u2 = new User(username: 'user', password: 'user')
-            BANKCARD.each { k, v ->
-                u2.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u2))
-            }
-        u2.save(failOnError: true)
+//        UserAdmin user = new UserAdmin(user: 'admin', password: 'admin')
+//        user.save(failOnError: true)
+//        UserAdmin u = new UserAdmin(user: 'sherlock', password: 'elementary')
+//            BANKCARD.each { k, v ->
+//                u.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u))
+//            }
+//        u.save(failOnError: true)
+//
+//        UserAdmin u2 = new UserAdmin(user: 'user', password: 'user')
+//            BANKCARD.each { k, v ->
+//                u2.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u2))
+//            }
+//        u2.save(failOnError: true)
 //        Role role = new Role(authority: 'ROLE_USER')
 //        role.save(failOnError: true)
 //        new UserRole(user: user, role: role).save()

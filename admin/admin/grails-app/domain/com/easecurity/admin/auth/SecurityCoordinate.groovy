@@ -6,5 +6,6 @@ import groovy.transform.CompileStatic
 class SecurityCoordinate {
     String position
     String value
-    static belongsTo = [user: User]
+    static belongsTo = [user: UserAdmin]
+    static transients = ['user']
 }

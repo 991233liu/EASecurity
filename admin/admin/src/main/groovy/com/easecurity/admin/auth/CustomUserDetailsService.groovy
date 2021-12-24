@@ -24,7 +24,7 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
     @Transactional(readOnly = true, noRollbackFor = [IllegalArgumentException, UsernameNotFoundException])
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("--------##1 " + username);
-        User user = User.findByUsername(username)
+        UserAdmin user = UserAdmin.findByUser(username)
         System.out.println("--------##1 " + user?.password);
         if (!user) throw new NoStackUsernameNotFoundException()
 
@@ -38,7 +38,7 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
         }
 
         // TODO 密码动态处理，目前domain中写死的
-        return new CustomUserDetails(user.username, user.password, true,
+        return new CustomUserDetails(user.user, user.password, true,
                 true, true, true,
                 authorities ?: NO_ROLES, user.id,
                 "fullname")
