@@ -31,7 +31,7 @@ public class Org implements Serializable {
     /**
      * 父节点ID
      */
-    public Integer parentid;
+    public Integer parentId;
     /**
      * 全路径名称，如：/root/xx公司/xx部门/
      */
@@ -85,12 +85,12 @@ public class Org implements Serializable {
 	this.status = status;
     }
 
-    public Integer getParentid() {
-	return parentid;
+    public Integer getParentId() {
+	return parentId;
     }
 
-    public void setParentid(Integer parentid) {
-	this.parentid = parentid;
+    public void setParentId(Integer parentId) {
+	this.parentId = parentId;
     }
 
     public String getFullName() {

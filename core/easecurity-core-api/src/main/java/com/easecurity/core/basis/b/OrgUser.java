@@ -15,7 +15,7 @@ public class OrgUser implements Serializable {
     /**
      * 用户ID
      */
-    public String userid;
+    public String userId;
     /**
      * 登录账号（冗余）
      */
@@ -23,62 +23,61 @@ public class OrgUser implements Serializable {
     /**
      * 组织ID
      */
-    public Integer orgid;
+    public Integer orgId;
     /**
      * 职务ID
      */
-    public Integer postsid;
+    public Integer postsId;
     /**
      * 是否主职
      */
     public Integer masterPosts;
 
     public Integer getId() {
-	return id;
+        return id;
     }
 
     public void setId(Integer id) {
-	this.id = id;
+        this.id = id;
     }
 
-    public String getUserid() {
-	return userid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserid(String userid) {
-	this.userid = userid;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUser() {
-	return user;
+        return user;
     }
 
     public void setUser(String user) {
-	this.user = user;
+        this.user = user;
     }
 
-    public Integer getOrgid() {
-	return orgid;
+    public Integer getOrgId() {
+        return orgId;
     }
 
-    public void setOrgid(Integer orgid) {
-	this.orgid = orgid;
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
     }
 
-    public Integer getPostsid() {
-	return postsid;
+    public Integer getPostsId() {
+        return postsId;
     }
 
-    public void setPostsid(Integer postsid) {
-	this.postsid = postsid;
+    public void setPostsId(Integer postsId) {
+        this.postsId = postsId;
     }
 
     public Integer getMasterPosts() {
-	return masterPosts;
+        return masterPosts;
     }
 
-    public void setMaster_posts(Integer masterPosts) {
-	this.masterPosts = masterPosts;
+    public void setMasterPosts(Integer masterPosts) {
+        this.masterPosts = masterPosts;
     }
-
 }

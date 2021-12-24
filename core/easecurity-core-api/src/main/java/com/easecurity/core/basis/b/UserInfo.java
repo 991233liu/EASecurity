@@ -9,13 +9,13 @@ import java.io.Serializable;
  */
 public class UserInfo implements Serializable {
 
-    private static final long serialVersionUID = 5223521401840975133L;
+    private static final long serialVersionuserId = 5223521401840975133L;
 
     public String id;
     /**
      * user表主键
      */
-    public String uid;
+    public String userId;
     /**
      * 登录账号
      */
@@ -37,12 +37,12 @@ public class UserInfo implements Serializable {
 	this.id = id;
     }
 
-    public String getUid() {
-	return uid;
+    public String getUserId() {
+	return userId;
     }
 
-    public void setUid(String uid) {
-	this.uid = uid;
+    public void setUserId(String userId) {
+	this.userId = userId;
     }
 
     public String getUser() {

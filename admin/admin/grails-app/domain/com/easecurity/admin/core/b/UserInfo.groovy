@@ -1,26 +1,23 @@
 package com.easecurity.admin.core.b
 
-import groovy.transform.ToString
 import grails.compiler.GrailsCompileStatic
+import groovy.transform.ToString
 
 @GrailsCompileStatic
 @ToString(includes = 'user', includeNames = true, includePackage = false)
-class User extends com.easecurity.core.basis.b.User {
+class UserInfo extends com.easecurity.core.basis.b.UserInfo {
 
     static constraints = {
         id length:40
+        userId length:40, nullable: false, blank: false, unique: true
         user nullable: false, blank: false, unique: true
-        pd length:100, nullable: true
-        uStatus length:2, nullable: true
-        pStatus length:2, nullable: true
-        identities length:4000, nullable: true
+        name length:50, nullable: true
+        status length:2, nullable: true
     }
 
     static mapping = {
-        table 'b_user'
+        table 'b_user_info'
         id generator:'assigned'
-        user index: 'IDX_USER'
-//	    password column: '`password`'
         version false
     }
 }

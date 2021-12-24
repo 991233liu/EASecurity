@@ -23,7 +23,7 @@ public class Posts implements Serializable {
     /**
      * 职级1~99
      */
-    public Integer rank;
+    public Integer ranking;
     /**
      * 职务类别，1领导，2，职员
      */
@@ -53,12 +53,12 @@ public class Posts implements Serializable {
 	this.code = code;
     }
 
-    public Integer getRank() {
-	return rank;
+    public Integer getRanking() {
+	return ranking;
     }
 
-    public void setRank(Integer rank) {
-	this.rank = rank;
+    public void setRanking(Integer ranking) {
+	this.ranking = ranking;
     }
 
     public Integer getType() {
