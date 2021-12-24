@@ -13,20 +13,16 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
     protected void additionalAuthenticationChecks(UserDetails userDetails,
                                                   UsernamePasswordAuthenticationToken authentication)
             throws AuthenticationException {
-        System.out.println("-------# 1")
-        // 校验图片动态验证码
         System.out.println("-------# a1")
+        // 校验图片动态验证码
         Object details = authentication.details
-        System.out.println("-------# a2")
         if ( !(details instanceof TwoFactorAuthenticationDetails) ) {
             logger.debug("Authentication failed: authenticationToken principal is not a TwoFactorPrincipal");
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
                     "Bad credentials"));
         }
-        System.out.println("-------# a3")
         def twoFactorAuthenticationDetails = details as TwoFactorAuthenticationDetails
-        System.out.println("-------# a4")
         if ( !coordinateValidator.isValidValueForPositionAndUserName(twoFactorAuthenticationDetails.coordinateValue, twoFactorAuthenticationDetails.coordinatePosition, authentication.name) ) {
             logger.debug("Authentication failed: coordiante note valid");
             throw new BadCredentialsException(messages.getMessage(

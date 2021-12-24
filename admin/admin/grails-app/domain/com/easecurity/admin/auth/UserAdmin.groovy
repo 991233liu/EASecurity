@@ -1,6 +1,7 @@
 package com.easecurity.admin.auth
 
-import com.easecurity.admin.core.User
+import com.easecurity.admin.core.b.User
+import com.easecurity.admin.core.r.RoleUser
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import grails.compiler.GrailsCompileStatic
@@ -24,10 +25,6 @@ class UserAdmin implements Serializable {
     static hasMany = [coordinates: SecurityCoordinate]
     static transients = ['buser', 'password', 'coordinates']
 
-    Set<Object> getAuthorities() {
-//        (UserRole.findAllByUser(this) as List<UserRole>)*.role as Set<Role>
-    }
-
     static constraints = {
         id length:40
         user nullable: false, blank: false, unique: true
@@ -39,6 +36,11 @@ class UserAdmin implements Serializable {
         id generator:'assigned'
 //	    password column: '`password`'
         version false
+    }
+
+    Set<String> getAuthorities() {
+        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.roleCode as Set<String>
+//        (UserRole.findAllByUser(this) as List<UserRole>)*.role as Set<Role>
     }
 
     void setPassword(String password) {

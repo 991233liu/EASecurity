@@ -1,4 +1,4 @@
-package com.easecurity.admin.core
+package com.easecurity.admin.core.b
 
 import groovy.transform.ToString
 import grails.compiler.GrailsCompileStatic

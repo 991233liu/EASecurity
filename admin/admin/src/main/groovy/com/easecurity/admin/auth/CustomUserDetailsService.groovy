@@ -29,11 +29,11 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
         if (!user) throw new NoStackUsernameNotFoundException()
 
         def roles = user.authorities
-
+        System.out.println("--------##1 " + roles);
         // or if you are using role groups:
         // def roles = user.authorities.collect { it.authorities }.flatten().unique()
 
-        def authorities = ['role_aa', 'role_bb'].collect {
+        def authorities = roles.collect {
             new SimpleGrantedAuthority(it)
         }
 
