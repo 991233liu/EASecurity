@@ -47,6 +47,13 @@
                                      placeholder="${message(code: 'user.password.label', default: 'Password')}" />
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
+                <div class="form-group has-feedback">
+                    <p>
+			<label for="coordinateValue">${position}</label>
+			<input type="hidden" name="coordinatePosition" id="coordinatePosition" value="${position}"/>
+			<input type="text" class="text_" name="coordinateValue" id="coordinateValue"/>
+		    </p>
+                </div>
                 <div class="row">
                     <div class="col-xs-8">
                         <div class="checkbox icheck">

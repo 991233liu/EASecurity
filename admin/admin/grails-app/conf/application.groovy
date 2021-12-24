@@ -1,3 +1,9 @@
+// 双因子认证
+grails.plugin.springsecurity.providerNames = [
+        'twoFactorAuthenticationProvider',
+        'anonymousAuthenticationProvider',
+        'rememberMeAuthenticationProvider']
+
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.easecurity.admin.auth.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.easecurity.admin.auth.UserRole'
@@ -5,8 +11,8 @@ grails.plugin.springsecurity.authority.className = 'com.easecurity.admin.auth.Ro
 
 //grails.plugin.springsecurity.password.algorithm = 'SHA-256'
 //grails.plugin.springsecurity.password.hash.iterations = 1
-grails.plugin.springsecurity.password.algorithm = 'bcrypt'
-grails.plugin.springsecurity.password.bcrypt.logrounds = 15
+//grails.plugin.springsecurity.password.algorithm = 'bcrypt'
+//grails.plugin.springsecurity.password.bcrypt.logrounds = 15
 
 grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
