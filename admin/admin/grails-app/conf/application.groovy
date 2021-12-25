@@ -6,7 +6,7 @@ grails.plugin.springsecurity.providerNames = [
 
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.easecurity.admin.auth.UserAdmin'
-grails.plugin.springsecurity.userLookup.usernamePropertyName = 'user'
+grails.plugin.springsecurity.userLookup.usernamePropertyName = 'account'
 //grails.plugin.springsecurity.userLookup.usernamePropertyName = 'user'
 //grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.easecurity.admin.core.r.RoleUser'
 //grails.plugin.springsecurity.authority.className = 'com.easecurity.admin.core.r.Role'

@@ -4,12 +4,12 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 
 @GrailsCompileStatic
-@ToString(includes = 'user,orgId', includeNames = true, includePackage = false)
+@ToString(includes = 'account,orgId', includeNames = true, includePackage = false)
 class OrgUser extends com.easecurity.core.basis.b.OrgUser {
 
     static constraints = {
         userId length:40, nullable: false, blank: false
-        user nullable: true
+        account nullable: true
         orgId nullable: false, blank: false
         postsId nullable: true
         masterPosts nullable: true

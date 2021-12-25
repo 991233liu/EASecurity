@@ -19,7 +19,7 @@ public class OrgUser implements Serializable {
     /**
      * 登录账号（冗余）
      */
-    public String user;
+    public String account;
     /**
      * 组织ID
      */
@@ -49,12 +49,12 @@ public class OrgUser implements Serializable {
         this.userId = userId;
     }
 
-    public String getUser() {
-        return user;
+    public String getAccount() {
+        return account;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public Integer getOrgId() {

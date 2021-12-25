@@ -16,7 +16,7 @@ public class User implements Serializable {
     /**
      * 登录账号
      */
-    public String user;
+    public String account;
 
     /**
      * 密码
@@ -46,12 +46,12 @@ public class User implements Serializable {
 	this.id = id;
     }
 
-    public String getUser() {
-	return user;
+    public String getAccount() {
+	return account;
     }
 
-    public void setUser(String user) {
-	this.user = user;
+    public void setAccount(String account) {
+	this.account = account;
     }
 
     public String getPd() {

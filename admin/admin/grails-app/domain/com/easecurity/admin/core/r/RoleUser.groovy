@@ -1,5 +1,6 @@
 package com.easecurity.admin.core.r
 
+import com.easecurity.admin.core.b.User
 import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 
@@ -7,22 +8,29 @@ import groovy.transform.ToString
 @ToString(includes='id', includeNames=true, includePackage=false)
 class RoleUser extends com.easecurity.core.basis.r.RoleUser {
 
+	User user
+	Role role
+
 	static constraints = {
 //		id length:40
-		usreid length:40, nullable: true
+		userId length:40, nullable: true
 		roleId nullable: true
-		user nullable: true
+		account nullable: true
 		roleCode nullable: true
 	}
 
 	static mapping = {
 		table 'r_role_user'
-		usreid index: 'IDX_USERID'
+		userId index: 'IDX_USERID'
 		roleId index: 'IDX_ROLEID'
+		user insertable: false
+		user updateable: false
+		role insertable: false
+		role updateable: false
 		version false
 	}
 
-	Role getRole() {
-		Role.findById(this.roleId)
-	}
+//	Role getRole() {
+//		Role.findById(this.roleId)
+//	}
 }

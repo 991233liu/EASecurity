@@ -15,7 +15,7 @@ public class RoleUser implements Serializable {
     /**
      * 用户ID
      */
-    public String usreid;
+    public String userId;
     /**
      * 小角色ID
      */
@@ -23,7 +23,7 @@ public class RoleUser implements Serializable {
     /**
      * 登录账号
      */
-    public String user;
+    public String account;
     /**
      * 小角色编码
      */
@@ -37,12 +37,12 @@ public class RoleUser implements Serializable {
 	this.id = id;
     }
 
-    public String getUsreid() {
-	return usreid;
+    public String getUserId() {
+	return userId;
     }
 
-    public void setUsreid(String usreid) {
-	this.usreid = usreid;
+    public void setUserId(String userId) {
+	this.userId = userId;
     }
 
     public String getRoleId() {
@@ -53,12 +53,12 @@ public class RoleUser implements Serializable {
 	this.roleId = roleid;
     }
 
-    public String getUser() {
-	return user;
+    public String getAccount() {
+	return account;
     }
 
-    public void setUser(String user) {
-	this.user = user;
+    public void setAccount(String account) {
+	this.account = account;
     }
 
     public String getRoleCode() {
