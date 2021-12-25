@@ -34,7 +34,9 @@
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">登录系统</p>
-
+            <g:if test='${flash.message}'>
+                <div class="login_message">${flash.message}</div>
+            </g:if>
             <form action='${postUrl}' method='POST' id='loginForm' class='cssform' autocomplete='off'>
                 <div class="form-group has-feedback">
                     <g:textField name="username" value="${username}"

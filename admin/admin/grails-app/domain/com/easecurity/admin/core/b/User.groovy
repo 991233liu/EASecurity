@@ -19,7 +19,7 @@ class User extends com.easecurity.core.basis.b.User {
     static mapping = {
         table 'b_user'
         id generator:'assigned'
-        account index: 'IDX_ACCOUNT'
+//        account index: 'IDX_ACCOUNT'
 //	    password column: '`password`'
         version false
     }

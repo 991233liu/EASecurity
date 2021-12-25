@@ -5,32 +5,39 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 
 @GrailsCompileStatic
-@ToString(includes='id', includeNames=true, includePackage=false)
+@ToString(includes = 'id', includeNames = true, includePackage = false)
 class RoleUser extends com.easecurity.core.basis.r.RoleUser {
 
-	User user
-	Role role
+    User user
+    Role role
 
-	static constraints = {
+    static constraints = {
 //		id length:40
-		userId length:40, nullable: true
-		roleId nullable: true
-		account nullable: true
-		roleCode nullable: true
-	}
+        userId length: 40, nullable: true
+        roleId nullable: true
+        account nullable: true
+        roleCode nullable: true
+    }
 
-	static mapping = {
-		table 'r_role_user'
-		userId index: 'IDX_USERID'
-		roleId index: 'IDX_ROLEID'
-		user insertable: false
-		user updateable: false
-		role insertable: false
-		role updateable: false
-		version false
-	}
+    static mapping = {
+        table 'r_role_user'
+        userId index: 'IDX_USERID'
+        roleId index: 'IDX_ROLEID'
+        userId insertable: false
+        userId updateable: false
+        roleId insertable: false
+        roleId updateable: false
+        version false
+    }
 
-//	Role getRole() {
-//		Role.findById(this.roleId)
-//	}
+    def beforeInsert() {
+        account = user?.account
+        roleCode = role?.code
+    }
+
+    def beforeUpdate() {
+        account = user?.account
+        roleCode = role?.code
+    }
+
 }

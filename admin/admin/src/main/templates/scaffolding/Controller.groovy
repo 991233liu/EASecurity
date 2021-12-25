@@ -13,23 +13,23 @@ class ${className}Controller {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond ${propertyName}Service.list(params), view:"\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     def show(Long id) {
         respond ${propertyName}Service.get(id), view:"\${VIEW_PATH}show"
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     def create() {
         respond new ${className}(params), view:"\${VIEW_PATH}create"
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     @Transactional
     def save(${className} ${propertyName}) {
         if (${propertyName} == null) {
@@ -53,13 +53,13 @@ class ${className}Controller {
         }
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     @Transactional
     def edit(Long id) {
         respond ${propertyName}Service.get(id), view:"\${VIEW_PATH}edit"
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     @Transactional
     def update(${className} ${propertyName}) {
         if (${propertyName} == null) {
@@ -83,7 +83,7 @@ class ${className}Controller {
         }
     }
 
-    @Secured(["ROLE_USER"])
+//    @Secured(["ROLE_USER"])
     @Transactional
     def delete() {
         String id = params.id
@@ -97,7 +97,7 @@ class ${className}Controller {
         else if (id.indexOf(";")) ids = id.split(";")
 
         ids.each { it ->
-            ${propertyName}.delete(Long.valueOf(it))
+            ${propertyName}Service.delete(Long.valueOf(it))
         }
 
         request.withFormat {

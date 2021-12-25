@@ -1,7 +1,10 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
+/**
+ * Copyright © 2021-2050 刘路峰版权所有。
+ */
 package com.easecurity.core.basis.r;
 
 import java.io.Serializable;
+
 
 /**
  * r_role表：小角色信息。
@@ -12,15 +15,15 @@ public class Role implements Serializable {
     private static final long serialVersionUID = -5985962922034933727L;
 
     /**
-     * 小角色主键=组织ID+#+大角色ID
+     * 小角色主键
      */
-    public String id;
+    public Integer id;
     /**
      * 角色名称
      */
     public String name;
     /**
-     * 小角色编码=组织编码+#+大角色编码
+     * 小角色编码=组织编码+'#'+大角色编码
      */
     public String code;
     /**
@@ -30,58 +33,58 @@ public class Role implements Serializable {
     /**
      * 大角色ID
      */
-    public Integer roleGroupid;
+    public Integer roleGroupId;
     /**
      * 组织ID
      */
-    public Integer orgid;
+    public Integer orgId;
 
-    public String getId() {
-	return id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setId(String id) {
-	this.id = id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getCode() {
-	return code;
+        return code;
     }
 
     public void setCode(String code) {
-	this.code = code;
+        this.code = code;
     }
 
     public String getFullName() {
-	return fullName;
+        return fullName;
     }
 
     public void setFullName(String fullName) {
-	this.fullName = fullName;
+        this.fullName = fullName;
     }
 
-    public Integer getRoleGroupid() {
-	return roleGroupid;
+    public Integer getRoleGroupId() {
+        return roleGroupId;
     }
 
-    public void setRoleGroupid(Integer roleGroupid) {
-	this.roleGroupid = roleGroupid;
+    public void setRoleGroupId(Integer roleGroupId) {
+        this.roleGroupId = roleGroupId;
     }
 
-    public Integer getOrgid() {
-	return orgid;
+    public Integer getOrgId() {
+        return orgId;
     }
 
-    public void setOrgid(Integer orgid) {
-	this.orgid = orgid;
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
     }
 
 }
