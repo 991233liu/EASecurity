@@ -7,6 +7,8 @@ import groovy.transform.ToString
 @ToString(includes = 'name,code', includeNames = true, includePackage = false)
 class Posts extends com.easecurity.core.basis.b.Posts {
 
+    static hasMany = [orgUsers: OrgUser]
+
     static constraints = {
         name nullable: true
         code nullable: true

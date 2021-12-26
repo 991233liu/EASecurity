@@ -5,7 +5,7 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 
 @GrailsCompileStatic
-@ToString(includes = 'id', includeNames = true, includePackage = false)
+@ToString(includes = 'id,account,roleCode', includeNames = true, includePackage = false)
 class RoleUser extends com.easecurity.core.basis.r.RoleUser {
 
     User user

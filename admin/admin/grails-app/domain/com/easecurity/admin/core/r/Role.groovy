@@ -11,6 +11,8 @@ class Role extends com.easecurity.core.basis.r.Role {
     Org org
     RoleGroup roleGroup
 
+    static hasMany = [roleUsers: RoleUser]
+
     static constraints = {
 //		id length:40
         name nullable: true

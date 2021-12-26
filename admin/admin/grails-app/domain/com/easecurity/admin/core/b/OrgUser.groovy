@@ -12,7 +12,7 @@ class OrgUser extends com.easecurity.core.basis.b.OrgUser {
     Posts posts
 
     static constraints = {
-        userId length:40, nullable: false, blank: false
+        userId length: 40, nullable: false, blank: false
         account nullable: true
         orgId nullable: false, blank: false
         postsId nullable: true
@@ -31,5 +31,13 @@ class OrgUser extends com.easecurity.core.basis.b.OrgUser {
         postsId insertable: false
         postsId updateable: false
         version false
+    }
+
+    def beforeInsert() {
+        account = user.account
+    }
+
+    def beforeUpdate() {
+        account = user.account
     }
 }

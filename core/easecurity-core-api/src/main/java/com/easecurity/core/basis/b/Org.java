@@ -33,7 +33,7 @@ public class Org implements Serializable {
      */
     public Integer parentId;
     /**
-     * 全路径名称，如：/root/xx公司/xx部门/
+     * 全路径名称，如：/xx公司/xx部门/
      */
     public String fullName;
     /**

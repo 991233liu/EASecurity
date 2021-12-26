@@ -14,6 +14,7 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
                                                   UsernamePasswordAuthenticationToken authentication)
             throws AuthenticationException {
         System.out.println("-------# a1")
+        // TODO 密码动态处理，目前domain中写死的
         // 校验图片动态验证码
         Object details = authentication.details
         if ( !(details instanceof TwoFactorAuthenticationDetails) ) {

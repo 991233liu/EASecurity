@@ -8,6 +8,8 @@ import groovy.transform.ToString
 @ToString(includes = 'code', includeNames = true, includePackage = false)
 class RoleGroup extends com.easecurity.core.basis.r.RoleGroup {
 
+    static hasMany = [roles: Role]
+
     static constraints = {
         name nullable: true
         code nullable: true

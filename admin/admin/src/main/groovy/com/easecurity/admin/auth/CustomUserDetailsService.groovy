@@ -23,25 +23,21 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
 
     @Transactional(readOnly = true, noRollbackFor = [IllegalArgumentException, UsernameNotFoundException])
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("--------##1 " + username);
         UserAdmin user = UserAdmin.findByAccount(username)
-        System.out.println("--------##1 " + user?.password);
         if (!user) throw new NoStackUsernameNotFoundException()
 
         def roles = user.authorities
-        System.out.println("--------##1 " + roles);
+
+        // TODO 大角色？？？
         // or if you are using role groups:
         // def roles = user.authorities.collect { it.authorities }.flatten().unique()
 
         def authorities = roles.collect {
             new SimpleGrantedAuthority(it)
         }
-//        def authorities = ['ROLE_USER', 'rootadmin'].collect {
-//            new SimpleGrantedAuthority(it)
-//        }
 
-
-        // TODO 密码动态处理，目前domain中写死的
+//        if ( log.isDebugEnabled() ) log.debug("syncUser message:uid=" + uid + ",username=" + username + ",mail=" + mail)
+        // TODO 还有值是写死的
         return new CustomUserDetails(user.account, user.password, true,
                 true, true, true,
                 authorities ?: NO_ROLES, user.id,
