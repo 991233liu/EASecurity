@@ -12,30 +12,9 @@ class TwoFactorAuthenticationDetailsSource extends WebAuthenticationDetailsSourc
     @Override
     WebAuthenticationDetails buildDetails(HttpServletRequest context) {
         TwoFactorAuthenticationDetails details = new TwoFactorAuthenticationDetails(context)
-        System.out.println("-------# 2")
-        String position = obtainCoordinatePosition(context)
-        details.coordinatePosition = position
-
-        String value = obtainCoordinateValue(context)
-        details.coordinateValue = value
+        details.gifCaptcha = context.getParameter('gifCaptcha')
+        details.gifCaptchaValue = context.getParameter('gifCaptchaValue')
         details
     }
 
-    /**
-     * Get the Coordinate Position from the request.
-     * @param request
-     * @return
-     */
-    private static String obtainCoordinatePosition(HttpServletRequest request) {
-        return request.getParameter('coordinatePosition')
-    }
-
-    /**
-     * Get the Coordinate Value from the request.
-     * @param request
-     * @return
-     */
-    private static String obtainCoordinateValue(HttpServletRequest request) {
-        return request.getParameter('coordinateValue')
-    }
 }

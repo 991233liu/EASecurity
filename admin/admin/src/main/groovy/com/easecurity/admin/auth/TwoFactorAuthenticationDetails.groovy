@@ -9,11 +9,10 @@ import javax.servlet.http.HttpServletRequest
 @Canonical
 @CompileStatic
 class TwoFactorAuthenticationDetails extends WebAuthenticationDetails {
-    String coordinatePosition
-    String coordinateValue
+    String gifCaptcha
+    String gifCaptchaValue
 
     TwoFactorAuthenticationDetails(HttpServletRequest request) {
         super(request)
-        System.out.println("-------# 3")
     }
 }

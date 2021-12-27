@@ -51,10 +51,10 @@
                 </div>
                 <div class="form-group has-feedback">
                     <p>
-			<label for="coordinateValue">${position}</label>
-			<input type="hidden" name="coordinatePosition" id="coordinatePosition" value="${position}"/>
-			<input type="text" class="text_" name="coordinateValue" id="coordinateValue"/>
-		    </p>
+                        <label for="gifCaptchaValue"><img src="${pictureCode.get("image")}"/></label>
+                        <input type="hidden" name="gifCaptcha" id="gifCaptcha" value="${pictureCode.get("key")}"/>
+                        <input type="text" class="text_" name="gifCaptchaValue" id="gifCaptchaValue"/>
+                    </p>
                 </div>
                 <div class="row">
                     <div class="col-xs-8">

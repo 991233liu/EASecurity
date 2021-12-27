@@ -1,6 +1,5 @@
 //import com.easecurity.admin.auth.UserPasswordEncoderListener
 import com.easecurity.admin.auth.CustomUserDetailsService
-import com.easecurity.admin.auth.CoordinateValidatorService
 import com.easecurity.admin.auth.TwoFactorAuthenticationDetailsSource
 import com.easecurity.admin.auth.TwoFactorAuthenticationProvider
 
@@ -9,17 +8,9 @@ beans = {
 //    userPasswordEncoderListener(UserPasswordEncoderListener)
     userDetailsService(CustomUserDetailsService)
 
-// tag::authenticationDetailsSource[]
+    // 双因子登录：密码+图片验证码
     authenticationDetailsSource(TwoFactorAuthenticationDetailsSource)
-// end::authenticationDetailsSource[]
-
-// tag::coordinateValidatorBeanDefinition[]
-    coordinateValidator(CoordinateValidatorService)
-// end::coordinateValidatorBeanDefinition[]
-
-// tag::twoFactorAuthenticationProviderBeanDefinition[]
     twoFactorAuthenticationProvider(TwoFactorAuthenticationProvider) {
-        coordinateValidator = ref('coordinateValidator')
         userDetailsService = ref('userDetailsService')
         passwordEncoder = ref('passwordEncoder')
         userCache = ref('userCache')
@@ -28,6 +19,5 @@ beans = {
         authoritiesMapper = ref('authoritiesMapper')
         hideUserNotFoundExceptions = true
     }
-// end::twoFactorAuthenticationProviderBeanDefinition[]
 }
 
