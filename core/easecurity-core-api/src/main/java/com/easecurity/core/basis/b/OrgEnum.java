@@ -13,10 +13,10 @@ public class OrgEnum {
      */
     public enum Type {
         ROOT("ROOT", "根"),
-        INSTITUTIONS("INSTITUTIONS", "机构"),
         COMPANY("COMPANY", "公司"),
-        OFFICE("OFFICE", "办事处"),
         DEPARTMENT("DEPARTMENT", "部门"),
+        INSTITUTIONS("INSTITUTIONS", "机构"),
+        OFFICE("OFFICE", "办事处"),
         TEMP("TEMP", "临时");
 
         private String index;

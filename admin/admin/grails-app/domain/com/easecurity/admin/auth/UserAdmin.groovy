@@ -17,10 +17,6 @@ class UserAdmin implements Serializable {
     String account
     String password
     User user
-//    boolean enabled = true
-//    boolean accountExpired
-//    boolean accountLocked
-//    boolean passwordExpired
 
     static hasMany = [coordinates: SecurityCoordinate]
     static transients = ['user', 'password', 'coordinates']
@@ -36,13 +32,9 @@ class UserAdmin implements Serializable {
         id generator: 'uuid'
         version false
     }
-//
-//    def beforeValidate() {
-//        if (id == null) id = getUser()?.id
-//    }
 
     def beforeInsert() {
-        id = getUser()?.id
+        account = getUser()?.account
     }
 
     Set<String> getAuthorities() {
