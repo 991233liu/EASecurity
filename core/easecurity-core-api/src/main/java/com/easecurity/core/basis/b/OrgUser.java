@@ -31,7 +31,7 @@ public class OrgUser implements Serializable {
     /**
      * 是否主职
      */
-    public Integer masterPosts;
+    public Boolean masterPosts;
 
     public Integer getId() {
         return id;
@@ -73,11 +73,11 @@ public class OrgUser implements Serializable {
         this.postsId = postsId;
     }
 
-    public Integer getMasterPosts() {
+    public Boolean getMasterPosts() {
         return masterPosts;
     }
 
-    public void setMasterPosts(Integer masterPosts) {
+    public void setMasterPosts(Boolean masterPosts) {
         this.masterPosts = masterPosts;
     }
 }

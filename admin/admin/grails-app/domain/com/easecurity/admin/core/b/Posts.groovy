@@ -12,12 +12,13 @@ class Posts extends com.easecurity.core.basis.b.Posts {
     static constraints = {
         name nullable: true
         code nullable: true
-        ranking nullable: true
+        ranking nullable: true, range: 1..99
         type nullable: true
     }
 
     static mapping = {
         table 'b_posts'
+        type enumType: "ordinal"
         version false
     }
 }

@@ -14,14 +14,14 @@ class RoleUser extends com.easecurity.core.basis.r.RoleUser {
     static constraints = {
 //		id length:40
         userId length: 40, nullable: true
-        roleId nullable: true
+        roleId nullable: true, unique: 'userId'
         account nullable: true
         roleCode nullable: true
     }
 
     static mapping = {
         table 'r_role_user'
-        userId index: 'IDX_USERID'
+//        userId index: 'IDX_USERID'
         roleId index: 'IDX_ROLEID'
         userId insertable: false
         userId updateable: false

@@ -16,19 +16,33 @@ class UserAdmin implements Serializable {
     String id
     String account
     String password
-    User buser
+    User user
 //    boolean enabled = true
 //    boolean accountExpired
 //    boolean accountLocked
 //    boolean passwordExpired
 
     static hasMany = [coordinates: SecurityCoordinate]
-    static transients = ['buser', 'password', 'coordinates']
+    static transients = ['user', 'password', 'coordinates']
 
     static constraints = {
         id length: 40
         account nullable: false, blank: false, unique: true
 //        password nullable: false, blank: false, password: true
+    }
+
+    static mapping = {
+        table 'b_user_admin'
+        id generator: 'uuid'
+        version false
+    }
+//
+//    def beforeValidate() {
+//        if (id == null) id = getUser()?.id
+//    }
+
+    def beforeInsert() {
+        id = getUser()?.id
     }
 
     Set<String> getAuthorities() {
@@ -45,26 +59,12 @@ class UserAdmin implements Serializable {
 //        (RoleUser.findAllByUsreid(this.id) as List<RoleUser>)*.roleCode as Set<String>
     }
 
-    static mapping = {
-        table 'b_user_admin'
-        id generator: 'assigned'
-//	    password column: '`password`'
-        version false
-    }
-
-    void setPassword(String password) {
-        this.password = password
-    }
-
     String getPassword() {
-        User.findByAccount(this.account)?.pd ?: ''
-//        def dataSource = BeanUtils.getBean('dataSource');
-//        def sql = new sql(dataSource);
-//        def sql = Sql.newInstance()
-//        String pd=""
-//        sql.eachRow("SELECT pd FROM b_user WHERE user = :user",[user: this.username]){
-//            pd=it.first()
-//        }
-//        User.executeQuery("SELECT pd FROM b_user WHERE user = :user",[user: this.username]).first()
+        getUser()?.pd ?: ''
+    }
+
+    User getUser() {
+        if (user == null) user = User.findByAccount(this.account)
+        user
     }
 }

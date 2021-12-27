@@ -1,5 +1,6 @@
 package com.easecurity.admin.auth
 
+import com.easecurity.core.basis.b.UserEnum
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.userdetails.GrailsUserDetailsService
 import grails.plugin.springsecurity.userdetails.NoStackUsernameNotFoundException
@@ -38,8 +39,8 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
 
 //        if ( log.isDebugEnabled() ) log.debug("syncUser message:uid=" + uid + ",username=" + username + ",mail=" + mail)
         // TODO 还有值是写死的
-        return new CustomUserDetails(user.account, user.password, true,
-                true, true, true,
+        return new CustomUserDetails(user.account, user.password, user.user.acStatus == UserEnum.AcStatus.ENABLED,
+                !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED,
                 authorities ?: NO_ROLES, user.id,
                 "fullname")
     }

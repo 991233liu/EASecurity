@@ -19,18 +19,13 @@ class UserInfo extends com.easecurity.core.basis.b.UserInfo {
 
     static mapping = {
         table 'b_user_info'
-        id generator: 'assigned'
+        id generator: 'uuid'
         userId insertable: false
         userId updateable: false
         version false
     }
 
-    def beforeValidate() {
-        if (id == null) id = UUID.randomUUID().toString().replaceAll("-", "")
-    }
-
     def beforeInsert() {
-        if (id == null) id = UUID.randomUUID().toString().replaceAll("-", "")
         account = user.account
     }
 

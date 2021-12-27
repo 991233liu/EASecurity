@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import com.easecurity.core.basis.b.OrgEnum.*;
 
 /**
  * b_org表：组织。
@@ -21,13 +22,13 @@ public class Org implements Serializable {
      */
     public String code;
     /**
-     * 类型:0根、1机构、2公司、3办事处、4部门
+     * 类型:0根、1机构、2公司、3办事处、4部门、5临时
      */
-    public String type;
+    public Type type;
     /**
      * 组织状态
      */
-    public String status;
+    public Status status;
     /**
      * 父节点ID
      */
@@ -69,19 +70,19 @@ public class Org implements Serializable {
 	this.code = code;
     }
 
-    public String getType() {
+    public Type getType() {
 	return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
 	this.type = type;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
 	return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
 	this.status = status;
     }
 

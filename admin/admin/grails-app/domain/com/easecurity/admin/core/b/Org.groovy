@@ -20,11 +20,14 @@ class Org extends com.easecurity.core.basis.b.Org {
         fullName length: 4000, nullable: true
         fullPathid length: 4000, nullable: true
         fullCode length: 4000, nullable: true
+        parent nullable: true
     }
 
     static mapping = {
         table 'b_org'
         parentId index: 'IDX_PARENTID'
+        type enumType: "ordinal"
+        status enumType: "ordinal"
         parentId insertable: false
         parentId updateable: false
         version false
@@ -36,6 +39,10 @@ class Org extends com.easecurity.core.basis.b.Org {
             // TODO 此时id为null，新建时有bug，调用更新后正常
             fullPathid = parent.fullPathid + id + "/"
             fullCode = parent.fullCode + code + "/"
+        } else {
+            fullName = "/"
+            fullPathid = "/"
+            fullCode = "/"
         }
     }
 
@@ -44,6 +51,10 @@ class Org extends com.easecurity.core.basis.b.Org {
             fullName = parent.fullName + name + "/"
             fullPathid = parent.fullPathid + id + "/"
             fullCode = parent.fullCode + code + "/"
+        } else {
+            fullName = "/"
+            fullPathid = "/"
+            fullCode = "/"
         }
     }
 }

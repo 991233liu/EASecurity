@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import com.easecurity.core.basis.b.UserEnum.*;
 
 /**
  * b_user表，用户账号信息
@@ -26,21 +27,19 @@ public class User implements Serializable {
     /**
      * 账号状态
      */
-    public String uStatus;
+    public AcStatus acStatus;
 
     /**
      * 密码状态
      */
-    public String pStatus;
+    public PdStatus pdStatus;
     
     /**
      * 身份串
      */
     public String identities;
 
-    public String getId() {
-	return id;
-    }
+    public String getId() { return id; }
 
     public void setId(String id) {
 	this.id = id;
@@ -62,28 +61,17 @@ public class User implements Serializable {
 	this.pd = pd;
     }
 
-    public String getuStatus() {
-	return uStatus;
-    }
+    public AcStatus getAcStatus() { return acStatus; }
 
-    public void setuStatus(String uStatus) {
-	this.uStatus = uStatus;
-    }
+    public void setAcStatus(AcStatus acStatus) { this.acStatus = acStatus; }
 
-    public String getpStatus() {
-	return pStatus;
-    }
+    public PdStatus getPdStatus() { return pdStatus; }
 
-    public void setpStatus(String pStatus) {
-	this.pStatus = pStatus;
-    }
+    public void setPdStatus(PdStatus pdStatus) { this.pdStatus = pdStatus; }
 
-    public String getIdentities() {
-        return identities;
-    }
+    public String getIdentities() { return identities; }
 
     public void setIdentities(String identities) {
         this.identities = identities;
     }
-
 }

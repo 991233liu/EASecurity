@@ -1,7 +1,11 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
+/**
+ * Copyright © 2021-2050 刘路峰版权所有。
+ */
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+
+import com.easecurity.core.basis.b.PostsEnum.*;
 
 /**
  * b_posts表：职务信息表。
@@ -25,48 +29,47 @@ public class Posts implements Serializable {
      */
     public Integer ranking;
     /**
-     * 职务类别，1领导，2，职员
+     * 职务类别，0 领导，1 职员
      */
-    public Integer type;
+    public Type type;
 
     public Integer getId() {
-	return id;
+        return id;
     }
 
     public void setId(Integer id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getCode() {
-	return code;
+        return code;
     }
 
     public void setCode(String code) {
-	this.code = code;
+        this.code = code;
     }
 
     public Integer getRanking() {
-	return ranking;
+        return ranking;
     }
 
     public void setRanking(Integer ranking) {
-	this.ranking = ranking;
+        this.ranking = ranking;
     }
 
-    public Integer getType() {
-	return type;
+    public Type getType() {
+        return type;
     }
 
-    public void setType(Integer type) {
-	this.type = type;
+    public void setType(Type type) {
+        this.type = type;
     }
-
 }

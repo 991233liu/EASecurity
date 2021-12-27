@@ -37,14 +37,14 @@ public class LoginService {
      */
     public UserDo login(String user, String pd) {
 	log.debug("-----## 登录信息：user={} pd={}", user, pd);
-	List<User> us = jdbcTemplate.query("SELECT * FROM b_user where user = ? and pd = ?", new BeanPropertyRowMapper<>(User.class), user, pd);
+	List<User> us = jdbcTemplate.query("SELECT * FROM b_user where account = ? and pd = ?", new BeanPropertyRowMapper<>(User.class), user, pd);
 	if (us.size() == 1) {
 	    // TODO 账号状态
 	    // TODO 密码状态
 
 	    UserDo userDo = new UserDo();
 	    userDo.user = us.get(0);
-	    userDo.orgUsers = jdbcTemplate.query("SELECT * FROM b_org_user where userid = ?", new BeanPropertyRowMapper<>(OrgUser.class), userDo.user.id);
+	    userDo.orgUsers = jdbcTemplate.query("SELECT * FROM b_org_user where user_id = ?", new BeanPropertyRowMapper<>(OrgUser.class), userDo.user.id);
 
 	    // TODO 存入session
 	    // TODO 存入Redis

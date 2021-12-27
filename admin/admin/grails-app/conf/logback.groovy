@@ -32,6 +32,5 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 
 root(INFO, ['STDOUT'])
 if (Environment.isDevelopmentMode()) {
-    logger("com.framework.auth", debug, ['STDOUT'], false)
-    logger("com.liulf", debug, ['STDOUT'], false)
+    logger("com.easecurity.admin", debug, ['STDOUT'], false)
 }

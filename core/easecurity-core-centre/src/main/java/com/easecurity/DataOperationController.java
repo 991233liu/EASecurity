@@ -13,6 +13,7 @@ import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.b.UserEnum;
 
 @RestController
 @RequestMapping("/demo")
@@ -43,6 +44,8 @@ public class DataOperationController {
 	UserDo userDo = loginService.login("liulufeng", "1");
 	request.getSession(true).setAttribute("userdo", userDo);
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
+	System.out.println("----## userDo.user.pStatus=" + userDo.user.pStatus);
+	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pStatus==UserEnum.PStatus.启用));
     }
 
 //    @PostMapping("/api/addData")
