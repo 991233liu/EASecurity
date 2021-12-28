@@ -1,7 +1,5 @@
 package com.easecurity.admin.utils
 
-//import com.liulf.constants.StaffEnum
-
 import javax.persistence.AttributeConverter
 
 class I2TConverter {

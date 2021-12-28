@@ -19,6 +19,8 @@ info:
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    profiles:
+        include: easecurity
     jmx:
         unique-names: true
     main:

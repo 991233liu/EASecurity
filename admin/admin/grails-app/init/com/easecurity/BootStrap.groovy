@@ -1,9 +1,6 @@
 package com.easecurity
 
-//import com.easecurity.admin.auth.Role
 import com.easecurity.admin.auth.UserAdmin
-//import com.easecurity.admin.auth.UserRole
-import com.easecurity.admin.auth.SecurityCoordinate
 
 class BootStrap {
 //	AnimalService animalService

@@ -1,11 +1,18 @@
 package com.easecurity.admin.auth
 
 import com.easecurity.core.captcha.GifCaptcha
-import grails.config.Config
+import com.easecurity.admin.auth.GifCaptcha as DGifCaptcha
+import grails.converters.JSON
+import org.springframework.beans.factory.annotation.Value
 
 class LoginController extends grails.plugin.springsecurity.LoginController {
 
-//    List<String> coordinatePositions
+    @Value('${loginCaptcha.disable:true}')
+    boolean disable
+    @Value('${loginCaptcha.gifCaptcha.length:5}')
+    Integer gifCaptchaLength
+    @Value('${loginCaptcha.gifCaptcha.delay:100}')
+    Integer gifCaptchaDelay
 
     def auth() {
 
@@ -16,41 +23,42 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
             return
         }
 
-//        String postUrl = request.contextPath + conf.apf.filterProcessesUrl
-//        render view: 'auth', model: [postUrl: postUrl,
-//                                     rememberMeParameter: conf.rememberMe.parameter,
-//                                     usernameParameter: conf.apf.usernameParameter,
-//                                     passwordParameter: conf.apf.passwordParameter,
-//                                     gspLayout: conf.gsp.layoutAuth]
-
-//        Collections.shuffle(coordinatePositions)
-//        String position = coordinatePositions.first()
-
+        Map<String, Object> map = disable ? null : getGifCaptcha()
         String postUrl = request.contextPath + conf.apf.filterProcessesUrl
         render view: 'auth', model: [postUrl            : postUrl,
                                      rememberMeParameter: conf.rememberMe.parameter,
                                      usernameParameter  : conf.apf.usernameParameter,
                                      passwordParameter  : conf.apf.passwordParameter,
                                      gspLayout          : conf.gsp.layoutAuth,
-                                     pictureCode          : getPictureCode()]
-//                                     position           : position]
+                                     gifCaptcha         : map]
     }
 
-//    @Override
-//    void setConfiguration(Config co) {
-//        coordinatePositions = co.getProperty('security.coordinate.positions', List, []) as List<String>
-//    }
+    def gifCaptcha() {
+        Map<String, Object> map = disable ? null : getGifCaptcha()
+        respond map, formats: ['json']
+    }
 
-    private Map getPictureCode() {
-        GifCaptcha gifCaptcha = new GifCaptcha(130, 48, 5);
-        Map<String, Object> map = new HashMap<>();
-        String key = UUID.randomUUID().toString();
-        String verCode = gifCaptcha.text().toLowerCase();
+    private Map getGifCaptcha() {
+        GifCaptcha gifCaptcha = new GifCaptcha(130, 48, gifCaptchaLength, gifCaptchaDelay)
+        String key = UUID.randomUUID().toString()
+        String verCode = gifCaptcha.text().toLowerCase()
+        DGifCaptcha dDifCaptcha1 = new DGifCaptcha()
+        dDifCaptcha1.sessionId = getSession().getId()
+        dDifCaptcha1.key2 = key
+        dDifCaptcha1.value = verCode
+        // TODO 改到配置文件中
+        dDifCaptcha1.validTime = System.currentTimeMillis() + 300000
+        DGifCaptcha.withTransaction {
+            dDifCaptcha1.save(flush: true)
+        }
+        if (log.isDebugEnabled()) log.debug("----# 图片验证码为：" + verCode)
+        // TODO 数据库验证
+        // TODO Redis验证
+        getSession().setAttribute("GifCaptcha", dDifCaptcha1)
+
+        Map<String, Object> map = new HashMap<>()
         map.put("key", key);
         map.put("image", gifCaptcha.toBase64());
-        System.out.println(verCode);
-
-//        redisTemplate.opsForValue().set(key, verCode, 5, TimeUnit.MINUTES);
         return map;
     }
 }

@@ -8,6 +8,8 @@ import java.io.OutputStream;
 
 public class GifCaptcha extends Captcha {
 
+    private int delay = 100;
+
     public GifCaptcha() {
     }
 
@@ -21,8 +23,14 @@ public class GifCaptcha extends Captcha {
         setLen(len);
     }
 
-    public GifCaptcha(int width, int height, int len, Font font) {
-        this(width, height, len);
+    public GifCaptcha(int width, int height, int len, int delay) {
+        this(width, height);
+        setLen(len);
+        setDelay(delay);
+    }
+
+    public GifCaptcha(int width, int height, int len, int delay, Font font) {
+        this(width, height, len, delay);
         setFont(font);
     }
 
@@ -49,7 +57,7 @@ public class GifCaptcha extends Captcha {
             // 开始画gif每一帧
             GifEncoder gifEncoder = new GifEncoder();
             gifEncoder.setQuality(180);
-            gifEncoder.setDelay(100);
+            gifEncoder.setDelay(delay);
             gifEncoder.setRepeat(0);
             gifEncoder.start(os);
             for (int i = 0; i < len; i++) {
@@ -133,4 +141,7 @@ public class GifCaptcha extends Captcha {
         return num >= len ? (num * r - s) : num * r;
     }
 
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
 }

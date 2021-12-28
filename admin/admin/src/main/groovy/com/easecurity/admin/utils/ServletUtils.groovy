@@ -1,6 +1,5 @@
 package com.easecurity.admin.utils
 
-//import com.liulf.people.Staff
 import groovy.transform.CompileStatic
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.context.request.RequestContextHolder

@@ -18,7 +18,6 @@ class UserAdmin implements Serializable {
     String password
     User user
 
-    static hasMany = [coordinates: SecurityCoordinate]
     static transients = ['user', 'password', 'coordinates']
 
     static constraints = {

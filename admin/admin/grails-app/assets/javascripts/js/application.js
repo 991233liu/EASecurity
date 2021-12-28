@@ -8,7 +8,6 @@
 /**
  * 点击列表中批量删除按钮
  */
-
 function deleteAll(obj) {
     var ids = []
     $.each($('input:checkbox[name="ids"]').get(), function (index, it) {
@@ -16,4 +15,20 @@ function deleteAll(obj) {
     });
     obj.form.action = obj.form.action + "/" + ids
     alert(obj.form.action)
+}
+
+/**
+ * 刷新图片验证码（登录）
+ */
+function flushLoginCaptcha() {
+    $.ajax({
+        url: '/admin/login/gifCaptcha',
+        method: "GET",
+        asyn: true,
+        dataType: "json",
+        success: (response) => {
+            $('#gifCaptcha').attr('value', response.key)
+            $('#gifCaptchaImg').attr('src', response.image)
+        }
+    });
 }

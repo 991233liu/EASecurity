@@ -49,13 +49,18 @@
                                      placeholder="${message(code: 'user.password.label', default: 'Password')}" />
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
-                <div class="form-group has-feedback">
-                    <p>
-                        <label for="gifCaptchaValue"><img src="${pictureCode.get("image")}"/></label>
-                        <input type="hidden" name="gifCaptcha" id="gifCaptcha" value="${pictureCode.get("key")}"/>
-                        <input type="text" class="text_" name="gifCaptchaValue" id="gifCaptchaValue"/>
-                    </p>
-                </div>
+                <g:if test='${gifCaptcha}'>
+                    <div class="form-group has-feedback">
+                        <p>
+                            <label for="gifCaptchaValue"><img id="gifCaptchaImg" src="${gifCaptcha.get("image")}" onclick="flushLoginCaptcha()"/>
+                            <input type="hidden" name="gifCaptcha" id="gifCaptcha" value="${gifCaptcha.get("key")}"/>
+                            <input type="text" style="width: 120px;" class="text_" name="gifCaptchaValue" id="gifCaptchaValue"/>
+                            <a href="javascript:;" class="btn btn-default" onclick="flushLoginCaptcha()">
+                                <g:message code="login.flush.label" default="刷新" />
+                            </a></label>
+                        </p>
+                    </div>
+                </g:if>
                 <div class="row">
                     <div class="col-xs-8">
                         <div class="checkbox icheck">
@@ -92,6 +97,7 @@
     <asset:javascript src="plugins/jQuery/jquery-2.2.3.min.js" />
     <asset:javascript src="plugins/bootstrap/js/bootstrap.min.js" />
     <asset:javascript src="plugins/iCheck/icheck.min.js" />
+    <asset:javascript src="js/application.js" />
     <script>
         $(function() {
             $('input').iCheck({
