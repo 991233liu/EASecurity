@@ -34,3 +34,5 @@ root(INFO, ['STDOUT'])
 if (Environment.isDevelopmentMode()) {
     logger("com.easecurity.admin", debug, ['STDOUT'], false)
 }
+// 开发gsp模板时，可以打开，打印模板加载日志
+//logger('grails.plugin.formfields.FormFieldsTemplateService', DEBUG,['STDOUT'])

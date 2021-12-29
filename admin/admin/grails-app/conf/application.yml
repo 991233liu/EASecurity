@@ -155,3 +155,10 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
+---
+#开发gsp模板时，可以打开，取消缓存
+#grails:
+#    plugin:
+#        fields:
+#            disableLookupCache: true

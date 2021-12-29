@@ -21,20 +21,22 @@
 									test="${bean.properties.get(p.name) instanceof java.sql.Timestamp}">
 									<g:formatDate format="yyyy-MM-dd"
 										date="${bean.properties.get(p.name)}" />
-								</g:if>
-								<g:else>
+								</g:if> <g:elseif test="${bean.properties.get(p.name)?.class?.isEnum()}">
+									<g:message code="${domainClass.name}.${p.name}.${bean.properties.get(p.name)}" default="${bean.properties.get(p.name)}" />
+								</g:elseif><g:else>
 									${bean.properties.get(p.name)}
 								</g:else>
 							</g:link></td>
 					</g:if>
 					<g:else>
-						<td><g:if
-								test="${bean.properties.get(p.name) instanceof java.sql.Timestamp}">
+						<td><g:if test="${bean.properties.get(p.name) instanceof java.sql.Timestamp}">
 								<g:formatDate format="yyyy-MM-dd"
 									date="${bean.properties.get(p.name)}" />
-							</g:if> <g:else>
-									${bean.properties.get(p.name)}
-								</g:else></td>
+							</g:if> <g:elseif test="${bean.properties.get(p.name)?.class?.isEnum()}">
+									<g:message code="${domainClass.name}.${p.name}.${bean.properties.get(p.name)}" default="${bean.properties.get(p.name)}" />
+							</g:elseif><g:else>
+								${bean.properties.get(p.name)}
+							</g:else></td>
 					</g:else>
 				</g:each>
 				<td class="text-center">
