@@ -39,11 +39,13 @@ class Role extends com.easecurity.core.basis.r.Role {
     def beforeInsert() {
 //        if (id == null) id = org.id + "~" + roleGroup.id
         code = org.code + "#" + roleGroup.code
+        name = roleGroup.name
         fullName = org.name + roleGroup.name
     }
 
     def beforeUpdate() {
         code = org.code + "#" + roleGroup.code
+        name = roleGroup.name
         fullName = org.name + roleGroup.name
     }
 }

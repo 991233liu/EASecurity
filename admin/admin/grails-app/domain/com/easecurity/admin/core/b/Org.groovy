@@ -36,8 +36,6 @@ class Org extends com.easecurity.core.basis.b.Org {
     def beforeInsert() {
         if (parent) {
             fullName = parent.fullName + name + "/"
-            // TODO 此时id为null，新建时有bug，调用更新后正常
-            fullPathid = parent.fullPathid + id + "/"
             fullCode = parent.fullCode + code + "/"
         } else {
             fullName = "/"
@@ -55,6 +53,12 @@ class Org extends com.easecurity.core.basis.b.Org {
             fullName = "/"
             fullPathid = "/"
             fullCode = "/"
+        }
+    }
+
+    def afterInsert() {
+        if (parent) {
+            Org.executeUpdate("update Org o set o.fullPathid = :fullPathid where o.id = :id", [fullPathid: parent.fullPathid + id + "/", id: id])
         }
     }
 }

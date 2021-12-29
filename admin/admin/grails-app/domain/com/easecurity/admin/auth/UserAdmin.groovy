@@ -18,7 +18,7 @@ class UserAdmin implements Serializable {
     String password
     User user
 
-    static transients = ['user', 'password', 'coordinates']
+    static transients = ['user', 'password']
 
     static constraints = {
         id length: 40
@@ -38,7 +38,7 @@ class UserAdmin implements Serializable {
 
     Set<String> getAuthorities() {
         Set<String> roles = []
-        (RoleUser.findAllByUserId(this.id) as List<RoleUser>).each {
+        (RoleUser.findAllByAccount(this.account) as List<RoleUser>).each {
             /*
              * Role names must start with “ROLE_”. This is configurable in Spring Security, but not in the plugin. It would be possible to allow different prefixes,
              * but it’s important that the prefix not be blank as the prefix is used to differentiate between role names and tokens such as IS_AUTHENTICATED_FULLY/IS_AUTHENTICATED_ANONYMOUSLY/etc., and SpEL expressions.
