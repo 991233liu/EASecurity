@@ -3,4 +3,4 @@
 	value="${value}"
 	noSelection="${['':'']}"
 	valueMessagePrefix="${beanClass}.${property}"
-	class="form-control"/>
+	class="form-control select2"/>
