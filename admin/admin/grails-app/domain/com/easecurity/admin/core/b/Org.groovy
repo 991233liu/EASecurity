@@ -9,7 +9,7 @@ class Org extends com.easecurity.core.basis.b.Org {
 
     Org parent
 
-    static hasMany = [orgUsers: OrgUser]
+    static hasMany = [orgUsers: OrgUser, children: Org]
 
     static constraints = {
         name length: 100, nullable: false, blank: false
