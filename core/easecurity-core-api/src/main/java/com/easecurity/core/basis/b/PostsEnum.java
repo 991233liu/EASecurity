@@ -15,31 +15,31 @@ public class PostsEnum {
         LEADERSHIP("LEADERSHIP", "领导"),
         EMPLOYEE("DISABLED", "员工");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (Type ms : Type.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (Type ms : Type.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static Type getType(String index) {
+        public static Type getType(String code) {
             for (Type ms : Type.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -57,17 +57,17 @@ public class PostsEnum {
         private Type() {
         }
 
-        private Type(String index, String title) {
-            this.index = index;
+        private Type(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {

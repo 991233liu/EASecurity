@@ -19,31 +19,31 @@ public class OrgEnum {
         OFFICE("OFFICE", "办事处"),
         TEMP("TEMP", "临时");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (Type ms : Type.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (Type ms : Type.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static Type getType(String index) {
+        public static Type getType(String code) {
             for (Type ms : Type.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -61,17 +61,17 @@ public class OrgEnum {
         private Type() {
         }
 
-        private Type(String index, String title) {
-            this.index = index;
+        private Type(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
@@ -93,31 +93,31 @@ public class OrgEnum {
         DEREGISTRATION("DEREGISTRATION", "注销"),
         DELETION("DEREGISTRATION", "删除");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (Status ms : Status.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (Status ms : Status.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static Status getStatus(String index) {
+        public static Status getStatus(String code) {
             for (Status ms : Status.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -135,17 +135,17 @@ public class OrgEnum {
         private Status() {
         }
 
-        private Status(String index, String title) {
-            this.index = index;
+        private Status(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {

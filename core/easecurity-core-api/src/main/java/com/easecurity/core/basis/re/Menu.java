@@ -1,11 +1,14 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
+/**
+ * Copyright © 2021-2050 刘路峰版权所有。
+ */
 package com.easecurity.core.basis.re;
 
 import java.io.Serializable;
 
+import com.easecurity.core.basis.re.MenuEnum.*;
+
 /**
  * re_menu表：菜单
- *
  */
 public class Menu implements Serializable {
 
@@ -17,120 +20,164 @@ public class Menu implements Serializable {
      * 菜单名称
      */
     public String name;
+    /**
+     * 菜单编码
+     */
     public String code;
-    public Integer level;
-    public Integer sort;
-    public Integer parentid;
+    /**
+     * 菜单级别
+     */
+    public Level level;
+    /**
+     * 显示顺序
+     */
+    public Integer sortNumber;
+    /**
+     * 打开链接URL
+     */
     public String openUrl;
+    /**
+     * 图标
+     */
     public String icon;
-    public String status;
-    public String displayStatus;
+    /**
+     * 上级菜单ID
+     */
+    public Integer parentId;
+    /**
+     * 全路径名称，如：默认菜单/系统管理/用户管理/
+     */
+    public String fullName;
+    /**
+     * 状态，0启用，1禁用
+     */
+    public Status status;
+    /**
+     * 显示状态，0始终隐藏、1始终显示、2禁用隐藏、3、无权限隐藏
+     */
+    public DisplayStatus displayStatus = DisplayStatus.NOPERMISSIONSHIDDEN;
+    /**
+     * 禁用提示
+     */
     public String disablePrompt;
-    public String noPermissionsPprompt;
-    public String accessType;
+    /**
+     * 无权限提示
+     */
+    public String noPermissionsPrompt;
+    /**
+     * 访问类型，0匿名访问、1登录用户访问、2授权访问
+     */
+    public AccessType accessType = AccessType.LOGIN;
 
     public Integer getId() {
-	return id;
+        return id;
     }
 
     public void setId(Integer id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getCode() {
-	return code;
+        return code;
     }
 
     public void setCode(String code) {
-	this.code = code;
+        this.code = code;
     }
 
-    public Integer getLevel() {
-	return level;
+    public Level getLevel() {
+        return level;
     }
 
-    public void setLevel(Integer level) {
-	this.level = level;
+    public void setLevel(Level level) {
+        this.level = level;
     }
 
-    public Integer getSort() {
-	return sort;
+    public Integer getSortNumber() {
+        return sortNumber;
     }
 
-    public void setSort(Integer sort) {
-	this.sort = sort;
-    }
-
-    public Integer getParentid() {
-	return parentid;
-    }
-
-    public void setParentid(Integer parentid) {
-	this.parentid = parentid;
+    public void setSortNumber(Integer sortNumber) {
+        this.sortNumber = sortNumber;
     }
 
     public String getOpenUrl() {
-	return openUrl;
+        return openUrl;
     }
 
     public void setOpenUrl(String openUrl) {
-	this.openUrl = openUrl;
+        this.openUrl = openUrl;
     }
 
     public String getIcon() {
-	return icon;
+        return icon;
     }
 
     public void setIcon(String icon) {
-	this.icon = icon;
+        this.icon = icon;
     }
 
-    public String getStatus() {
-	return status;
+    public Integer getParentId() {
+        return parentId;
     }
 
-    public void setStatus(String status) {
-	this.status = status;
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
-    public String getDisplayStatus() {
-	return displayStatus;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setDisplayStatus(String displayStatus) {
-	this.displayStatus = displayStatus;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public DisplayStatus getDisplayStatus() {
+        return displayStatus;
+    }
+
+    public void setDisplayStatus(DisplayStatus displayStatus) {
+        this.displayStatus = displayStatus;
     }
 
     public String getDisablePrompt() {
-	return disablePrompt;
+        return disablePrompt;
     }
 
     public void setDisablePrompt(String disablePrompt) {
-	this.disablePrompt = disablePrompt;
+        this.disablePrompt = disablePrompt;
     }
 
-    public String getNoPermissionsPprompt() {
-	return noPermissionsPprompt;
+    public String getNoPermissionsPrompt() {
+        return noPermissionsPrompt;
     }
 
-    public void setNoPermissionsPprompt(String noPermissionsPprompt) {
-	this.noPermissionsPprompt = noPermissionsPprompt;
+    public void setNoPermissionsPrompt(String noPermissionsPrompt) {
+        this.noPermissionsPrompt = noPermissionsPrompt;
     }
 
-    public String getAccessType() {
-	return accessType;
+    public AccessType getAccessType() {
+        return accessType;
     }
 
-    public void setAccessType(String accessType) {
-	this.accessType = accessType;
+    public void setAccessType(AccessType accessType) {
+        this.accessType = accessType;
     }
-
 }

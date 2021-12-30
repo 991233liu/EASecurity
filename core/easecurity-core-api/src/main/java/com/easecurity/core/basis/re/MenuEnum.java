@@ -15,31 +15,31 @@ public class MenuEnum {
         ENABLED("ENABLED", "启用"),
         DISABLED("DISABLED", "禁用");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (Status ms : Status.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (Status ms : Status.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static Status getStatus(String index) {
+        public static Status getStatus(String code) {
             for (Status ms : Status.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -57,17 +57,17 @@ public class MenuEnum {
         private Status() {
         }
 
-        private Status(String index, String title) {
-            this.index = index;
+        private Status(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
@@ -88,31 +88,31 @@ public class MenuEnum {
         DISABLEDHIDDEN("DISABLEDHIDDEN", "禁用隐藏"),
         NOPERMISSIONSHIDDEN("NOPERMISSIONSHIDDEN", "无权限隐藏");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (DisplayStatus ms : DisplayStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (DisplayStatus ms : DisplayStatus.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static DisplayStatus getDisplayStatus(String index) {
+        public static DisplayStatus getDisplayStatus(String code) {
             for (DisplayStatus ms : DisplayStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -130,17 +130,17 @@ public class MenuEnum {
         private DisplayStatus() {
         }
 
-        private DisplayStatus(String index, String title) {
-            this.index = index;
+        private DisplayStatus(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
@@ -160,31 +160,31 @@ public class MenuEnum {
         LOGIN("LOGIN", "登录用户访问"),
         AUTHORIZATION("AUTHORIZATION", "授权访问");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (AccessType ms : AccessType.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (AccessType ms : AccessType.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static AccessType getAccessType(String index) {
+        public static AccessType getAccessType(String code) {
             for (AccessType ms : AccessType.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -202,17 +202,17 @@ public class MenuEnum {
         private AccessType() {
         }
 
-        private AccessType(String index, String title) {
-            this.index = index;
+        private AccessType(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
@@ -223,5 +223,80 @@ public class MenuEnum {
             this.title = title;
         }
 
+    }
+
+    /**
+     * 菜单级别<br>
+     */
+    public enum Level {
+        ROOT("ROOT", "根"),
+        FIRST("FIRST", "一级"),
+        SECOND("SECOND", "二级"),
+        THIRD("THIRD", "三级"),
+        FOURTH("FOURTH", "四级"),
+        FIFTH("FIFTH", "五级");
+
+        private String code;
+        private String title;
+
+        // 普通方法
+        public static String getTitle(String code) {
+            for (Level ms : Level.values()) {
+                if (ms.getCode().equals(code)) {
+                    return ms.title;
+                }
+            }
+            return null;
+        }
+
+        public static String getCode(String title) {
+            for (Level ms : Level.values()) {
+                if (ms.title.equals(title)) {
+                    return ms.code;
+                }
+            }
+            return null;
+        }
+
+        public static Level getLevel(String code) {
+            for (Level ms : Level.values()) {
+                if (ms.getCode().equals(code)) {
+                    return ms;
+                }
+            }
+            return null;
+        }
+
+        public static List<Level> getAllEnum() {
+            List<Level> mss = new ArrayList<Level>();
+            for (Level ms : Level.values()) {
+                mss.add(ms);
+            }
+            return mss;
+        }
+
+        private Level() {
+        }
+
+        private Level(String code, String title) {
+            this.code = code;
+            this.title = title;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
     }
 }

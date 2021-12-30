@@ -17,31 +17,31 @@ public class UserEnum {
         DEREGISTRATION("DEREGISTRATION", "注销"),
         DELETION("DEREGISTRATION", "删除");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (AcStatus ms : AcStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (AcStatus ms : AcStatus.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static AcStatus getAcStatus(String index) {
+        public static AcStatus getAcStatus(String code) {
             for (AcStatus ms : AcStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -59,17 +59,17 @@ public class UserEnum {
         private AcStatus() {
         }
 
-        private AcStatus(String index, String title) {
-            this.index = index;
+        private AcStatus(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
@@ -90,31 +90,31 @@ public class UserEnum {
         EXPIRED("EXPIRED", "过期"),
         MAXTIMES("MAXTIMES", "超过尝试次数");
 
-        private String index;
+        private String code;
         private String title;
 
         // 普通方法
-        public static String getTitle(String index) {
+        public static String getTitle(String code) {
             for (PdStatus ms : PdStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
             }
             return null;
         }
 
-        public static String getIndex(String title) {
+        public static String getCode(String title) {
             for (PdStatus ms : PdStatus.values()) {
                 if (ms.title.equals(title)) {
-                    return ms.index;
+                    return ms.code;
                 }
             }
             return null;
         }
 
-        public static PdStatus getPdStatus(String index) {
+        public static PdStatus getPdStatus(String code) {
             for (PdStatus ms : PdStatus.values()) {
-                if (ms.getIndex().equals(index)) {
+                if (ms.getCode().equals(code)) {
                     return ms;
                 }
             }
@@ -132,17 +132,17 @@ public class UserEnum {
         private PdStatus() {
         }
 
-        private PdStatus(String index, String title) {
-            this.index = index;
+        private PdStatus(String code, String title) {
+            this.code = code;
             this.title = title;
         }
 
-        public String getIndex() {
-            return index;
+        public String getCode() {
+            return code;
         }
 
-        public void setIndex(String index) {
-            this.index = index;
+        public void setCode(String code) {
+            this.code = code;
         }
 
         public String getTitle() {
