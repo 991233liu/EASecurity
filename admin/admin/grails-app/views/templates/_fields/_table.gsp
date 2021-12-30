@@ -34,6 +34,8 @@
 									date="${bean.properties.get(p.name)}" />
 							</g:if> <g:elseif test="${bean.properties.get(p.name)?.class?.isEnum()}">
 									<g:message code="${domainClass.name}.${p.name}.${bean.properties.get(p.name)}" default="${bean.properties.get(p.name)}" />
+							</g:elseif><g:elseif test="${bean.properties.get(p.name) instanceof Boolean }">
+									<g:message code="default.boolean.${bean.properties.get(p.name)}" default="${bean.properties.get(p.name)}" />
 							</g:elseif><g:else>
 								${bean.properties.get(p.name)}
 							</g:else></td>
