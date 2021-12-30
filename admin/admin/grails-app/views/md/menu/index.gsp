@@ -3,11 +3,11 @@
     <head>
         <meta name="layout" content="adminLTE" />
         <g:set var="entityName"
-               value="${message(code: 'orgUser.label', default: 'OrgUser')}" />
+               value="${message(code: 'menu.label', default: 'Menu')}" />
         <title><g:message code="default.list.label" args="[entityName]" /></title>
     </head>
     <body>
-        <g:render template="/themes/menuAll" model="['openMenu':'OrgUsers', 'activeMenu':'OrgUserList']"/>
+        <g:render template="/themes/menuAll" model="['openMenu':'Menus', 'activeMenu':'MenuList']"/>
 
         <!-- 内容区域 -->
         <!-- Content Wrapper. Contains page content -->
@@ -16,7 +16,7 @@
             <!-- 内容头部 -->
             <section class="content-header">
                 <h1>
-                    <g:message code="orgUser.list.label" args="[]" default="OrgUsers" />
+                    <g:message code="menu.list.label" args="[]" default="Menus" />
                     <small>XXX<g:message code="default.list.label" args="[entityName]" /></small>
                 </h1>
                 <ol class="breadcrumb">
@@ -24,7 +24,7 @@
 		    <li>&nbsp <g:link controller="dashboard">
 			    <g:message code="home.label" default="Home" />
 			</g:link></li>
-			<li><g:message code="orgUsers.label" default="OrgUsers" /></li>
+			<li><g:message code="menus.label" default="Menus" /></li>
                 </ol>
             </section>
             <!-- 内容头部 /-->
@@ -57,7 +57,7 @@
                             <div class="pull-left">
                                 <div class="form-group form-inline">
                                     <div class="btn-group">
-                                        <g:form name="orgUserDelete" controller="orgUser" action="delete" method="DELETE">
+                                        <g:form name="menuDelete" controller="menu" action="delete" method="DELETE">
 
                                             <g:link class="btn btn-default" action="create">
                                                 <g:message code="default.button.create.label" default="Create" />
@@ -65,7 +65,7 @@
                                             <input class="btn btn-danger" type="submit"
                                                    value="${message(code: 'default.button.delete.label', default: 'Delete')}"
                                                    onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}')?deleteAll(this):false" />
-                                            <g:link class="btn btn-default" controller="orgUser">
+                                            <g:link class="btn btn-default" controller="menu">
                                                 <g:message code="default.button.reload.label" default="Reload" />
                                             </g:link>
                                         </g:form>
@@ -81,7 +81,7 @@
                             <!--工具栏/-->
 
                             <!--数据列表-->
-                            <f:table collection="${orgUserList}" except="id" />
+                            <f:table collection="${menuList}" except="id" />
                             <!--数据列表/-->
                         </div>
                         <!-- 数据表格 /-->
@@ -95,7 +95,7 @@
 
                         <div class="box-tools pull-right">
                             <ul class="pagination">
-                                <alte:paginate total="${orgUserCount ?: 0}" />
+                                <alte:paginate total="${menuCount ?: 0}" />
                             </ul>
                         </div>
 

@@ -37,31 +37,36 @@ var menuObj = {
         pmenu_expand_class: "fa fa-angle-left pull-right",
         label_icon_class: "label pull-right",
         // treeviewHtml:'<li class="treeview"> <a href="#"> <i class="fa fa-pie-chart"></i> <span>XXX</span> <span class="pull-right-container"> <i class="fa fa-angle-left pull-right"></i></span> </a> <ul class="treeview-menu"> </ul> </li>',
-        treeviewHtml:'<li class="treeview"></li>',
-        treeviewHtml_ico:'<i class="fa fa-files-o"></i>',
-        treeviewHtml_pull:'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>',
-        menuHtml:'<li id=""></li>',
-        menuHtml_ico:'<i class="fa fa-circle-o"></i>'
+        treeviewHtml: '<li class="treeview"></li>',
+        treeviewHtml_ico: '<i class="fa fa-files-o"></i>',
+        treeviewHtml_pull: '<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>',
+        menuHtml: '<li id=""></li>',
+        menuHtml_ico: '<i class="fa fa-circle-o"></i>'
     },
-    loadMenu: function (menuJson) {
-        this.setMenuList(menuJson);
+    loadMenu: function (menuJson, activeMenuCode) {
+        this.setMenuList(menuJson, activeMenuCode);
     },
-    loadMenuUrl: function (url) {
+    loadMenuUrl: function (url, activeMenuCode) {
         $.ajax({
             url: url,
             method: "GET",
             asyn: true,
             dataType: "json",
             success: (response) => {
-                this.setMenuList(response);
+                this.setMenuList(response, activeMenuCode);
             }
         });
+    },
+    openActiveMenu: function (openMenu, activeMenuCode) {
+        $('#' + openMenu).addClass("active");
+        $('#' + activeMenuCode).addClass("active");
     },
     getMenuList: function () {
         return this.menuList;
     },
-    setMenuList: function (menuList) {
+    setMenuList: function (menuList, activeMenuCode) {
         this.menuList = menuList;
+        this.activeMenuCode = activeMenuCode;
         this._showMenuList();
     },
     _showMenuList: function () {
@@ -83,17 +88,20 @@ var menuObj = {
             var li = $(this.config.menuHtml);
             m_html = li;
             li.prop("id", menu.id);
-            if(menu.active){
+            if (menu.code != null && menu.code == this.activeMenuCode) {
                 li.addClass("active");
             }
             var a = $("<a></a>");
-            a.attr("href", "javascript:;");
-            var menu_str = JSON.stringify(menu);
-            a.attr("onclick", "navigateTo(\'" + menu_str + "\')");
-            var ico = $(this.config.menuHtml_ico);
-            if (menu.ico != null && menu.ico != '') {
-                ico.removeClass();
-                ico.addClass(menu.ico);
+            a.attr("href", menu.openUrl);
+            // var menu_str = JSON.stringify(menu.openUrl);
+            // a.attr("onclick", "navigateTo(" + menu_str + ")");
+            var icon = $(this.config.menuHtml_ico);
+            if (menu.icon != null && menu.icon != '') {
+                menu.icon = menu.icon.trim()
+                if (menu.icon.startsWith("class")) {
+                    icon.removeClass();
+                    icon.addClass(menu.icon.replace('class', '').replace(/\"/g, '').replace('=', ''));
+                }
             }
             // var i = $("<i></i>");
             // i.css("margin-right", "8px");
@@ -108,7 +116,7 @@ var menuObj = {
             //     i.addClass(this.config.lmenu_icon_class);
             //     i.addClass("fa-circle-o");
             // }
-            a.append(ico);
+            a.append(icon);
             var span = $("<span></span>");
             span.html(menu.name);
             a.append(span);
@@ -133,10 +141,13 @@ var menuObj = {
             var a = $("<a></a>");
             a.attr("href", "javascript:;");
             li.append(a);
-            var ico = $(this.config.treeviewHtml_ico);
-            if (menu.ico != null && menu.ico != '') {
-                ico.removeClass();
-                ico.addClass(menu.ico);
+            var icon = $(this.config.treeviewHtml_ico);
+            if (menu.icon != null && menu.icon != '') {
+                menu.icon = menu.icon.trim()
+                if (menu.icon.startsWith("class")) {
+                    icon.removeClass();
+                    icon.addClass(menu.icon.replace('class', '').replace(/\"/g, '').replace('=', ''));
+                }
             }
             // i.css("margin-right", "8px");
             // i.css("width", "14px");
@@ -150,11 +161,11 @@ var menuObj = {
             //     i.addClass(this.config.pmenu_icon_class);
             //     i.addClass("fa-files-o");
             // }
-            a.append(ico);
+            a.append(icon);
             var span = $("<span></span>");
             span.html(menu.name);
             a.append(span);
-            var pull=$(this.config.treeviewHtml_pull);
+            var pull = $(this.config.treeviewHtml_pull);
             // if (menu.label != null && menu.label.name != null && menu.label.name != '') {
             //     var label = menu.label;
             //     var span = $("<span></span>");
@@ -181,7 +192,7 @@ var menuObj = {
             for (var k = 0; k < mchidren.length; k++) {
                 var childHtml = this._generateMenuHtml(mchidren[k]);
                 ul.append(childHtml);
-                if(mchidren[k].active){
+                if (mchidren[k].code != null && mchidren[k].code == this.activeMenuCode) {
                     li.addClass("active");
                 }
             }

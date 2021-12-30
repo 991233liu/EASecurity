@@ -34,8 +34,8 @@
                     %{-- 三种菜单加载模式，随意选择 --}%
                     %{-- //TODO 第三种菜单加载方式待开发 --}%
 %{--                    <g:render template="/themes/menu"/>--}%
-                    <g:render template="/themes/menuJosn"/>
-%{--                    <g:render template="/themes/menuJosnUrl"/>--}%
+%{--                    <g:render template="/themes/menuJosn"/>--}%
+                    <g:render template="/themes/menuJosnUrl"/>
                 </ul>
             </section>
             <!-- /.sidebar -->

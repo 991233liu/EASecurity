@@ -1,5 +1,6 @@
 package com.easecurity.admin.auth
 
+import com.easecurity.admin.core.re.Menu
 import com.easecurity.core.captcha.GifCaptcha
 import com.easecurity.admin.auth.GifCaptcha as DGifCaptcha
 import grails.converters.JSON
@@ -33,6 +34,18 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
                                      gifCaptcha         : map]
     }
 
+    def allMenu() {
+        Map menuTree = getSession().getAttribute('allMenuTree')
+        if (!menuTree) {
+            Menu menu = Menu.findByCode('adminRoot')
+//        List<Menu> menuList = Menu.findAllByFullNameIlike('admin系统菜单%',[sort: 'sortNumber'])
+//        respond menuList, formats: ['json']
+            menuTree = getMenuTree(menu)
+            getSession().setAttribute('allMenuTree', menuTree)
+        }
+        respond menuTree.get('children') ?: [], formats: ['json']
+    }
+
     def gifCaptcha() {
         Map<String, Object> map = disable ? null : getGifCaptcha()
         respond map, formats: ['json']
@@ -60,5 +73,21 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
         map.put("key", key);
         map.put("image", gifCaptcha.toBase64());
         return map;
+    }
+
+    private Map getMenuTree(Menu menu) {
+        Map map = new HashMap()
+        map.putAll(menu.properties)
+        map.put('id', menu.id)
+        map.remove('parent')
+        List children = []
+        (menu.children as List).sort { x, y ->
+            x.sortNumber.compareTo(y.sortNumber)
+        }.each {
+            children.add(getMenuTree(it))
+        }
+        if (!children.isEmpty()) map.put('children', children)
+        else map.remove('children')
+        map
     }
 }

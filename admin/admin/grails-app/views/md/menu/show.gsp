@@ -3,11 +3,11 @@
     <head>
         <meta name="layout" content="adminLTE" />
         <g:set var="entityName"
-               value="${message(code: 'roleGroup.label', default: 'RoleGroup')}" />
+               value="${message(code: 'menu.label', default: 'Menu')}" />
         <title><g:message code="default.show.label" args="[entityName]" /></title>
     </head>
     <body>
-        <g:render template="/themes/menuAll" model="['openMenu':'RoleGroups', 'activeMenu':'RoleGroupList']"/>
+        <g:render template="/themes/menuAll" model="['openMenu':'Menus', 'activeMenu':'MenuList']"/>
 
         <!-- 内容区域 -->
         <!-- Content Wrapper. Contains page content -->
@@ -16,7 +16,7 @@
             <!-- 内容头部 -->
             <section class="content-header">
                 <h1>
-                    <g:message code="roleGroup.list.label" args="[]" default="RoleGroups" />
+                    <g:message code="menu.list.label" args="[]" default="Menus" />
                     <small>XXX<g:message code="default.show.label" args="[entityName]" /></small>
                 </h1>
                 <ol class="breadcrumb">
@@ -24,11 +24,11 @@
                     <li>&nbsp <g:link controller="dashboard">
                         <g:message code="home.label" default="Home" />
                     </g:link></li>
-                    <li class="breadcrumb-item"><g:link controller="roleGroup">
-                        <g:message code="roleGroups.label" default="RoleGroups" />
+                    <li class="breadcrumb-item"><g:link controller="menu">
+                        <g:message code="menus.label" default="Menus" />
                     </g:link></li>
                     <li class="breadcrumb-item active"><g:message
-                            code="roleGroup.label" default="RoleGroup" /></li>
+                            code="menu.label" default="Menu" /></li>
                 </ol>
             </section>
             <!-- 内容头部 /-->
@@ -56,7 +56,7 @@
                             <div class="tab-pane active" id="tab-form">
                                 <div class="row data-type">
                                     <!--两列展示-->
-                                    <f:display bean="roleGroup" except="id" />
+                                    <f:display bean="menu" except="id" />
                                 </div>
                             </div>
                             <!--数据展示区/-->
@@ -70,8 +70,8 @@
                         <div class="pull-left">
                             <div class="form-group form-inline">
                                 <div class="btn-group">
-                                    <g:form resource="${this.roleGroup}" method="DELETE">
-                                        <g:link class="btn bg-blue" action="edit" resource="${this.roleGroup}">
+                                    <g:form resource="${this.menu}" method="DELETE">
+                                        <g:link class="btn bg-blue" action="edit" resource="${this.menu}">
                                             <g:message code="default.button.edit.label" default="Edit" />
                                         </g:link>
                                         <input class="btn bg-maroon" type="submit"

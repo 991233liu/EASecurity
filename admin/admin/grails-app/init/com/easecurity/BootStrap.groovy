@@ -7,9 +7,11 @@ import com.easecurity.admin.core.b.User
 import com.easecurity.admin.core.r.Role
 import com.easecurity.admin.core.r.RoleGroup
 import com.easecurity.admin.core.r.RoleUser
+import com.easecurity.admin.core.re.Menu
 import com.easecurity.core.basis.b.OrgEnum
 import com.easecurity.core.basis.b.PostsEnum
 import com.easecurity.core.basis.b.UserEnum
+import com.easecurity.core.basis.re.MenuEnum
 
 class BootStrap {
 //	AnimalService animalService
@@ -40,6 +42,11 @@ class BootStrap {
                 posts2.save(failOnError: true)
                 Posts posts3 = new Posts(name: '员工', code: 'yuangong', ranking: 1, type: PostsEnum.Type.EMPLOYEE)
                 posts3.save(failOnError: true)
+
+                Menu menu=new Menu(name: '默认菜单', code: 'root', sortNumber: 0, status: MenuEnum.Status.ENABLED)
+                menu.save(failOnError: true)
+                Menu menu2=new Menu(name: 'admin系统菜单', code: 'adminRoot', sortNumber: 0, status: MenuEnum.Status.ENABLED)
+                menu2.save(failOnError: true)
             }
             UserAdmin.withTransaction {
                 UserAdmin userAdmin = new UserAdmin(account: 'admin')

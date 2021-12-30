@@ -7,7 +7,7 @@
         <title><g:message code="default.create.label" args="[entityName]" /></title>
     </head>
     <body>
-        <g:render template="/themes/menuAll" model="['openMenu':'RoleGroups', 'activeMenu':'List']"/>
+        <g:render template="/themes/menuAll" model="['openMenu':'RoleGroups', 'activeMenu':'RoleGroupList']"/>
 
         <!-- 内容区域 -->
         <!-- Content Wrapper. Contains page content -->

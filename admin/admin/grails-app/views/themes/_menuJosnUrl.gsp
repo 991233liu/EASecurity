@@ -1,3 +1,3 @@
 <script>
-    menuObj.loadMenuUrl("http://localhost:8080/admin/menu/json");
+    menuObj.loadMenuUrl("/admin/login/allMenu",'${activeMenu}');
 </script>
