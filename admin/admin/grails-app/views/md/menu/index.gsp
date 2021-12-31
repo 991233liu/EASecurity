@@ -63,17 +63,17 @@
                                         <div class="table-box">
                                             <div class="col-sm-11 pull-left">
                                                 <div class="form-group col-sm-6">
-                                                    <label class="col-sm-3"><div class="pull-right">
+                                                    <label class="col-sm-3 control-label"><div class="pull-right">
                                                         <g:message code="com.easecurity.admin.core.re.Menu.name" default="Name" /></div></label>
                                                     <div class="col-sm-9 left"><div class="col-lg-pull-12">
                                                         <g:field type="search" name="search.name" value="${params.search?.name}" class="form-control"/>
                                                     </div></div>
                                                 </div>
                                                 <div class="form-group col-sm-6">
-                                                    <label class="col-sm-3"><div class="pull-right">
-                                                        <g:message code="com.easecurity.admin.core.re.Menu.code" default="code" /></div></label>
+                                                    <label class="col-sm-3 control-label"><div class="pull-right">
+                                                        <g:message code="com.easecurity.admin.core.re.Menu.code" default="Code" /></div></label>
                                                     <div class="col-sm-9 left"><div class="col-lg-pull-12">
-                                                        <g:field type="search" name="search.code" value="${params.search?.Code}" class="form-control"/>
+                                                        <g:field type="search" name="search.code" value="${params.search?.code}" class="form-control"/>
                                                     </div></div>
                                                 </div>
                                             </div>

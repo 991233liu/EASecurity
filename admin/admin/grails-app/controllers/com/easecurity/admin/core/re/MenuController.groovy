@@ -1,5 +1,6 @@
 package com.easecurity.admin.core.re
 
+
 import com.easecurity.admin.utils.ServletUtils
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
@@ -20,21 +21,25 @@ class MenuController {
         if (params.search) {
             searchParams = ServletUtils.getSearchParams(params.search, Menu)
         }
+        String where = searchParams.remove('where')
         if (searchParams) {
-            respond Menu.findAllWhere(searchParams), view: "${VIEW_PATH}index", model:[menuCount: menuService.count()]
+            String orderBy = params.sort ? " order by ${params.sort} ${params.order}" : ""
+            int menuCount = Menu.executeQuery("select count(id) from Menu where" + where, searchParams)[0]
+            List menuList = Menu.findAll("from Menu where" + where + orderBy, searchParams, params)
+            respond menuList, view: "${VIEW_PATH}index", model: [menuCount: menuCount]
         } else {
-            respond menuService.list(params), view:"${VIEW_PATH}index", model:[menuCount: menuService.count()]
+            respond menuService.list(params), view: "${VIEW_PATH}index", model:[menuCount: menuService.count()]
         }
     }
 
 //    @Secured(["ROLE_USER"])
     def show(Long id) {
-        respond menuService.get(id), view:"${VIEW_PATH}show"
+        respond menuService.get(id), view: "${VIEW_PATH}show"
     }
 
 //    @Secured(["ROLE_USER"])
     def create() {
-        respond new Menu(params), view:"${VIEW_PATH}create"
+        respond new Menu(params), view: "${VIEW_PATH}create"
     }
 
 //    @Secured(["ROLE_USER"])
@@ -48,7 +53,7 @@ class MenuController {
         try {
             menuService.save(menu)
         } catch (ValidationException e) {
-            respond menu.errors, view:"${VIEW_PATH}create"
+            respond menu.errors, view: "${VIEW_PATH}create"
             return
         }
 
@@ -64,7 +69,7 @@ class MenuController {
 //    @Secured(["ROLE_USER"])
     @Transactional
     def edit(Long id) {
-        respond menuService.get(id), view:"${VIEW_PATH}edit"
+        respond menuService.get(id), view: "${VIEW_PATH}edit"
     }
 
 //    @Secured(["ROLE_USER"])
@@ -78,7 +83,7 @@ class MenuController {
         try {
             menuService.save(menu)
         } catch (ValidationException e) {
-            respond menu.errors, view:"${VIEW_PATH}edit"
+            respond menu.errors, view: "${VIEW_PATH}edit"
             return
         }
 
@@ -101,8 +106,8 @@ class MenuController {
         }
 
         String[] ids = [id]
-        if (id.indexOf(",")) ids = id.split(",")
-        else if (id.indexOf(";")) ids = id.split(";")
+        if ( id. indexOf ( "," ) ) ids = id.split ( "," )
+        else if ( id.indexOf ( ";" ) ) ids = id.split ( ";" )
 
         ids.each { it ->
             menuService.delete(Long.valueOf(it))
@@ -111,7 +116,7 @@ class MenuController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'menu.label', default: 'Menu'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
             '*'{ render status: NO_CONTENT }
         }

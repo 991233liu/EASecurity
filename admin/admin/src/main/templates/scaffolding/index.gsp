@@ -54,7 +54,7 @@
                     <div class="box-body">
                         <div class="box-group" id="accordion">
                             <!-- 搜索条件面板 -->
-                            <g:form name="search" controller="menu" action="index" method="PUT">
+                            <g:form name="search" controller="${propertyName}" action="index" method="PUT">
                                 <div class="">
     %{--                                <div class="box-header with-border">--}%
     %{--                                    <h3 class="box-title">列表</h3>--}%
@@ -63,14 +63,14 @@
                                         <div class="table-box">
                                             <div class="col-sm-11 pull-left">
                                                 <div class="form-group col-sm-6">
-                                                    <label class="col-sm-3"><div class="pull-right">
+                                                    <label class="col-sm-3 control-label"><div class="pull-right">
                                                         <g:message code="${packageName}.${className}.name" default="Name" /></div></label>
                                                     <div class="col-sm-9 left"><div class="col-lg-pull-12">
                                                         <g:field type="search" name="search.name" value="\${params.search?.name}" class="form-control"/>
                                                     </div></div>
                                                 </div>
                                                 <div class="form-group col-sm-6">
-                                                    <label class="col-sm-3"><div class="pull-right">
+                                                    <label class="col-sm-3 control-label"><div class="pull-right">
                                                         <g:message code="${packageName}.${className}.code" default="Code" /></div></label>
                                                     <div class="col-sm-9 left"><div class="col-lg-pull-12">
                                                         <g:field type="search" name="search.code" value="\${params.search?.code}" class="form-control"/>

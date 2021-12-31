@@ -1,5 +1,6 @@
 <%=packageName ? "package ${packageName}" : ''%>
 
+
 import com.easecurity.admin.utils.ServletUtils
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
@@ -18,23 +19,27 @@ class ${className}Controller {
         params.max = Math.min(max ?: 10, 100)
         Map searchParams = [:]
         if (params.search) {
-            searchParams = ServletUtils.getSearchParams(params.search, Menu)
+            searchParams = ServletUtils.getSearchParams(params.search, ${className})
         }
+        String where = searchParams.remove('where')
         if (searchParams) {
-            respond ${className}.findAllWhere(searchParams), view: "\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
+            String orderBy = params.sort ? " order by \${params.sort} \${params.order}" : ""
+            int ${propertyName}Count = ${className}.executeQuery("select count(id) from ${className} where" + where, searchParams)[0]
+            List ${propertyName}List = ${className}.findAll("from ${className} where" + where + orderBy, searchParams, params)
+            respond ${propertyName}List, view: "\${VIEW_PATH}index", model: [${propertyName}Count: ${propertyName}Count]
         } else {
-            respond ${propertyName}Service.list(params), view:"\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
+            respond ${propertyName}Service.list(params), view: "\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
         }
     }
 
 //    @Secured(["ROLE_USER"])
     def show(Long id) {
-        respond ${propertyName}Service.get(id), view:"\${VIEW_PATH}show"
+        respond ${propertyName}Service.get(id), view: "\${VIEW_PATH}show"
     }
 
 //    @Secured(["ROLE_USER"])
     def create() {
-        respond new ${className}(params), view:"\${VIEW_PATH}create"
+        respond new ${className}(params), view: "\${VIEW_PATH}create"
     }
 
 //    @Secured(["ROLE_USER"])
@@ -48,7 +53,7 @@ class ${className}Controller {
         try {
             ${propertyName}Service.save(${propertyName})
         } catch (ValidationException e) {
-            respond ${propertyName}.errors, view:"\${VIEW_PATH}create"
+            respond ${propertyName}.errors, view: "\${VIEW_PATH}create"
             return
         }
 
@@ -64,7 +69,7 @@ class ${className}Controller {
 //    @Secured(["ROLE_USER"])
     @Transactional
     def edit(Long id) {
-        respond ${propertyName}Service.get(id), view:"\${VIEW_PATH}edit"
+        respond ${propertyName}Service.get(id), view: "\${VIEW_PATH}edit"
     }
 
 //    @Secured(["ROLE_USER"])
@@ -78,7 +83,7 @@ class ${className}Controller {
         try {
             ${propertyName}Service.save(${propertyName})
         } catch (ValidationException e) {
-            respond ${propertyName}.errors, view:"\${VIEW_PATH}edit"
+            respond ${propertyName}.errors, view: "\${VIEW_PATH}edit"
             return
         }
 
@@ -101,8 +106,8 @@ class ${className}Controller {
         }
 
         String[] ids = [id]
-        if (id.indexOf(",")) ids = id.split(",")
-        else if (id.indexOf(";")) ids = id.split(";")
+        if ( id. indexOf ( "," ) ) ids = id.split ( "," )
+        else if ( id.indexOf ( ";" ) ) ids = id.split ( ";" )
 
         ids.each { it ->
             ${propertyName}Service.delete(Long.valueOf(it))
@@ -111,7 +116,7 @@ class ${className}Controller {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: '${propertyName}.label', default: '${className}'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
             '*'{ render status: NO_CONTENT }
         }

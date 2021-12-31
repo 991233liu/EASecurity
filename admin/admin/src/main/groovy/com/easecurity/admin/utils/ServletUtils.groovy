@@ -113,19 +113,25 @@ class ServletUtils {
     static Map getSearchParams(Map<String, String> params, Class calzz) {
         if (params) {
             Map searchParams = [:]
+            String where = ''
             params.each { String k, String v ->
                 if (v != null && !''.equals(v)) {
                     if (calzz.getField(k).type == Integer) {
                         searchParams[k] = Integer.valueOf(v)
+                        where += ' and ' + k + ' = :' + k
                     } else if (calzz.getField(k).type == Boolean) {
                         searchParams[k] = Boolean.valueOf(v)
+                        where += ' and ' + k + ' = :' + k
                     } else if (calzz.getField(k).type.isEnum()) {
                         searchParams[k] = calzz.getField(k).type.getMethod('getEnumByCode', String).invoke(null, v)
+                        where += ' and ' + k + ' = :' + k
                     } else {
-                        searchParams[k] = v
+                        searchParams[k] = '%' + v + '%'
+                        where += ' and ' + k + ' like :' + k
                     }
                 }
             }
+            searchParams.where = where.replaceFirst('and', '')
             return searchParams
         } else {
             return [:]
