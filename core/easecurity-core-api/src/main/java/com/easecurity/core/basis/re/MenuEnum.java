@@ -37,7 +37,7 @@ public class MenuEnum {
             return null;
         }
 
-        public static Status getStatus(String code) {
+        public static Status getEnumByCode(String code) {
             for (Status ms : Status.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
@@ -110,7 +110,7 @@ public class MenuEnum {
             return null;
         }
 
-        public static DisplayStatus getDisplayStatus(String code) {
+        public static DisplayStatus getEnumByCode(String code) {
             for (DisplayStatus ms : DisplayStatus.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
@@ -182,7 +182,7 @@ public class MenuEnum {
             return null;
         }
 
-        public static AccessType getAccessType(String code) {
+        public static AccessType getEnumByCode(String code) {
             for (AccessType ms : AccessType.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
@@ -258,7 +258,7 @@ public class MenuEnum {
             return null;
         }
 
-        public static Level getLevel(String code) {
+        public static Level getEnumByCode(String code) {
             for (Level ms : Level.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;

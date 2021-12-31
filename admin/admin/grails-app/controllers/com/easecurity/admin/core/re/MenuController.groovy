@@ -1,6 +1,6 @@
 package com.easecurity.admin.core.re
 
-
+import com.easecurity.admin.utils.ServletUtils
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
@@ -16,7 +16,15 @@ class MenuController {
 //    @Secured(["ROLE_USER"])
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond menuService.list(params), view:"${VIEW_PATH}index", model:[menuCount: menuService.count()]
+        Map searchParams = [:]
+        if (params.search) {
+            searchParams = ServletUtils.getSearchParams(params.search, Menu)
+        }
+        if (searchParams) {
+            respond Menu.findAllWhere(searchParams), view: "${VIEW_PATH}index", model:[menuCount: menuService.count()]
+        } else {
+            respond menuService.list(params), view:"${VIEW_PATH}index", model:[menuCount: menuService.count()]
+        }
     }
 
 //    @Secured(["ROLE_USER"])

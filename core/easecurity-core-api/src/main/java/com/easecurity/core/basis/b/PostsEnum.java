@@ -37,7 +37,7 @@ public class PostsEnum {
             return null;
         }
 
-        public static Type getType(String code) {
+        public static Type getEnumByCode(String code) {
             for (Type ms : Type.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;

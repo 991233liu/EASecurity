@@ -23,6 +23,27 @@ var $g = {
                 it.checked = false;
             });
         }
+    },
+    /**
+     * @public
+     * list页面带搜索条件的请求提交（适用于超链接<a></a>）
+     */
+    searchListByLnk: function (obj) {
+        alert(obj.href)
+        alert($(obj).attr('action'))
+        var s = $('#search')
+        s.attr('action', $(obj).attr('href'))
+        s.submit()
+        return false;
+        // if (obj.checked == true) {
+        //     $.each($('input:checkbox[name=' + obj.id.replace('_all', '') + ']').get(), function (index, it) {
+        //         it.checked = true;
+        //     });
+        // } else {
+        //     $.each($('input:checkbox[name=' + obj.id.replace('_all', '') + ']').get(), function (index, it) {
+        //         it.checked = false;
+        //     });
+        // }
     }
 }
 

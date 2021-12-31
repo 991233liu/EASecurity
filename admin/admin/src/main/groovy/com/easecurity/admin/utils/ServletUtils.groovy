@@ -15,7 +15,7 @@ class ServletUtils {
      */
     static def getCurrentUser() {
         HttpServletRequest request = ServletUtils.getRequest()
-        if ( request == null ) return null
+        if (request == null) return null
         UserDetails principal = BeanUtils.getBean('springSecurityService').getPrincipal()
 //        User user = (User) request.getAttribute("user")
 //        if ( user != null ) return user
@@ -102,5 +102,38 @@ class ServletUtils {
         } catch (Exception e) {
             return null
         }
+    }
+
+    /**
+     * 获得当前请求用户的session<p>
+     *
+     * @return session，如果没有请求，则返回null，如从后台直接调用时
+     */
+    @CompileStatic
+    static Map getSearchParams(Map<String, String> params, Class calzz) {
+        if (params) {
+            Map searchParams = [:]
+            params.each { String k, String v ->
+                if (v != null && !''.equals(v)) {
+                    if (calzz.getField(k).type == Integer) {
+                        searchParams[k] = Integer.valueOf(v)
+                    } else if (calzz.getField(k).type == Boolean) {
+                        searchParams[k] = Boolean.valueOf(v)
+                    } else if (calzz.getField(k).type.isEnum()) {
+                        searchParams[k] = calzz.getField(k).type.getMethod('getEnumByCode', String).invoke(null, v)
+                    } else {
+                        searchParams[k] = v
+                    }
+                }
+            }
+            return searchParams
+        } else {
+            return [:]
+        }
+//        try {
+//            return getRequest()?.getSession(false)
+//        } catch (Exception e) {
+//            return null
+//        }
     }
 }

@@ -5,7 +5,7 @@
 				<input id="ids_all" type="checkbox" class="icheckbox_square-blue" onclick="$g.selectAll(this)">
 			</th>
 			<g:each in="${domainProperties}" var="p" status="i">
-				<g:sortableColumn property="${p.property}" titleKey="${domainClass.name}.${p.name}" title="${p.label}" />
+				<s:sortableColumn property="${p.property}" titleKey="${domainClass.name}.${p.name}" title="${p.label}" mapping='["onclick":"return \$g.searchListByLnk(this)"]'/>
 			</g:each>
 			<th class="text-center">操作</th>
 		</tr>

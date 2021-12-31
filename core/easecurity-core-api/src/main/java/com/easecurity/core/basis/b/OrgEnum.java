@@ -41,7 +41,7 @@ public class OrgEnum {
             return null;
         }
 
-        public static Type getType(String code) {
+        public static Type getEnumByCode(String code) {
             for (Type ms : Type.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
@@ -115,7 +115,7 @@ public class OrgEnum {
             return null;
         }
 
-        public static Status getStatus(String code) {
+        public static Status getEnumByCode(String code) {
             for (Status ms : Status.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;

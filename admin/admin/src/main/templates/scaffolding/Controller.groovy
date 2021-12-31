@@ -1,6 +1,6 @@
 <%=packageName ? "package ${packageName}" : ''%>
 
-
+import com.easecurity.admin.utils.ServletUtils
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
@@ -16,7 +16,15 @@ class ${className}Controller {
 //    @Secured(["ROLE_USER"])
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond ${propertyName}Service.list(params), view:"\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
+        Map searchParams = [:]
+        if (params.search) {
+            searchParams = ServletUtils.getSearchParams(params.search, Menu)
+        }
+        if (searchParams) {
+            respond ${className}.findAllWhere(searchParams), view: "\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
+        } else {
+            respond ${propertyName}Service.list(params), view:"\${VIEW_PATH}index", model:[${propertyName}Count: ${propertyName}Service.count()]
+        }
     }
 
 //    @Secured(["ROLE_USER"])

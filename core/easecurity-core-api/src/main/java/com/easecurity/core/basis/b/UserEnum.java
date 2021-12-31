@@ -112,7 +112,7 @@ public class UserEnum {
             return null;
         }
 
-        public static PdStatus getPdStatus(String code) {
+        public static PdStatus getEnumByCode(String code) {
             for (PdStatus ms : PdStatus.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
