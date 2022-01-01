@@ -7,7 +7,7 @@
                 <div class="user-panel">
                     <div class="pull-left image">
                         <sec:ifLoggedIn>
-                            <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser()?.icon?:'img/user2-160x160.jpg'}" class="img-circle" alt="User Image" />
+                            <asset:image src="userimg/${com.easecurity.admin.utils.ServletUtils.getCurrentUser()?.icon?:'user2-160x160.jpg'}" class="img-circle" alt="User Image" />
                         </sec:ifLoggedIn> <sec:ifNotLoggedIn>
                             <asset:image src="img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image" />
                         </sec:ifNotLoggedIn>

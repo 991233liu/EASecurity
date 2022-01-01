@@ -322,7 +322,7 @@
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 			<sec:ifLoggedIn>
-                <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'img/user2-160x160.jpg'}" class="user-image img-circle elevation-2" alt="User Image" />
+                <asset:image src="userimg/${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'user2-160x160.jpg'}" class="user-image img-circle elevation-2" alt="User Image" />
 				<span class="hidden-xs">${com.easecurity.admin.utils.ServletUtils.getCurrentUser().fullName?:com.easecurity.admin.utils.ServletUtils.getCurrentUser().username}</span>
 			</sec:ifLoggedIn> <sec:ifNotLoggedIn>
                 <asset:image src="img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image" />
@@ -334,7 +334,7 @@
                                 <!-- User image -->
 				<li class="user-header bg-primary">
                     <sec:ifLoggedIn>
-                        <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'img/user2-160x160.jpg'}" class="img-circle elevation-2" alt="User Image" />
+                        <asset:image src="userimg/${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'user2-160x160.jpg'}" class="img-circle elevation-2" alt="User Image" />
                     </sec:ifLoggedIn><sec:ifNotLoggedIn>
                         <asset:image src="img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
                     </sec:ifNotLoggedIn>
@@ -385,21 +385,6 @@
                 locale: 'zh-CN'
             });
         });
-
-        // // 设置激活菜单
-        // function setSidebarActive(tagUri) {
-        //     var liObj = $("#" + tagUri);
-        //     if (liObj.length > 0) {
-        //         liObj.parent().parent().addClass("active");
-        //         liObj.addClass("active");
-        //     }
-        // }
-        //
-        //
-        // $(document).ready(function() {
-        //     // 激活导航位置
-        //     setSidebarActive("admin-index");
-        // });
     </script>
 </body>
 
