@@ -43,22 +43,17 @@
             <!-- 正文区域 -->
             <section class="content">
 
-                <!-- .box-body -->
-                <div class="box box-primary">
-%{--                    <div class="box-header fa-border">--}%
-%{--                        <div class="table-box">--}%
-%{--                            <h3 class="box-title">列表</h3>--}%
-%{--                        </div>--}%
-%{--                    </div>--}%
-
-                    <div class="box-body">
                         <div class="box-group" id="accordion">
                             <!-- 搜索条件面板 -->
-                            <g:form name="search" controller="roleGroup" action="index" method="PUT">
-                                <div class="">
-    %{--                                <div class="box-header with-border">--}%
-    %{--                                    <h3 class="box-title">列表</h3>--}%
-    %{--                                </div>--}%
+                            <g:form name="search" controller="roleGroup" action="index" method="PUT" class="form-horizontal">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><g:message code="default.label.query.criteria" default="Query Criteria" /></h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
                                     <div class="box-body">
                                         <div class="table-box">
                                             <div class="col-sm-11 pull-left">
@@ -79,9 +74,7 @@
                                             </div>
                                             <div class="pull-right">
                                                 <div class="has-feedback">
-                                                    <input class="btn btn-default" type="submit" value="&nbsp;&nbsp;"/>
-%{--                                                    <input type="text" class="form-control input-sm" placeholder="搜索">--}%
-                                                    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                                                    <a class="btn btn-default" onclick="return $g.searchListByLnk(this)"><span class="glyphicon glyphicon-search has-feedback"></span></a>
                                                 </div>
                                             </div>
 
@@ -93,65 +86,55 @@
 
                             <!-- 查询结果面板 -->
                             <div class="box">
-    %{--                            <div class="box-header with-border">--}%
-    %{--                                <h3 class="box-title">列表</h3>--}%
-    %{--                            </div>--}%
+                                <div class="box-header">
+                                    <div class="pull-left"><h3 class="box-title"><g:message code="default.label.query.results" default="Query Results" /></h3></div>
+                                    <!-- 工具栏 -->
+                                    <div class="box-tools pull-right">
+                                        <div class="form-group form-inline">
+                                            <div class="btn-group">
+                                                <g:form name="roleGroupDelete" controller="roleGroup" action="delete" method="DELETE">
+
+                                                    <g:link class="btn btn-default" action="create">
+                                                        <g:message code="default.button.create.label" default="Create" />
+                                                    </g:link>
+                                                    <input class="btn btn-danger" type="submit"
+                                                           value="${message(code: 'default.button.delete.label', default: 'Delete')}"
+                                                           onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}')?deleteAll(this):false" />
+                                                    <g:link class="btn btn-default" controller="roleGroup">
+                                                        <g:message code="default.button.reload.label" default="Reload" />
+                                                    </g:link>
+                                                </g:form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 工具栏 /-->
+                                </div>
                                 <div class="box-body">
                                     <!-- 数据表格 -->
                                     <div class="table-box">
-                                        <!--工具栏-->
-                                        <div class="pull-left">
-                                            <div class="form-group form-inline">
-                                                <div class="btn-group">
-                                                    <g:form name="roleGroupDelete" controller="roleGroup" action="delete" method="DELETE">
-
-                                                        <g:link class="btn btn-default" action="create">
-                                                            <g:message code="default.button.create.label" default="Create" />
-                                                        </g:link>
-                                                        <input class="btn btn-danger" type="submit"
-                                                               value="${message(code: 'default.button.delete.label', default: 'Delete')}"
-                                                               onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}')?deleteAll(this):false" />
-                                                        <g:link class="btn btn-default" controller="roleGroup">
-                                                            <g:message code="default.button.reload.label" default="Reload" />
-                                                        </g:link>
-                                                    </g:form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="box-tools pull-right">
-                                            <div class="has-feedback">
-%{--                                                <input type="text" class="form-control input-sm" placeholder="搜索">--}%
-%{--                                                <span class="glyphicon glyphicon-search form-control-feedback"></span>--}%
-                                            </div>
-                                        </div>
-                                        <!--工具栏/-->
-
                                         <!--数据列表-->
                                         <f:table collection="${roleGroupList}" except="id" />
                                         <!--数据列表/-->
                                     </div>
                                     <!-- 数据表格 /-->
                                 </div>
+
+                                <!-- .box-footer-->
+                                <div class="box-footer">
+                                    <div class="pull-left">
+                                    </div>
+
+                                    <div class="box-tools pull-right">
+                                        <ul class="pagination">
+                                            <s:paginate total="${roleGroupCount ?: 0}" mapping='["onclick":"return \$g.searchListByLnk(this)"]'/>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <!-- /.box-footer-->
                             </div>
                             <!-- 查询结果面板 /-->
                         </div>
-                    </div>
-                    <!-- /.box-body -->
-
-                    <!-- .box-footer-->
-                    <div class="box-footer">
-                        <div class="pull-left">
-                        </div>
-
-                        <div class="box-tools pull-right">
-                            <ul class="pagination">
-                                <alte:paginate total="${roleGroupCount ?: 0}" />
-                            </ul>
-                        </div>
-
-                    </div>
-                    <!-- /.box-footer-->
-                </div>
 
             </section>
             <!-- 正文区域 /-->

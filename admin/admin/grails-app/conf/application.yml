@@ -158,7 +158,7 @@ environments:
 
 ---
 #开发gsp模板时，可以打开，取消缓存
-#grails:
-#    plugin:
-#        fields:
-#            disableLookupCache: true
+grails:
+    plugin:
+        fields:
+            disableLookupCache: true
