@@ -40,7 +40,6 @@ class CustomUserDetailsService implements GrailsUserDetailsService {
 //        if ( log.isDebugEnabled() ) log.debug("syncUser message:uid=" + uid + ",username=" + username + ",mail=" + mail)
         return new CustomUserDetails(user.account, user.password, user.user.acStatus == UserEnum.AcStatus.ENABLED,
                 !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED,
-                authorities ?: NO_ROLES, user.id,
-                "fullname")
+                authorities ?: NO_ROLES, user.id, user.user.userinfo?.name, user.user.userinfo?.icon, user.user.lastLoginTtime, user.user.pdErrorTimes)
     }
 }

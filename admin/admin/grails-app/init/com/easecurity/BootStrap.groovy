@@ -4,6 +4,7 @@ import com.easecurity.admin.auth.UserAdmin
 import com.easecurity.admin.core.b.Org
 import com.easecurity.admin.core.b.Posts
 import com.easecurity.admin.core.b.User
+import com.easecurity.admin.core.b.UserInfo
 import com.easecurity.admin.core.r.Role
 import com.easecurity.admin.core.r.RoleGroup
 import com.easecurity.admin.core.r.RoleUser
@@ -11,6 +12,7 @@ import com.easecurity.admin.core.re.Menu
 import com.easecurity.core.basis.b.OrgEnum
 import com.easecurity.core.basis.b.PostsEnum
 import com.easecurity.core.basis.b.UserEnum
+import com.easecurity.core.basis.b.UserInfoEnum
 import com.easecurity.core.basis.re.MenuEnum
 
 class BootStrap {
@@ -24,6 +26,7 @@ class BootStrap {
 
     def init = { servletContext ->
         if (User.count() == 0) {  // 系统全新安装时，初始化系统基础数据
+            User user
             User.withTransaction {
                 RoleGroup roleGroup = new RoleGroup(name: '系统管理员', code: 'admin')
                 roleGroup.save(failOnError: true)
@@ -32,7 +35,7 @@ class BootStrap {
                 Role role = new Role(org: org, roleGroup: roleGroup)
                 role.save(failOnError: true)
                 // TODO 账号identities空
-                User user = new User(account: 'admin', pd: '1', acStatus: UserEnum.AcStatus.ENABLED, pdStatus: UserEnum.PdStatus.ENABLED)
+                user = new User(account: 'admin', pd: '1', acStatus: UserEnum.AcStatus.ENABLED, pdStatus: UserEnum.PdStatus.ENABLED)
                 user.save(failOnError: true)
                 RoleUser roleUser = new RoleUser(role: role, user: user)
                 roleUser.save(failOnError: true)
@@ -43,14 +46,16 @@ class BootStrap {
                 Posts posts3 = new Posts(name: '员工', code: 'yuangong', ranking: 1, type: PostsEnum.Type.EMPLOYEE)
                 posts3.save(failOnError: true)
 
-                Menu menu=new Menu(name: '默认菜单', code: 'root', sortNumber: 0, status: MenuEnum.Status.ENABLED)
+                Menu menu = new Menu(name: '默认菜单', code: 'root', sortNumber: 0, status: MenuEnum.Status.ENABLED)
                 menu.save(failOnError: true)
-                Menu menu2=new Menu(name: 'admin系统菜单', code: 'adminRoot', sortNumber: 0, status: MenuEnum.Status.ENABLED)
+                Menu menu2 = new Menu(name: 'admin系统菜单', code: 'adminRoot', sortNumber: 0, status: MenuEnum.Status.ENABLED)
                 menu2.save(failOnError: true)
             }
             UserAdmin.withTransaction {
                 UserAdmin userAdmin = new UserAdmin(account: 'admin')
                 userAdmin.save(failOnError: true)
+                UserInfo userInfo = new UserInfo(user: user, userId: user.id, account: user.account, name: '系统管理员', icon: 'admin.png', status: UserInfoEnum.Status.ENABLED)
+                userInfo.save(failOnError: true)
             }
         }
 //        UserAdmin user = new UserAdmin(user: 'admin', password: 'admin')

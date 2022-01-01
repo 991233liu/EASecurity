@@ -1,3 +1,4 @@
+<%@ page import="com.easecurity.admin.utils.ServletUtils" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -320,10 +321,11 @@
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-			    <asset:image src="img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image" />
 			<sec:ifLoggedIn>
-				<span class="hidden-xs"><sec:username /></span>
+                <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'img/user2-160x160.jpg'}" class="user-image img-circle elevation-2" alt="User Image" />
+				<span class="hidden-xs">${com.easecurity.admin.utils.ServletUtils.getCurrentUser().fullName?:com.easecurity.admin.utils.ServletUtils.getCurrentUser().username}</span>
 			</sec:ifLoggedIn> <sec:ifNotLoggedIn>
+                <asset:image src="img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image" />
 				<span class="hidden-xs"><g:message
 						code="default.user.guest" default="Guest" /> </span>
 			</sec:ifNotLoggedIn>
@@ -331,21 +333,24 @@
                             <ul class="dropdown-menu">
                                 <!-- User image -->
 				<li class="user-header bg-primary">
-				    <asset:image src="img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
+                    <sec:ifLoggedIn>
+                        <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser().icon?:'img/user2-160x160.jpg'}" class="img-circle elevation-2" alt="User Image" />
+                    </sec:ifLoggedIn><sec:ifNotLoggedIn>
+                        <asset:image src="img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
+                    </sec:ifNotLoggedIn>
 					<p>
 						<sec:ifLoggedIn>
-							<sec:username />
-%{--							张猿猿 - 数据管理员--}%
+                            ${com.easecurity.admin.utils.ServletUtils.getCurrentUser().fullName?:com.easecurity.admin.utils.ServletUtils.getCurrentUser().username}
+                            <small>最后登录 ${com.easecurity.admin.utils.ServletUtils.getCurrentUser().lastLoginTime?:''}</small>
 						</sec:ifLoggedIn>
 						<sec:ifNotLoggedIn>
 							<g:message code="default.user.guest" default="Guest" />
 						</sec:ifNotLoggedIn>
-						<small>最后登录 11:20AM</small>
 					</p></li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
 				    <g:link class="btn btn-default btn-flat" controller="logout">
-					<g:message code="logout.signout.label" default="注销" />
+					    <g:message code="logout.signout.label" default="注销" />
 				    </g:link>
                                 </li>
                             </ul>

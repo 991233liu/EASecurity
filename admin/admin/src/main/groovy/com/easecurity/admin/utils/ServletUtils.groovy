@@ -38,11 +38,11 @@ class ServletUtils {
 //        if ( request ) request.setAttribute("user", user)
     }
 
-    /**
-     * 获得当前登录的用户员工身份
-     */
-    static def getCurrentStaff() {
-        def staff = getSession().getAttribute("CurrentStaff")
+//    /**
+//     * 获得当前登录的用户员工身份
+//     */
+//    static def getCurrentStaff() {
+//        def staff = getSession().getAttribute("CurrentStaff")
 //        return staff ? staff : Staff.findByUid(ServletUtils.currentUser?.username, [cache:true])
 //        HttpServletRequest request = ServletUtils.getRequest()
 //        if ( request == null ) return null
@@ -66,7 +66,7 @@ class ServletUtils {
 //        }
 //
 //        if ( request ) request.setAttribute("user", user)
-    }
+//    }
 
     /**
      * 获得当前请求的request对象<p>

@@ -2,6 +2,8 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import com.easecurity.core.basis.b.UserEnum.*;
 
 /**
@@ -38,6 +40,14 @@ public class User implements Serializable {
      * 身份串
      */
     public String identities;
+    /**
+     * 最后登录时间
+     */
+    public Date lastLoginTtime;
+    /**
+     * 密码错误次数
+     */
+    public Integer pdErrorTimes = 0;
 
     public String getId() { return id; }
 
@@ -73,5 +83,21 @@ public class User implements Serializable {
 
     public void setIdentities(String identities) {
         this.identities = identities;
+    }
+
+    public Date getLastLoginTtime() {
+        return lastLoginTtime;
+    }
+
+    public void setLastLoginTtime(Date lastLoginTtime) {
+        this.lastLoginTtime = lastLoginTtime;
+    }
+
+    public Integer getPdErrorTimes() {
+        return pdErrorTimes;
+    }
+
+    public void setPdErrorTimes(Integer pdErrorTimes) {
+        this.pdErrorTimes = pdErrorTimes;
     }
 }

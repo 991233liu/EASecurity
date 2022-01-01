@@ -14,16 +14,22 @@ class UserInfo extends com.easecurity.core.basis.b.UserInfo {
         userId length: 40, nullable: false, blank: false, unique: true
         account nullable: false, blank: false, unique: true
         name length: 50, nullable: true
-        status length: 2, nullable: true
+        status nullable: true
+        icon nullable: true
     }
 
     static mapping = {
         table 'b_user_info'
         id generator: 'uuid'
+        status enumType: "ordinal"
         userId insertable: false
         userId updateable: false
         version false
     }
+
+//    def beforeValidate() {
+//        account = user.account
+//    }
 
     def beforeInsert() {
         account = user.account

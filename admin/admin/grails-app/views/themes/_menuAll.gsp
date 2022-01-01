@@ -6,14 +6,21 @@
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-			<asset:image src="img/user2-160x160.jpg" class="img-circle" alt="User Image" />
+                        <sec:ifLoggedIn>
+                            <asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser()?.icon?:'img/user2-160x160.jpg'}" class="img-circle" alt="User Image" />
+                        </sec:ifLoggedIn> <sec:ifNotLoggedIn>
+                            <asset:image src="img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image" />
+                        </sec:ifNotLoggedIn>
+%{--			<asset:image src="${com.easecurity.admin.utils.ServletUtils.getCurrentUser()?.icon?:'img/user2-160x160.jpg'}" class="img-circle" alt="User Image" />--}%
                     </div>
                     <div class="pull-left info">
                         <p>
-			<sec:ifLoggedIn>
-				<sec:username />
-			</sec:ifLoggedIn>
-			</p>
+                            <sec:ifLoggedIn>
+                                ${com.easecurity.admin.utils.ServletUtils.getCurrentUser().fullName?:com.easecurity.admin.utils.ServletUtils.getCurrentUser().username}
+                            </sec:ifLoggedIn> <sec:ifNotLoggedIn>
+                                <g:message code="default.user.guest" default="Guest" />
+                            </sec:ifNotLoggedIn>
+			            </p>
                         <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
                     </div>
                 </div>

@@ -19,6 +19,8 @@ class User extends com.easecurity.core.basis.b.User {
         pdStatus nullable: true
         identities length: 4000, nullable: true
         userinfo nullable: true
+        lastLoginTtime nullable: true
+        pdErrorTimes nullable: true
     }
 
     static mapping = {

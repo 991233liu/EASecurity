@@ -1,7 +1,11 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
+/**
+ * Copyright © 2021-2050 刘路峰版权所有。
+ */
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+
+import com.easecurity.core.basis.b.UserInfoEnum.*;
 
 /**
  * b_user_info表：用户信息
@@ -27,46 +31,57 @@ public class UserInfo implements Serializable {
     /**
      * 用户状态
      */
-    public String status;
+    public Status status = Status.ENABLED;
+    /**
+     * 用户图标
+     */
+    public String icon;
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getUserId() {
-	return userId;
+        return userId;
     }
 
     public void setUserId(String userId) {
-	this.userId = userId;
+        this.userId = userId;
     }
 
     public String getAccount() {
-	return account;
+        return account;
     }
 
     public void setAccount(String account) {
-	this.account = account;
+        this.account = account;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
-    public String getStatus() {
-	return status;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setStatus(String status) {
-	this.status = status;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 }

@@ -120,7 +120,8 @@ environments:
     development:
         dataSource:
             dbCreate: create-drop
-            url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
+#            url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
+            url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=UTF8
             username: easuser
             password: easuser
     test:
@@ -158,7 +159,7 @@ environments:
 
 ---
 #开发gsp模板时，可以打开，取消缓存
-grails:
-    plugin:
-        fields:
-            disableLookupCache: true
+#grails:
+#    plugin:
+#        fields:
+#            disableLookupCache: true

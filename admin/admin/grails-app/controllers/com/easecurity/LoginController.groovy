@@ -38,8 +38,6 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
         Map menuTree = getSession().getAttribute('allMenuTree')
         if (!menuTree) {
             Menu menu = Menu.findByCode('adminRoot')
-//        List<Menu> menuList = Menu.findAllByFullNameIlike('admin系统菜单%',[sort: 'sortNumber'])
-//        respond menuList, formats: ['json']
             menuTree = getMenuTree(menu)
             getSession().setAttribute('allMenuTree', menuTree)
         }
