@@ -35,6 +35,16 @@ public class UriService {
     private static volatile Map<String, UriDo> allUriDoMap = null;
     private static volatile long validTime = -1;
 
+    String sql = "INSERT INTO re_uri (uri, class_full_name, method_name, method_signature, eas_type, from_to, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql2 = "UPDATE re_uri set class_full_name=?, method_name=?, method_signature=?, eas_type=?, from_to=? where id=?";
+    String sql3 = "INSERT INTO au_uri_org (uriid, orgid, from_to, status) VALUES (?, ?, ?, ?)";
+    String sql4 = "UPDATE au_uri_org set from_to=? where id=?";
+    String sql5 = "SELECT id FROM re_uri where uri = ?";
+    String sql6 = "SELECT * FROM au_uri_org where uriid = ?";
+    String sql7 = "SELECT * FROM re_uri";
+    String sql8 = "SELECT id FROM re_uri where uri = ?";
+    String sql9 = "SELECT id FROM au_uri_org where uriid = ? and orgid = ?";
+
     /**
      * 从core初始化URI信息。
      */
@@ -45,12 +55,12 @@ public class UriService {
 	    allUriDoMap = (Map<String, UriDo>) redisUtil.get("uri:all");
 	} else {
 	    Map<String, UriDo> audoAllMap = new HashMap<String, UriDo>();
-	    List<Uri> all = jdbcTemplate.query("SELECT * FROM re_uri", new BeanPropertyRowMapper<>(Uri.class));
+	    List<Uri> all = jdbcTemplate.query(sql7, new BeanPropertyRowMapper<>(Uri.class));
 	    for (Uri uri : all) {
 		// TODO 属性没加载全
 		UriDo udo = new UriDo();
 		udo.uri = uri;
-		udo.uriOrg = jdbcTemplate.query("SELECT * FROM au_uri_org where uriid = ?", new BeanPropertyRowMapper<>(UriOrg.class), uri.id);
+		udo.uriOrg = jdbcTemplate.query(sql6, new BeanPropertyRowMapper<>(UriOrg.class), uri.id);
 		audoAllMap.put(uri.uri, udo);
 //		redisUtil.set("uri:" + uri.id, udo, URI_TIMEOUT);
 	    }
@@ -80,7 +90,7 @@ public class UriService {
      */
     // TODO 优化代码结构
     public void saveUriDo(UriDo lUriDo) {
-	List<String> ids = jdbcTemplate.queryForList("SELECT id FROM re_uri where uri = ?", String.class, lUriDo.uri.uri);
+	List<String> ids = jdbcTemplate.queryForList(sql5, String.class, lUriDo.uri.uri);
 	if (ids.size() > 0) { // 存在则更新，不更新状态
 	    jdbcTemplate.update(sql2, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo, ids.get(0));
 	} else { // 不存在则新建
@@ -93,10 +103,10 @@ public class UriService {
     }
 
     private void saveUriOrg(List<UriOrg> uriOrgs, String uri) {
-	List<String> ids = jdbcTemplate.queryForList("SELECT id FROM re_uri where uri = ?", String.class, uri);
+	List<String> ids = jdbcTemplate.queryForList(sql8, String.class, uri);
 	String uriId = ids.get(0);
 	uriOrgs.forEach(item -> {
-	    List<String> ids2 = jdbcTemplate.queryForList("SELECT id FROM au_uri_org where uriid = ? and orgid = ?", String.class, uriId, item.orgid);
+	    List<String> ids2 = jdbcTemplate.queryForList(sql9, String.class, uriId, item.orgid);
 	    if (ids2.size() > 0) { // 更新
 		jdbcTemplate.update(sql4, item.fromTo, ids2.get(0));
 	    } else {
@@ -104,9 +114,4 @@ public class UriService {
 	    }
 	});
     }
-
-    String sql = "INSERT INTO re_uri (uri, class_full_name, method_name, method_signature, eas_type, from_to, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    String sql2 = "UPDATE re_uri set class_full_name=?, method_name=?, method_signature=?, eas_type=?, from_to=? where id=?";
-    String sql3 = "INSERT INTO au_uri_org (uriid, orgid, from_to, status) VALUES (?, ?, ?, ?)";
-    String sql4 = "UPDATE au_uri_org set from_to=? where id=?";
 }

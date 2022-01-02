@@ -42,6 +42,10 @@ public class MenuService {
     private static volatile List<MenuDo> rootMenuDoList = null; // 根list，支持多棵树
     // TODO 内存强制失效?
     private static volatile long validTime = -1;
+    
+    String sql = "SELECT * FROM re_menu order by sort_number";
+    String sql2 = "SELECT * FROM au_menu_org where menuid = ?";
+    String sql3 = "SELECT id FROM re_menu where parent_id = ? order by sort_number";
 
     /**
      * 初始化菜单信息，存入Redis
@@ -61,16 +65,16 @@ public class MenuService {
 	    Map<String, MenuDo> amdoAllMap = new HashMap<String, MenuDo>();
 	    List<MenuDo> mdoAll = new ArrayList<>();
 	    List<MenuDo> rootMdo = new ArrayList<>();
-	    List<Menu> all = jdbcTemplate.query("SELECT * FROM re_menu order by sort", new BeanPropertyRowMapper<>(Menu.class));
+	    List<Menu> all = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Menu.class));
 	    for (Menu menu : all) {
 		// TODO 属性没加载全
 		MenuDo mdo = new MenuDo();
 		mdo.menu = menu;
-		mdo.menuOrg = jdbcTemplate.query("SELECT * FROM au_menu_org where menuid = ?", new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
-		mdo.childMenuIds = jdbcTemplate.queryForList("SELECT id FROM re_menu where parentid = ? order by sort", String.class, menu.id);
+		mdo.menuOrg = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
+		mdo.childMenuIds = jdbcTemplate.queryForList(sql3, String.class, menu.id);
 		mdoAll.add(mdo);
 		amdoAllMap.put("menu:" + menu.id, mdo);
-		if (menu.parentid == null || menu.parentid < 1)
+		if (menu.parentId == null || menu.parentId < 1)
 		    rootMdo.add(mdo);
 		redisUtil.set("menu:" + menu.id, mdo, MENU_TIMEOUT);
 	    }

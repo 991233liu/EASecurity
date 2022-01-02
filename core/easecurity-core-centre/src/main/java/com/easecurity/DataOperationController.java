@@ -44,8 +44,8 @@ public class DataOperationController {
 	UserDo userDo = loginService.login("liulufeng", "1");
 	request.getSession(true).setAttribute("userdo", userDo);
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
-	System.out.println("----## userDo.user.pStatus=" + userDo.user.pStatus);
-	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pStatus==UserEnum.PStatus.启用));
+	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
+	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus==UserEnum.PdStatus.ENABLED));
     }
 
 //    @PostMapping("/api/addData")
