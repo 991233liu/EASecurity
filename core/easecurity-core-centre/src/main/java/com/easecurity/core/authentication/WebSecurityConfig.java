@@ -44,13 +44,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/auth/login")
             .loginProcessingUrl("/login")
             .permitAll()
+//            .failureForwardUrl("/auth/login?aa=aa")
+//            .failureUrl("/auth/login?aa=aa")
 //            .defaultSuccessUrl("/todo.html", true)
             .authenticationDetailsSource(authenticationDetailsSource)
         .and()
             .logout()
             .logoutUrl("/logout")
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-            .logoutSuccessUrl("/login")
+            .logoutSuccessUrl("/auth/login?logout")
             .and()
         .csrf().disable();
     }
