@@ -23,7 +23,7 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
     @Autowired
     LoginService loginService;
 
-    @Value("${loginCaptcha.disable:false}")
+    @Value("${loginCaptcha.disable:true}")
     boolean loginCaptchaDisable;
 
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {

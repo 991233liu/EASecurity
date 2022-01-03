@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Value("${loginCaptcha.disable:false}")
+    @Value("${loginCaptcha.disable:true}")
     boolean disable;
     @Value("${loginCaptcha.gifCaptcha.length:5}")
     Integer gifCaptchaLength;

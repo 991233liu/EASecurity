@@ -5,7 +5,7 @@ server:
       context-path: /SecurityCentre
 
 spring:
-   rofiles:
+   profiles:
       include: easecurity
 # 数据库配置
    datasource:
