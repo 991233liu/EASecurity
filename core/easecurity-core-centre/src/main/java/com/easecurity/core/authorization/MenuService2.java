@@ -26,7 +26,7 @@ package com.easecurity.core.authorization;
  *
  */
 //@Service
-public class MenuService {
+public class MenuService2 {
 
 //    private static final Logger log = LoggerFactory.getLogger(MenuService.class);
 //

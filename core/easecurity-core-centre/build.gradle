@@ -14,12 +14,13 @@ apply from: "../common.gradle"
 
 dependencies {
     implementation project(":easecurity-core")
-    implementation project(":easecurity-framework-all")
+//    implementation project(":easecurity-framework-all")
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-    //	implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation 'org.springframework.security:spring-security-core'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.session:spring-session-data-redis'

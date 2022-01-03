@@ -32,7 +32,7 @@ public class DemoController {
     @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
 	UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
-	System.out.println("-----## 当前登录人为：" + userDo.user.user);
+	System.out.println("-----## 当前登录人为：" + userDo.user.account);
     }
 
 }
