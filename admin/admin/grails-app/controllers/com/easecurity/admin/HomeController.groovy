@@ -1,4 +1,4 @@
-package com.easecurity
+package com.easecurity.admin
 
 import grails.plugin.springsecurity.annotation.Secured
 import groovy.transform.CompileStatic

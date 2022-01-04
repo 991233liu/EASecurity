@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 //@CompileStatic
 class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
@@ -48,20 +49,28 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
         System.out.println("-------# 1=" + userDetails.properties)
         System.out.println("-------# 1=" + authentication.name + authentication.properties)
         if (authentication.getCredentials() == null) {
-            logger.debug("Authentication failed: no credentials provided");
-            throw new BadCredentialsException(messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+            loginFail(customUserDetails)
+            logger.debug("Authentication failed: no credentials provided1")
+            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
 
-        String presentedPassword = authentication.getCredentials().toString();
+        String presentedPassword = authentication.getCredentials().toString()
+        System.out.println("-------# 1=" + presentedPassword)
+        if (presentedPassword.length() < 60) {
+            loginFail(customUserDetails);
+            logger.debug("Authentication failed: no credentials provided2")
+            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
+        }
+        presentedPassword = presentedPassword.substring(presentedPassword.length() - 31)
+        System.out.println("-------# 1=" + presentedPassword)
+//        BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(5)
+//        System.out.println("-------# 1=" + bcryptPasswordEncoder.encode(presentedPassword))
+//	System.out.println("-------# 1=" + bcryptPasswordEncoder.matches(presentedPassword, customUserDetails.getPassword()))
 
-        if (!customUserDetails.getPassword().equals(presentedPassword)) {
-            loginFail(customUserDetails.username)
-            logger.debug("Authentication failed: password does not match stored value");
-            throw new BadCredentialsException(messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+        if (!new BCryptPasswordEncoder().matches(presentedPassword, customUserDetails.getPassword())) {
+            loginFail(customUserDetails)
+            logger.debug("Authentication failed: password does not match stored value3")
+            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
 
         loginSuccess(customUserDetails.username)

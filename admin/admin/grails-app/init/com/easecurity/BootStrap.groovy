@@ -35,7 +35,7 @@ class BootStrap {
                 Role role = new Role(org: org, roleGroup: roleGroup)
                 role.save(failOnError: true)
                 // TODO 账号identities空
-                user = new User(account: 'admin', pd: '1', acStatus: UserEnum.AcStatus.ENABLED, pdStatus: UserEnum.PdStatus.ENABLED)
+                user = new User(account: 'admin', pd: '$2a$05$EzgpXxRZY/78MyUBA6ORfOsPQapPih36qlw8bdFmUBRLB25icMcOW', acStatus: UserEnum.AcStatus.ENABLED, pdStatus: UserEnum.PdStatus.ENABLED)
                 user.save(failOnError: true)
                 RoleUser roleUser = new RoleUser(role: role, user: user)
                 roleUser.save(failOnError: true)

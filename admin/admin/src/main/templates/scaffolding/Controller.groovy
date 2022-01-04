@@ -1,6 +1,5 @@
 <%=packageName ? "package ${packageName}" : ''%>
 
-
 import com.easecurity.admin.utils.ServletUtils
 import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.annotation.Secured
@@ -8,6 +7,8 @@ import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
 
 class ${className}Controller {
+
+//    static scaffold = ${className}
 
     ${className}Service ${propertyName}Service
     static public String VIEW_PATH = "/md/${propertyName}/"

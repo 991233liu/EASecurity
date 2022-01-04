@@ -28,6 +28,9 @@
 
 <body class="hold-transition login-page">
     <div class="login-box">
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 -->
+	<input type="hidden" name="salt" id="salt" value="$2a$10$ayeUQHCANiGOhpO3uBTllu"/>
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 /-->
         <div class="login-logo">
             <a href="pages/all-admin-index.html"><b><g:message code="default.app.title" default="default.app.title" /></b></a>
         </div>
@@ -69,7 +72,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="onLogin()">
                             <g:message code="login.signin.label" default="登录" />
                         </button>
                     </div>
@@ -98,6 +101,13 @@
     <asset:javascript src="plugins/bootstrap/js/bootstrap.min.js" />
     <asset:javascript src="plugins/iCheck/icheck.min.js" />
     <asset:javascript src="js/application.js" />
+    <asset:javascript src="js/bcrypt/prng/accum.js" />
+    <asset:javascript src="js/bcrypt/prng/isaac.js" />
+    <asset:javascript src="js/bcrypt/util/base64.js" />
+    <asset:javascript src="js/bcrypt/util/utf8.js" />
+    <asset:javascript src="js/bcrypt/impl.js" />
+    <asset:javascript src="js/bcrypt/util.js" />
+    <asset:javascript src="js/bcrypt/bcrypt.js" />
     <script>
         $(function() {
             $('input').iCheck({

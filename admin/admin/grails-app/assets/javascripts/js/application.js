@@ -14,7 +14,6 @@ function deleteAll(obj) {
         if (it.checked) ids.push(it.value)
     });
     obj.form.action = obj.form.action + "/" + ids
-    alert(obj.form.action)
 }
 
 /**
@@ -31,4 +30,24 @@ function flushLoginCaptcha() {
             $('#gifCaptchaImg').attr('src', response.image)
         }
     });
+}
+
+/**
+ * 加密密码（bcrypt算法）
+ */
+function encodePassword() {
+//    var salt = bcrypt.genSaltSync(10);
+	var salt = $("#salt").val();
+	if(!salt||salt.length<28)
+		throw Error("salt 为非法值，请联系管理员申请: " + salt);
+	var hash = bcrypt.hashSync($("#password").val(), salt);
+	$("#password").val(hash);
+}
+
+/**
+ * 登录
+ */
+function onLogin() {
+	encodePassword();
+	$('#loginForm').submit();
 }
