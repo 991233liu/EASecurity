@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.easecurity.core.basis.s.GifCaptcha;
@@ -54,16 +55,31 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 //        System.out.println("-------# 1=" + userDetails.properties);
 	System.out.println("-------# 1=" + authentication.getName());
 	if (authentication.getCredentials() == null) {
-	    logger.debug("Authentication failed: no credentials provided");
+	    loginService.loginFail(customUserDetails);
+	    logger.debug("Authentication failed: no credentials provided1");
 	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	}
 
 	String presentedPassword = authentication.getCredentials().toString();
 	System.out.println("-------# 1=" + presentedPassword);
-
-	if (!customUserDetails.getPassword().equals(presentedPassword)) {
+	if (presentedPassword.length() < 60) {
 	    loginService.loginFail(customUserDetails);
-	    logger.debug("Authentication failed: password does not match stored value");
+	    logger.debug("Authentication failed: no credentials provided2");
+	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+	}
+	presentedPassword = presentedPassword.substring(presentedPassword.length() - 31);
+	System.out.println("-------# 1=" + presentedPassword);
+	BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(5);
+	System.out.println("-------# 1=" + bcryptPasswordEncoder.encode(presentedPassword));
+//	String customUser = customUserDetails.getPassword();
+//	String userSalt = customUser.substring(0, customUser.length() - 31);
+//	String userPassword = customUser.substring(customUser.length() - 31);
+//	System.out.println("-------# 1=" + userSalt);
+//	System.out.println("-------# 1=" + bcryptPasswordEncoder.matches(presentedPassword, customUserDetails.getPassword()));
+
+	if (!new BCryptPasswordEncoder().matches(presentedPassword, customUserDetails.getPassword())) {
+	    loginService.loginFail(customUserDetails);
+	    logger.debug("Authentication failed: password does not match stored value3");
 	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	}
 
@@ -73,7 +89,6 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-	// TODO Auto-generated method stub
 	UserDetails loadedUser = userDetailsService.loadUserByUsername(username);
 	return loadedUser;
     }

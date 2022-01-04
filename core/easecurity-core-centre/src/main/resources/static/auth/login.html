@@ -27,6 +27,9 @@
 </head>
 
 <body class="hold-transition login-page">
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 -->
+	<input type="hidden" name="salt" id="salt" value="$2a$10$ayeUQHCANiGOhpO3uBTllu"/>
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 /-->
     <div class="login-box">
         <!-- /.login-logo -->
         <div class="login-box-body">
@@ -60,7 +63,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="onLogin()">
                             登录
                         </button>
                     </div>
@@ -82,7 +85,13 @@
     <script type="text/javascript" src="/SecurityCentre/js/icheck.min.js?compile=false" ></script>
 
     <script type="text/javascript" src="/SecurityCentre/js/application.js?compile=false" ></script>
-
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/prng/accum.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/prng/isaac.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util/base64.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util/utf8.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/impl.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/bcrypt.js"></script>
     <script>
 		$(document).ready(function() {
             flushLoginCaptcha();
