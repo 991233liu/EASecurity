@@ -13,7 +13,7 @@ plugins {
 apply from: "../common.gradle"
 
 dependencies {
-    implementation project(":easecurity-framework-all")
+    implementation project(":easecurity-framework-springboot")
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

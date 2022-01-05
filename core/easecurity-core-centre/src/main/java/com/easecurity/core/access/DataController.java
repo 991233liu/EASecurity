@@ -40,7 +40,7 @@ public class DataController {
     private static volatile HashMap<String, Object> allEas = null;
 
     /**
-     * 当前登录人的菜单
+     * 当前登录人的菜单？？？？
      */
     @RequestMapping("/alleas")
     public void getAllEas(HttpServletRequest request, HttpServletResponse response) {

@@ -126,6 +126,7 @@ public class AccessRegister {
 		if (lUriDo == null)
 		    continue;
 		if (!sendUriDoToServer(lUriDo)) { // 发送失败后，重新放入待发送队列
+		    // TODO 这里有个bug，如果发送失败就立即放进去，那么还会失败，此时会出现一个死循环
 		    taskQueue.add(lUriDo);
 		}
 	    }

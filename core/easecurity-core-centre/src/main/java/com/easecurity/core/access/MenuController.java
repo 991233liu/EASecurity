@@ -38,7 +38,6 @@ public class MenuController {
 	String account = ServletUtils.getCurrentUser().getUsername();
 	// 获取身份
 	UserDo userDo = userService.getUserDoByAccount(account);
-	request.getSession(true).setAttribute("userdo", userDo);
 	// 获取有权限的菜单
 	return menuService.getMenuByUser(userDo);
     }

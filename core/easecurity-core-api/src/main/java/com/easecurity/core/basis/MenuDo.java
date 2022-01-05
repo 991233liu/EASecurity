@@ -38,7 +38,7 @@ public class MenuDo implements Serializable {
      * @return true 有权限；false 无权限。
      */
     // TODO 需要优化，临时凑合着写的
-    public boolean havePermissionThroughOrg(String orgId) {
+    public boolean havePermissionByOrgId(String orgId) {
 	if (menuOrg != null) {
 	    if (_auOrgStr == null) {
 		_auOrgStr = ",";

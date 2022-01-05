@@ -137,7 +137,7 @@ public class MenuService {
 	    break;
 	case "org":
 	    for (String id : Identities.split(",")) {
-		if (menuDo.havePermissionThroughOrg(id)) {
+		if (menuDo.havePermissionByOrgId(id)) {
 		    return true;
 		}
 	    }

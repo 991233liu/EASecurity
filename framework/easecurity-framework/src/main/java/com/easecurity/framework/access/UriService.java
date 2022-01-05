@@ -114,7 +114,7 @@ public class UriService {
 		    break;
 		case "org":
 		    for (String id : v.split(",")) {
-			if (uriDo.havePermissionThroughOrgId(id)) {
+			if (uriDo.havePermissionByOrgId(id)) {
 			    flag[0] = true;
 			    return;
 			}
