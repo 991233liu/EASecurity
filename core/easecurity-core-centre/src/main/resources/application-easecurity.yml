@@ -8,6 +8,9 @@ easecurity:
    verification: dev   # 安全校验模式：dev(development)、prod(production)。在dev模式下，安全校验标签（功能）会正常执行，
                          # 校验结果会输出到日志中（info级别），但是，无论校验结果如何，被保护（控制）的方法仍会被执行。
                          # 默认为prod模式。
+   cache:
+      user:
+         validTime: 3600
 ---
 # 登录验证码
 loginCaptcha:

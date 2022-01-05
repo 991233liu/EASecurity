@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.annotation.EaSecured;
-import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.b.UserEnum;
 
 @RestController
@@ -25,7 +25,7 @@ public class DataOperationController {
     @Autowired
     MenuService menuService;
     @Autowired
-    LoginService loginService;
+    UserService userService;
 
     @RequestMapping("/queryData")
     public List<Object> queryData() {
@@ -41,11 +41,11 @@ public class DataOperationController {
     @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
 //	loginService.login("liulufeng", "1");
-	UserDo userDo = loginService.login("liulufeng", "1");
+	UserDo userDo = userService.getUserDoByAccount("liulufeng");
 	request.getSession(true).setAttribute("userdo", userDo);
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
 	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
-	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus==UserEnum.PdStatus.ENABLED));
+	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus == UserEnum.PdStatus.ENABLED));
     }
 
 //    @PostMapping("/api/addData")

@@ -1,6 +1,7 @@
 package com.easecurity.core.authentication;
 
 import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.b.UserEnum;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    LoginService loginService;
+    UserService userService;
 
     protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
@@ -37,7 +38,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // TODO 登录性能待优化
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	UserDo user = loginService.getUserDoForLogin(username);
+	UserDo user = userService.getUserDoForLogin(username);
 	if (user == null)
 	    throw new UsernameNotFoundException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 
