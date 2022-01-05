@@ -14,6 +14,8 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
     Integer gifCaptchaLength
     @Value('${loginCaptcha.gifCaptcha.delay:100}')
     Integer gifCaptchaDelay
+    @Value('${loginCaptcha.gifCaptcha.validTime:300000}')
+    Integer validTime
 
     def auth() {
 
@@ -57,8 +59,7 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
         dDifCaptcha1.sessionId = getSession().getId()
         dDifCaptcha1.key2 = key
         dDifCaptcha1.value = verCode
-        // TODO 改到配置文件中
-        dDifCaptcha1.validTime = System.currentTimeMillis() + 300000
+        dDifCaptcha1.validTime = System.currentTimeMillis() + validTime
         DGifCaptcha.withTransaction {
             dDifCaptcha1.save(flush: true)
         }

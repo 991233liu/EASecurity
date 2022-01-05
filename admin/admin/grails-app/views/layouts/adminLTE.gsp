@@ -348,9 +348,12 @@
 					</p></li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
-				    <g:link class="btn btn-default btn-flat" controller="logout">
-					    <g:message code="logout.signout.label" default="注销" />
-				    </g:link>
+                                    <g:link class="btn btn-default btn-flat" controller="changePassword">
+                                        <g:message code="logout.changePassword.label" default="修改密码" />
+                                    </g:link>
+                                    <g:link class="btn btn-default btn-flat" controller="logout">
+                                        <g:message code="logout.signout.label" default="注销" />
+                                    </g:link>
                                 </li>
                             </ul>
                         </li>

@@ -16,3 +16,4 @@ loginCaptcha:
     gifCaptcha:
         length: 5    # 验证码字符个数
         delay: 200   # 验证码闪烁时间间隔
+        validTime: 300000   # 验证码有效时间（毫秒）

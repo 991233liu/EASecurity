@@ -35,19 +35,37 @@ function flushLoginCaptcha() {
 /**
  * 加密密码（bcrypt算法）
  */
-function encodePassword() {
+function encodePassword(obj) {
 //    var salt = bcrypt.genSaltSync(10);
-	var salt = $("#salt").val();
-	if(!salt||salt.length<28)
-		throw Error("salt 为非法值，请联系管理员申请: " + salt);
-	var hash = bcrypt.hashSync($("#password").val(), salt);
-	$("#password").val(hash);
+    var salt = $("#salt").val();
+    if (!salt || salt.length < 28)
+        throw Error("salt 为非法值，请联系管理员申请: " + salt);
+    var hash = bcrypt.hashSync(obj.val(), salt);
+    obj.val(hash);
 }
 
 /**
  * 登录
  */
 function onLogin() {
-	encodePassword();
-	$('#loginForm').submit();
+    encodePassword($("#password"));
+    $('#loginForm').submit();
+}
+
+/**
+ * 修改密码
+ */
+function onChangePassword() {
+    if (!$("#oldPassword") || !$("#newPassword").val()) {
+        alert("密码不能为空");
+        return false
+    }
+    if ($("#newPassword").val() != $("#new2Password").val()) {
+        alert("两次输入的密码不一致！");
+        return false
+    }
+    encodePassword($("#oldPassword"));
+    encodePassword($("#newPassword"));
+    $("#new2Password").val('');
+    $('#changePasswordForm').submit();
 }
