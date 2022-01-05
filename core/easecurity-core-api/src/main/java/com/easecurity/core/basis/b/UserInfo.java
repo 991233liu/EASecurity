@@ -12,9 +12,9 @@ import com.easecurity.core.basis.b.UserInfoEnum.*;
  *
  */
 public class UserInfo implements Serializable {
-
-    private static final long serialVersionuserId = 5223521401840975133L;
-
+    
+    private static final long serialVersionUID = -938014939971884433L;
+    
     public String id;
     /**
      * user表主键

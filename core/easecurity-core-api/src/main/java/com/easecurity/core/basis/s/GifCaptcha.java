@@ -1,9 +1,6 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.basis.s;
 
-import com.easecurity.core.basis.b.OrgEnum.Status;
-import com.easecurity.core.basis.b.OrgEnum.Type;
-
 import java.io.Serializable;
 
 /**
