@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.access;
+package com.easecurity.core.basis;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.easecurity.core.basis.UriDo;
 import com.easecurity.core.basis.au.UriOrg;
 import com.easecurity.core.basis.re.Uri;
 import com.easecurity.core.redis.RedisUtil;

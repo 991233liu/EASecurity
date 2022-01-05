@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.basis.MenuDo;
+import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
 
 /**

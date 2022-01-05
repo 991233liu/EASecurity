@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.easecurity.core.basis.UriDo;
+import com.easecurity.core.basis.UriService;
 
 /**
  * 企业安全中心数据交换服务

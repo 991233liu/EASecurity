@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.access;
+package com.easecurity.core.basis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +14,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.easecurity.core.basis.MenuDo;
-import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.au.MenuOrg;
 import com.easecurity.core.basis.re.Menu;
 import com.easecurity.core.redis.RedisUtil;
