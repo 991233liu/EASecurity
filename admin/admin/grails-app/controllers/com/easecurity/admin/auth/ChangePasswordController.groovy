@@ -91,6 +91,43 @@ class ChangePasswordController {
         redirect uri: '/'
     }
 
+    def toChangePassword() {
+        render view: '/md/user/changePassword'
+    }
+
+    def changePassword() {
+        System.out.println(params)
+        String newPassword = params.newPassword
+        System.out.println("-------# 1=" + newPassword)
+        if (newPassword.length() < 60) {
+            log.debug("Authentication failed: no credentials provided2")
+            request.withFormat {
+                form multipartForm {
+                    flash.message = message(code: 'AbstractUserDetailsAuthenticationProvider.badCredentials', default: "Bad credentials")
+                    render view: '/md/user/changePassword'
+                }
+            }
+            return
+        }
+        newPassword = newPassword.substring(newPassword.length() - 31)
+        System.out.println("-------# 1=" + newPassword)
+        User user = User.findByAccount(params.username)
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(5);
+        User.withTransaction {
+            user.pd = bCryptPasswordEncoder.encode(newPassword)
+            user.save()
+        }
+
+        System.out.println("-------# is true")
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'xx.xx', default: "Change Successful")
+                render view: '/md/user/changePassword'
+            }
+        }
+        return
+    }
+
     private Map getGifCaptcha() {
         com.easecurity.core.captcha.GifCaptcha gifCaptcha = new com.easecurity.core.captcha.GifCaptcha(130, 48, gifCaptchaLength, gifCaptchaDelay)
         String key = UUID.randomUUID().toString()

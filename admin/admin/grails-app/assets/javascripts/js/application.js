@@ -69,3 +69,21 @@ function onChangePassword() {
     $("#new2Password").val('');
     $('#changePasswordForm').submit();
 }
+
+/**
+ * 修改密码
+ */
+function onChangePasswordByUser() {
+    if (!$("#newPassword").val()) {
+        alert("密码不能为空");
+        return false
+    }
+    if ($("#newPassword").val() != $("#new2Password").val()) {
+        alert("两次输入的密码不一致！");
+        return false
+    }
+    // encodePassword($("#oldPassword"));
+    encodePassword($("#newPassword"));
+    $("#new2Password").val('');
+    $('#changePasswordForm').submit();
+}
