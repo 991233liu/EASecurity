@@ -15,6 +15,9 @@ dependencies {
     api project(":easecurity-core-api")
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'com.alibaba:fastjson:1.2.79'
+    
+    compileOnly 'javax.servlet:servlet-api:2.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }

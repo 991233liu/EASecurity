@@ -1,6 +1,9 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.framework;
 
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+
 /**
  * EasSecurity配置
  *
@@ -55,4 +58,22 @@ public class EaSecurityConfiguration {
 //    public void afterPropertiesSet(){
 //	// TODO 做点啥呢？
 //    }
+    
+    /**
+     * 设置HttpURLConnection的链接属性
+     * 
+     */
+    public HttpURLConnection setDefaultConfig(HttpURLConnection connection) throws ProtocolException {
+	connection.setConnectTimeout(getConnectTimeout());
+	connection.setReadTimeout(getConnectTimeout());
+	connection.setDoInput(true);
+	connection.setDoOutput(true);
+	connection.setUseCaches(false);
+	connection.setRequestMethod("POST");
+	connection.addRequestProperty("User-Agent", "Mozilla/99.0");
+	connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+	connection.addRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");// "en-US,en;q=0.5");
+	connection.addRequestProperty("Accept-Charset", "utf-8,ISO-8859-1,gbk,gb2312;q=0.7,*;q=0.7");
+	return connection;
+    }
 }

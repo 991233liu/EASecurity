@@ -3,16 +3,19 @@ package com.easecurity.core.authentication;
 //import com.easecurity.admin.core.re.Menu;
 //import com.easecurity.core.captcha.GifCaptcha;
 import com.easecurity.util.JsonUtils;
+import com.alibaba.fastjson.JSON;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.ServletUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -63,9 +66,10 @@ class LoginController {
     @ResponseBody
     // TODO 加密？？
     // TODO 后台访问？？？
-    public String currentUser(HttpServletRequest request, HttpSession session) {
+    public String currentUser(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
 	CustomUserDetails user = ServletUtils.getCurrentUser();
 	if (user == null || user.isAnonymousUser()) { // TODO 未登录时？
+	    response.setStatus(203);
 	    return "anonymousUser";
 	} else { // 登录用户
 	    UserDo userdo = (UserDo) session.getAttribute("userdo");
@@ -75,7 +79,8 @@ class LoginController {
 	    }
 	    // 清空密码，不能传递
 	    userdo.user.pd = null;
-	    return JsonUtils.objectToJson(userdo);
+	    return JSON.toJSONString(userdo);
+//	    return JsonUtils.objectToJson(userdo);
 	}
     }
 

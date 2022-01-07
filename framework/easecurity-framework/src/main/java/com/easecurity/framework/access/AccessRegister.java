@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class AccessRegister {
     private EaSecurityConfiguration eaSecurityConfiguration = null;
     private static ArrayBlockingQueue<UriDo> taskQueue = new ArrayBlockingQueue<UriDo>(10240, true);
     /**
-     * 最后修改时间，"0"标示不存在
+     * 最后修改时间，"0"表示不存在
      */
     private static volatile String lastModified = "0";
     /**
@@ -85,7 +84,7 @@ public class AccessRegister {
 	try {
 	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/alleas?lastModified=" + lastModified;
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-	    setDefaultConfig(connection);
+	    connection = eaSecurityConfiguration.setDefaultConfig(connection);
 	    connection.connect();
 	    int state = connection.getResponseCode();
 	    if (state == 200) { // 列表发生变化，读取新的控制列表
@@ -146,7 +145,7 @@ public class AccessRegister {
 	try {
 	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/saveurido?time=" + System.currentTimeMillis();
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-	    setDefaultConfig(connection);
+	    connection = eaSecurityConfiguration.setDefaultConfig(connection);
 	    connection.connect();
 	    oos = new ObjectOutputStream(connection.getOutputStream());
 	    oos.writeObject(lUriDo);
@@ -198,22 +197,5 @@ public class AccessRegister {
 	} catch (Exception ex) {
 	    log.error("保存本地UriDo配置到待发送队列异常", ex);
 	}
-    }
-
-    /**
-     * 设置HttpURLConnection的链接属性
-     * 
-     */
-    private void setDefaultConfig(HttpURLConnection connection) throws ProtocolException {
-	connection.setConnectTimeout(eaSecurityConfiguration.getConnectTimeout());
-	connection.setReadTimeout(eaSecurityConfiguration.getConnectTimeout());
-	connection.setDoInput(true);
-	connection.setDoOutput(true);
-	connection.setUseCaches(false);
-	connection.setRequestMethod("POST");
-	connection.addRequestProperty("User-Agent", "Mozilla/99.0");
-	connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-	connection.addRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");// "en-US,en;q=0.5");
-	connection.addRequestProperty("Accept-Charset", "utf-8,ISO-8859-1,gbk,gb2312;q=0.7,*;q=0.7");
     }
 }
