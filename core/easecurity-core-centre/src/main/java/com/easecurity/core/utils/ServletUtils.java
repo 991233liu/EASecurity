@@ -17,7 +17,16 @@ public class ServletUtils {
      * 获得当前登录的用户Bean
      */
     public static CustomUserDetails getCurrentUser() {
-	return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//	return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	if (principal instanceof CustomUserDetails) { // 数据库登录用户
+	    return (CustomUserDetails) principal;
+	} else if (principal == null || principal instanceof String) { // 匿名登录
+	    return CustomUserDetails.getAnonymousUser();
+	} else { // 其它待开发类型
+	    // TODO 其它待开发类型
+	    return null;
+	}
 //        HttpServletRequest request = ServletUtils.getRequest()
 //        if (request == null) return null
 //        UserDetails principal = BeanUtils.getBean('springSecurityService').getPrincipal()

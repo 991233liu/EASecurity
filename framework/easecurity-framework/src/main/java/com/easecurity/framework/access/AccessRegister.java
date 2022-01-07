@@ -7,7 +7,9 @@ import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.easecurity.core.basis.UriDo;
+import com.easecurity.framework.EaSecurityConfiguration;
 
 /**
  * 控制列表加载方法。每分钟从远端拉取一次最新控制列表，如果无变化，则不重载。
@@ -119,6 +122,7 @@ public class AccessRegister {
     private void processQueue() {
 	log.debug(">>>>>>>>>>current taskQueue has " + taskQueue.size() + " tasks");
 	UriDo lUriDo = null;
+	List<UriDo> list = new ArrayList<UriDo>();
 	try {
 	    while (!taskQueue.isEmpty()) { // 如果消息队列中存在消息，则循环处理，直到所有消息处理完毕。
 		lUriDo = taskQueue.poll(20, TimeUnit.MILLISECONDS);
@@ -126,10 +130,11 @@ public class AccessRegister {
 		if (lUriDo == null)
 		    continue;
 		if (!sendUriDoToServer(lUriDo)) { // 发送失败后，重新放入待发送队列
-		    // TODO 这里有个bug，如果发送失败就立即放进去，那么还会失败，此时会出现一个死循环
-		    taskQueue.add(lUriDo);
+		    list.add(lUriDo);
 		}
 	    }
+	    // 发送失败后，重新放入待发送队列
+	    taskQueue.addAll(list);
 	} catch (InterruptedException e) {
 	    log.error("Process sendUriDoToServer failed: lUriDo={}", lUriDo, e);
 	}

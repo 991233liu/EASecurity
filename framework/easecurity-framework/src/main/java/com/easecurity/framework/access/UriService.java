@@ -30,7 +30,7 @@ public class UriService {
     private static volatile Map<String, UriDo> localeUriDos = new HashMap<>();
     private static volatile long lastModifyTime = -1;
 
-    protected UriService(AccessRegister accessRegister) {
+    public UriService(AccessRegister accessRegister) {
 	this.accessRegister = accessRegister;
     }
 

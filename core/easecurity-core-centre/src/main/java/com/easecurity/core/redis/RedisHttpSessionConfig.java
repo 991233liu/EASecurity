@@ -30,7 +30,8 @@ public class RedisHttpSessionConfig {
     public CookieSerializer cookieSerializer() {
 	DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
 	defaultCookieSerializer.setCookiePath("/");
-	defaultCookieSerializer.setCookieName("SESSION_TEST");
+	defaultCookieSerializer.setCookieName("EASECURITY_S");
+	defaultCookieSerializer.setUseHttpOnlyCookie(true);
 	return defaultCookieSerializer;
     }
 

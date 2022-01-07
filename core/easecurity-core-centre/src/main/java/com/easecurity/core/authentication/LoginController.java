@@ -3,16 +3,21 @@ package com.easecurity.core.authentication;
 //import com.easecurity.admin.core.re.Menu;
 //import com.easecurity.core.captcha.GifCaptcha;
 import com.easecurity.util.JsonUtils;
+import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
+import com.easecurity.core.utils.ServletUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 //import grails.converters.JSON;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,6 +31,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/auth")
 class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
+    @Autowired
+    UserService userService;
 
     @Value("${loginCaptcha.disable:true}")
     boolean disable;
@@ -51,24 +59,25 @@ class LoginController {
 	return mav;
     }
 
-//    def auth() {
-
-//        ConfigObject conf = getConf();
-//
-//        if (springSecurityService.isLoggedIn()) {
-//            redirect uri: conf.successHandler.defaultTargetUrl;
-//            return
-//        }
-//
-//        Map<String, Object> map = disable ? null : getGifCaptcha()
-//        String postUrl = request.contextPath + conf.apf.filterProcessesUrl
-//        render view: 'auth', model: [postUrl            : postUrl,
-//                                     rememberMeParameter: conf.rememberMe.parameter,
-//                                     usernameParameter  : conf.apf.usernameParameter,
-//                                     passwordParameter  : conf.apf.passwordParameter,
-//                                     gspLayout          : conf.gsp.layoutAuth,
-//                                     gifCaptcha         : map]
-//    }
+    @GetMapping("/currentUser")
+    @ResponseBody
+    // TODO 加密？？
+    // TODO 后台访问？？？
+    public String currentUser(HttpServletRequest request, HttpSession session) {
+	CustomUserDetails user = ServletUtils.getCurrentUser();
+	if (user == null || user.isAnonymousUser()) { // TODO 未登录时？
+	    return "anonymousUser";
+	} else { // 登录用户
+	    UserDo userdo = (UserDo) session.getAttribute("userdo");
+	    if (userdo == null) {
+		userdo = userService.getUserDoByAccount(user.getUsername());
+		session.setAttribute("userdo", userdo);
+	    }
+	    // 清空密码，不能传递
+	    userdo.user.pd = null;
+	    return JsonUtils.objectToJson(userdo);
+	}
+    }
 
 //    def allMenu() {
 //        Map menuTree = getSession().getAttribute('allMenuTree')
