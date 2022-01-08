@@ -3,13 +3,11 @@ package com.easecurity.core.basis;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import com.easecurity.core.basis.b.OrgUser;
 import com.easecurity.core.basis.b.User;
 import com.easecurity.core.basis.b.UserInfo;
 import com.easecurity.core.basis.r.RoleUser;
-import com.easecurity.util.JsonUtils;
 
 /**
  * domain：用户
@@ -47,16 +45,4 @@ public class UserDo implements Serializable {
 	// TODO 时间戳，最后更新时间
 	return user.identities;
     }
-
-    /**
-     * 获取所有的身份信息
-     */
-    @SuppressWarnings("unchecked")
-//    @Cacheable
-    public Map<String, String> allIdentitiesWithMap() {
-	if(_AllIdentitiesWithMap==null) _AllIdentitiesWithMap=(Map<String, String>) JsonUtils.jsonToObject(user.identities);
-	return _AllIdentitiesWithMap;
-    }
-
-    private Map<String, String> _AllIdentitiesWithMap;
 }

@@ -54,6 +54,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 //        if ( log.isDebugEnabled() ) log.debug("syncUser message:uid=" + uid + ",username=" + username + ",mail=" + mail)
 	return new CustomUserDetails(username, user.user.pd, user.user.acStatus == UserEnum.AcStatus.ENABLED, !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED),
 		!(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED, authorities, user.user.id, user.userinfo.name,
-		user.userinfo.icon, user.user.lastLoginTtime, user.user.pdErrorTimes);
+		user.userinfo.icon, user.user.identities, user.user.lastLoginTtime, user.user.pdErrorTimes);
     }
 }

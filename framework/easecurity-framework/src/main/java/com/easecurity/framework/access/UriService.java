@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.access.annotation.EasType;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.UriDo;
-import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.au.UriOrg;
 import com.easecurity.core.basis.re.Uri;
 import com.easecurity.util.JsonUtils;
@@ -80,7 +80,7 @@ public class UriService {
     /**
      * 校验访问权限
      */
-    public boolean validation(EaSecured eas, String uri, UserDo userDo) {
+    public boolean validation(EaSecured eas, String uri, UserDetails userDo) {
 	EasType type = eas.type();
 	Map<String, String> allIdentities = new HashMap<>();
 	if (userDo != null)

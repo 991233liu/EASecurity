@@ -20,7 +20,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
-import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.access.UriService;
 
 /**
@@ -60,12 +60,13 @@ public class EaSecuredAspect {
 	    EaSecured eas = method.getAnnotation(EaSecured.class);
 	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	    String uri = request.getRequestURI();
-	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
-	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={}", methodSignature, eas, userDo);
+	    UserDetails user = (UserDetails) request.getSession().getAttribute("userDetails");
+//	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
+	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={}", methodSignature, eas, user);
 
 	    uriAccessService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
 
-	    if (uriAccessService.validation(eas, uri, userDo)) { // 有执行权限
+	    if (uriAccessService.validation(eas, uri, user)) { // 有执行权限
 		if (verification.toLowerCase().equals("dev")) {
 		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", verification);
 		} else {
@@ -73,7 +74,7 @@ public class EaSecuredAspect {
 		}
 	    } else { // 无执行权限
 		if (verification.toLowerCase().equals("dev")) {
-		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, userDo, verification);
+		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, verification);
 		} else {
 		    HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 		    httpServletResponse.setStatus(403);

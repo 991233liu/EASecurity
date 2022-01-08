@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.authentication.CustomUserDetails;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.b.UserEnum;
+import com.easecurity.core.utils.ServletUtils;
 
 @RestController
 @RequestMapping("/demo")
@@ -40,8 +42,9 @@ public class DataOperationController {
     @RequestMapping("/queryData3")
     @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
-//	loginService.login("liulufeng", "1");
-	UserDo userDo = userService.getUserDoByAccount("liulufeng");
+	CustomUserDetails user = ServletUtils.getCurrentUser();
+	// 获取身份
+	UserDo userDo = userService.getUserDoById(user.id);
 	request.getSession(true).setAttribute("userdo", userDo);
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
 	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);

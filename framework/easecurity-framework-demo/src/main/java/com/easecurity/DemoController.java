@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.authentication.LoginService;
-import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.authentication.UserDetails;
 
 @RestController
 @RequestMapping("/demo")
@@ -29,19 +29,19 @@ public class DemoController {
 
     @RequestMapping("/login")
     public void login(HttpServletRequest request) throws IOException {
-	UserDo userDo = loginService.getCurrentUser(request);
-	if (userDo == null) {
+	UserDetails userDetails = loginService.getCurrentUser(request);
+	if (userDetails == null) {
 	    System.out.println("anonymousUser");
 	} else {
-	    request.getSession(true).setAttribute("userdo", userDo);
-	    System.out.println("-----## 当前登录人为：" + userDo.user.account);
+	    request.getSession(true).setAttribute("userDetails", userDetails);
+	    System.out.println("-----## 当前登录人为：" + userDetails.account);
 	}
     }
 
     @RequestMapping("/queryData3")
     @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
-	UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
+	UserDetails userDetails = (UserDetails) request.getSession().getAttribute("userDetails");
     }
 
 }

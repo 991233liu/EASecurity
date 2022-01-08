@@ -12,20 +12,22 @@ public class CustomUserDetails extends User {
 
     private static final long serialVersionUID = -7665150614803466540L;
 
-    final String id;
-    final String fullName;
-    final String icon;
-    final Date lastLoginTime;
-    final Integer pdErrorTimes;
-    final Boolean isAnonymousUser;
+    public final String id;
+    public final String fullName;
+    public final String icon;
+    public final String identities;
+    public final Date lastLoginTime;
+    public final Integer pdErrorTimes;
+    public final Boolean isAnonymousUser;
 
     public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, Date lastLoginTime, Integer pdErrorTimes) {
+	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, String identities, Date lastLoginTime, Integer pdErrorTimes) {
 	super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
 	this.id = id;
 	this.fullName = fullName;
 	this.icon = icon;
+	this.identities = identities;
 	this.lastLoginTime = lastLoginTime;
 	this.pdErrorTimes = pdErrorTimes;
 	this.isAnonymousUser = false;
@@ -34,12 +36,13 @@ public class CustomUserDetails extends User {
     }
 
     public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, Date lastLoginTime, Integer pdErrorTimes, Boolean isAnonymousUser) {
+	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, String identities, Date lastLoginTime, Integer pdErrorTimes, Boolean isAnonymousUser) {
 	super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
 	this.id = id;
 	this.fullName = fullName;
 	this.icon = icon;
+	this.identities = identities;
 	this.lastLoginTime = lastLoginTime;
 	this.pdErrorTimes = pdErrorTimes;
 	this.isAnonymousUser = isAnonymousUser;
@@ -53,7 +56,7 @@ public class CustomUserDetails extends User {
 //		new Date(), Integer.valueOf(0), Boolean.TRUE);
 	Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) new ArrayList<GrantedAuthority>();
 	authorities.add((GrantedAuthority) new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
-	return new CustomUserDetails("anonymousUser", "", true, true, true, true, authorities, "anonymousUser", null, null, null, null, Boolean.TRUE);
+	return new CustomUserDetails("anonymousUser", "", true, true, true, true, authorities, "anonymousUser", null, null, null, null, null, Boolean.TRUE);
     }
 
     public boolean isAnonymousUser() {

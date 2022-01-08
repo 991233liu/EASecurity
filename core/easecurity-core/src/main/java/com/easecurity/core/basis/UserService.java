@@ -65,20 +65,20 @@ public class UserService {
 	}
     }
 
-    /**
-     * 获取用户信息（高性能）
-     * 
-     * @param user 账号
-     */
-    public UserDo getUserDoByAccount(String account) {
-	UserDo userDo = (UserDo) redisUtil.get("userdo:account:" + account);
-	if (userDo == null) {
-	    userDo = getUserDoByAccountNoCache(account);
-	    redisUtil.set("userdo:account:" + account, userDo, validTime);
-	    redisUtil.set("userdo:id:" + userDo.user.id, userDo, validTime);
-	}
-	return userDo;
-    }
+//    /**
+//     * 获取用户信息（高性能）
+//     * 
+//     * @param user 账号
+//     */
+//    public UserDo getUserDoByAccount(String account) {
+//	UserDo userDo = (UserDo) redisUtil.get("userdo:account:" + account);
+//	if (userDo == null) {
+//	    userDo = getUserDoByAccountNoCache(account);
+//	    redisUtil.set("userdo:account:" + account, userDo, validTime);
+//	    redisUtil.set("userdo:id:" + userDo.user.id, userDo, validTime);
+//	}
+//	return userDo;
+//    }
 
     /**
      * 获取用户信息（高性能）
@@ -89,7 +89,7 @@ public class UserService {
 	UserDo userDo = (UserDo) redisUtil.get("userdo:id:" + userId);
 	if (userDo == null) {
 	    userDo = getUserDoByIdNoCache(userId);
-	    redisUtil.set("userdo:account:" + userDo.user.account, userDo, validTime);
+//	    redisUtil.set("userdo:account:" + userDo.user.account, userDo, validTime);
 	    redisUtil.set("userdo:id:" + userId, userDo, validTime);
 	}
 	return userDo;

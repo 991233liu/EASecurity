@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.easecurity.core.basis.UserDo;
 import com.easecurity.framework.EaSecurityConfiguration;
 
 /**
@@ -43,7 +42,7 @@ public class LoginService {
      * @return
      * @throws IOException
      */
-    public UserDo getCurrentUser(HttpServletRequest request) throws IOException {
+    public UserDetails getCurrentUser(HttpServletRequest request) throws IOException {
 	Cookie[] cookies = request.getCookies();
 	for (Cookie cookie : cookies) {
 	    if (cookie.getName().equals("EASECURITY_S")) {
@@ -53,7 +52,7 @@ public class LoginService {
 	return _getCurrentUser(null);
     }
 
-    private UserDo _getCurrentUser(Cookie cookie) throws IOException {
+    private UserDetails _getCurrentUser(Cookie cookie) throws IOException {
 	if (cookie == null) { // TODO 未登录用户 或者 其它待开发的认证方式
 	    return null;
 	} else { // 存在cookie，从远端获取认证用户
@@ -74,7 +73,7 @@ public class LoginService {
 			sb.append(line);
 		    }
 		    String str = sb.toString().trim();
-		    return (UserDo) JSON.parseObject(str,UserDo.class);
+		    return (UserDetails) JSON.parseObject(str, UserDetails.class);
 		} else if (state == 203) { // 匿名访问
 		    return null;
 		} else { // 服务器返回错误
