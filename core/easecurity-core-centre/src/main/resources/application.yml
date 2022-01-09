@@ -22,7 +22,6 @@ spring:
       port: 16379
 #      password: 123456
       database: 5
-#      coredatabase: 2
       timeout: 3000
       lettuce:
          pool:

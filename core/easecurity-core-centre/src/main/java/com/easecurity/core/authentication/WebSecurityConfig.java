@@ -22,6 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
+    @Autowired
+    CookieLogoutHandler cookieLogoutHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -54,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logoutUrl("/logout")
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .logoutSuccessUrl("/auth/login?logout")
+            .addLogoutHandler(cookieLogoutHandler)
             .and()
         .csrf().disable();
     }

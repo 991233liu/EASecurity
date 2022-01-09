@@ -150,7 +150,7 @@ public class UriService {
 	    uriDo.uriOrg = new ArrayList<>();
 	    Map<String, Object> allOrgs = (Map<String, Object>) JsonUtils.jsonToObject(org);
 	    allOrgs.forEach((k, v) -> {
-		// TODO 遍历，其它方式
+		// TODO 遍历，其它方式；其它方式下需要预先转化为id？？？
 		switch (k) {
 		case "id":
 		    if (v instanceof String) {

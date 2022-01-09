@@ -25,7 +25,7 @@ public @interface EaSecured {
     String value() default "";
 
     /**
-     * 基于组织的访问控制。格式：{'id' : ['1','2'], 'code' : ['gongsi', 'abumen']}。 支持的属性：id、code、name、fullName
+     * 基于组织的访问控制。格式：{'id' : ['1','2'], 'code' : ['gongsi', 'abumen']}。 支持的属性：id、code、fullCode、name、fullName
      */
     String org() default "";
     

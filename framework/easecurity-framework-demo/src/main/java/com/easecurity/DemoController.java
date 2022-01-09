@@ -1,9 +1,9 @@
 package com.easecurity;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +18,7 @@ import com.easecurity.core.authentication.UserDetails;
 public class DemoController {
 
     @Autowired
-    SomeDao service;
-    @Autowired
     LoginService loginService;
-
-    @RequestMapping("/queryData")
-    public List<Object> queryData() {
-	return service.queryForList(null);
-    }
 
     @RequestMapping("/login")
     public void login(HttpServletRequest request) throws IOException {
@@ -38,10 +31,21 @@ public class DemoController {
 	}
     }
 
+    @RequestMapping("/logout")
+    public void logout(HttpSession session) throws IOException {
+	session.invalidate();
+    }
+
+//    @RequestMapping("/queryData")
+//    public List<Object> queryData() {
+//	return service.queryForList(null);
+//    }
+
     @RequestMapping("/queryData3")
     @EaSecured(org = "{id:['1','4']}")
     public void queryData3(HttpServletRequest request) {
 	UserDetails userDetails = (UserDetails) request.getSession().getAttribute("userDetails");
+	System.out.println("-----## 当前登录人userDetails：" + userDetails);
     }
 
 }
