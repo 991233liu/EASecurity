@@ -1,10 +1,13 @@
 package com.easecurity;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +18,7 @@ import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.b.UserEnum;
+import com.easecurity.core.redis.RedisUtil;
 import com.easecurity.core.utils.ServletUtils;
 
 @RestController
@@ -23,6 +27,13 @@ public class DataOperationController {
 
     @Autowired
     SomeDao service;
+//    @Resource
+//    private RedisTemplate<String, Object> redisTemplate2;
+//    @Autowired
+    @Resource
+    Map<String, RedisTemplate<Object, Object>> otherRedises;
+    @Autowired
+    RedisUtil redisUtil;
 
     @Autowired
     MenuService menuService;
@@ -49,6 +60,9 @@ public class DataOperationController {
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
 	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
 	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus == UserEnum.PdStatus.ENABLED));
+	otherRedises.get("redis1").opsForValue().set("userdo1", userDo);
+	redisUtil.set("userdo2", userDo, "redis2");
+	redisUtil.set("userdo", userDo);
     }
 
 //    @PostMapping("/api/addData")

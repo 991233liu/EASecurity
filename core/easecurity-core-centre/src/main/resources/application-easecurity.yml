@@ -20,3 +20,52 @@ loginCaptcha:
         length: 5    # 验证码字符个数
         delay: 200   # 验证码闪烁时间间隔
         validTime: 300000   # 验证码有效时间（毫秒）
+---
+# 多redis支持
+redises.datasources:
+      redis1:
+         host: 128.0.0.2
+         port: 16379
+   #      password: 123456
+         database: 1
+   #      coredatabase: 2
+         timeout: 3000
+         lettuce:
+            pool:
+               max-wait: 1000  # 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接 抛出JedisConnectionException
+               max-active: 5   # 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool 的状态为exhausted(耗尽)
+               max-idle: 1     # 连接池中的最大空闲连接，默认值也是8。
+               min-idle: 1     # 连接池中的最小空闲连接，默认值也是0。
+            shutdown-timeout: 10000ms  # 关闭超时时间
+   # 设置Redis序列化类。对于稳定的生产系统，建议选用最快速的序列化类；对于开发或者刚上线的系统，建议选用易解读的序列化类。
+   # 目前支持常见的RedisTemplate类。包括：
+   # 支持自定义，自定义类需要实现com.easecurity.core.redis.OemRedisSerializer接口
+         serializer:
+            key: StringRedisSerializer
+   #         value: Jackson2JsonRedisSerializer
+            value: GenericJackson2JsonRedisSerializer
+            hashkey: StringRedisSerializer
+            hashvalue: GenericJackson2JsonRedisSerializer
+      redis2:
+         host: 128.0.0.2
+         port: 16379
+   #      password: 123456
+         database: 2
+   #      coredatabase: 2
+         timeout: 3000
+         lettuce:
+            pool:
+               max-wait: 1000  # 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接 抛出JedisConnectionException
+               max-active: 5   # 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool 的状态为exhausted(耗尽)
+               max-idle: 1     # 连接池中的最大空闲连接，默认值也是8。
+               min-idle: 1     # 连接池中的最小空闲连接，默认值也是0。
+            shutdown-timeout: 10000ms  # 关闭超时时间
+   # 设置Redis序列化类。对于稳定的生产系统，建议选用最快速的序列化类；对于开发或者刚上线的系统，建议选用易解读的序列化类。
+   # 目前支持常见的RedisTemplate类。包括：
+   # 支持自定义，自定义类需要实现com.easecurity.core.redis.OemRedisSerializer接口
+         serializer:
+            key: StringRedisSerializer
+   #         value: Jackson2JsonRedisSerializer
+            value: GenericJackson2JsonRedisSerializer
+            hashkey: StringRedisSerializer
+            hashvalue: GenericJackson2JsonRedisSerializerrrr
