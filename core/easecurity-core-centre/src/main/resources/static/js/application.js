@@ -51,3 +51,30 @@ function onLogin() {
 	encodePassword();
 	$('#loginForm').submit();
 }
+
+/**
+ * Ajax登录
+ */
+function onLoginAjax() {
+	if($("#password").val().length<50) encodePassword();
+	$.ajax({
+        url: $('#loginForm').attr('action'),
+        method: "POST",
+        asyn: true,
+        dataType: "json",
+//		data: {"username":$("#username").val(),"password":$("#password").val(),"gifCaptchaValue":$("#gifCaptchaValue").val()},
+		data: $('#loginForm').serialize(),
+        success: (response) => {
+            alert(response);
+        },
+		error : function(XMLHttpRequest, ajaxOptions, thrownError) {
+			if(XMLHttpRequest.responseJSON){
+				var response = XMLHttpRequest.responseJSON;
+				$('#errormessage').text(response.message);
+				$('#message').css('display','block'); 
+			} else {
+				alert("服务器异常！" + XMLHttpRequest.status + ":" + XMLHttpRequest.responseText);
+			}
+		}
+    });
+}

@@ -40,15 +40,16 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	System.out.println("-------# 输入的验证码key为：" + twoFactorAuthenticationDetails.gifCaptcha);
 	System.out.println("-------# 输入的验证码value为：" + twoFactorAuthenticationDetails.gifCaptchaValue);
 	GifCaptcha gifCaptcha1 = twoFactorAuthenticationDetails.localGifCaptcha1;
-	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
+//	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
 	// TODO 数据库验证
 	// TODO Redis验证
-	if (!loginCaptchaDisable
-		&& !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.value.equals(twoFactorAuthenticationDetails.gifCaptchaValue.toLowerCase()))) {
+	if (!loginCaptchaDisable && ((gifCaptcha1 == null)
+		|| !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.value.equals(twoFactorAuthenticationDetails.gifCaptchaValue.toLowerCase())))) {
 	    logger.debug("Authentication failed: gifCaptcha note valid");
 	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	}
 	twoFactorAuthenticationDetails.localGifCaptcha1 = null;
+	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
 
 	// 校验密码
 	System.out.println("-------# 1=" + userDetails.getUsername() + userDetails.getPassword());

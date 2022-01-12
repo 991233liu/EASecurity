@@ -24,6 +24,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
     @Autowired
     CookieLogoutHandler cookieLogoutHandler;
+    @Autowired
+    LoginSuccessHandler loginSuccessHandler;
+    @Autowired
+    LoginFailureHandler loginFailureHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,9 +51,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/auth/login")
             .loginProcessingUrl("/login")
             .permitAll()
+            .successHandler(loginSuccessHandler)
+            .failureHandler(loginFailureHandler)
 //            .failureForwardUrl("/auth/login?aa=aa")
 //            .failureUrl("/auth/login?aa=aa")
-//            .defaultSuccessUrl("/todo.html", true)
             .authenticationDetailsSource(authenticationDetailsSource)
         .and()
             .logout()
@@ -57,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .logoutSuccessUrl("/auth/login?logout")
             .addLogoutHandler(cookieLogoutHandler)
+	// TODO CSRF攻击被关闭了。如何防御？？？
             .and()
         .csrf().disable();
     }

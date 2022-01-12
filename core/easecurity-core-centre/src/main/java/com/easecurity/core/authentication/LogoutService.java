@@ -36,7 +36,7 @@ public class LogoutService {
 	    if (state == 200) { // 服务器处理正常
 		log.debug("远程系统退出登录成功：{}", url);
 	    } else { // 服务器返回错误
-		log.error("远程系统退出登录失败：state={} url={}", state, url);
+		log.info("远程系统退出登录失败：state={} url={}", state, url);
 	    }
 	} catch (IOException e) {
 	    log.error("远程系统退出登录异常:" + url, e);

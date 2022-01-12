@@ -17,5 +17,6 @@ public class TwoFactorAuthenticationDetails extends WebAuthenticationDetails {
     TwoFactorAuthenticationDetails(HttpServletRequest request) {
 	super(request);
 	localGifCaptcha1 = (GifCaptcha) request.getSession().getAttribute("GifCaptcha");
+	request.getSession().removeAttribute("GifCaptcha");
     }
 }
