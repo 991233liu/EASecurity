@@ -13,6 +13,8 @@ class RoleGroup extends com.easecurity.core.basis.r.RoleGroup {
     static constraints = {
         name nullable: true
         code nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

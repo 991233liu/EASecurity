@@ -20,6 +20,8 @@ class Role extends com.easecurity.core.basis.r.Role {
         fullName nullable: true
         roleGroupId nullable: true, unique: 'orgId'
         orgId nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

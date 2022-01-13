@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * b_org_user表：组织用户关系表，含职务。
@@ -32,6 +33,9 @@ public class OrgUser implements Serializable {
      * 是否主职
      */
     public Boolean masterPosts;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
         return id;
@@ -79,5 +83,21 @@ public class OrgUser implements Serializable {
 
     public void setMasterPosts(Boolean masterPosts) {
         this.masterPosts = masterPosts;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

@@ -17,6 +17,8 @@ class RoleUser extends com.easecurity.core.basis.r.RoleUser {
         roleId nullable: true, unique: 'userId'
         account nullable: true
         roleCode nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

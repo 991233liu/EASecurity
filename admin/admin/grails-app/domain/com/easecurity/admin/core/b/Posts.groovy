@@ -14,6 +14,8 @@ class Posts extends com.easecurity.core.basis.b.Posts {
         code nullable: true
         ranking nullable: true, range: 1..99
         type nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

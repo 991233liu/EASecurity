@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.r;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * r_role_group表：大角色信息。
@@ -20,6 +21,9 @@ public class RoleGroup implements Serializable {
      * 角色编码
      */
     public String code;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
 	return id;
@@ -43,4 +47,19 @@ public class RoleGroup implements Serializable {
 	this.code = code;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

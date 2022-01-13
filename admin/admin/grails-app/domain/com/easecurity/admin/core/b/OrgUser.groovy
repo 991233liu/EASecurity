@@ -17,6 +17,8 @@ class OrgUser extends com.easecurity.core.basis.b.OrgUser {
         orgId nullable: false, blank: false
         postsId nullable: true
         masterPosts nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

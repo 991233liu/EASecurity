@@ -26,6 +26,8 @@ class Menu extends com.easecurity.core.basis.re.Menu {
         disablePrompt length: 2000, nullable: true
         noPermissionsPrompt length: 2000, nullable: true
         accessType nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

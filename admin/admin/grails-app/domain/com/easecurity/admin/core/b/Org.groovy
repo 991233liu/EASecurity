@@ -21,6 +21,8 @@ class Org extends com.easecurity.core.basis.b.Org {
         fullPathid length: 4000, nullable: true
         fullCode length: 4000, nullable: true
         parent nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

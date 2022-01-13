@@ -4,6 +4,7 @@
 package com.easecurity.core.basis.r;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -38,6 +39,9 @@ public class Role implements Serializable {
      * 组织ID
      */
     public Integer orgId;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
         return id;
@@ -87,4 +91,19 @@ public class Role implements Serializable {
         this.orgId = orgId;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

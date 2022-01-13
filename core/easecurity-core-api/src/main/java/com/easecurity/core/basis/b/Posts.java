@@ -4,6 +4,7 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.easecurity.core.basis.b.PostsEnum.*;
 
@@ -32,6 +33,9 @@ public class Posts implements Serializable {
      * 职务类别，0 领导，1 职员
      */
     public Type type;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
         return id;
@@ -71,5 +75,21 @@ public class Posts implements Serializable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

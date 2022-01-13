@@ -16,6 +16,8 @@ class UserInfo extends com.easecurity.core.basis.b.UserInfo {
         name length: 50, nullable: true
         status nullable: true
         icon nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

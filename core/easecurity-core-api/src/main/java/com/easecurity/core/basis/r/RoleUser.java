@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.r;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * r_role_user表：人员小角色关系。
@@ -28,6 +29,9 @@ public class RoleUser implements Serializable {
      * 小角色编码
      */
     public String roleCode;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
 	return id;
@@ -69,4 +73,19 @@ public class RoleUser implements Serializable {
 	this.roleCode = roleCode;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

@@ -2,6 +2,8 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import com.easecurity.core.basis.b.OrgEnum.*;
 
 /**
@@ -45,6 +47,9 @@ public class Org implements Serializable {
      * 全路径组织编码，如：/0/abc/def/
      */
     public String fullCode;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
 	return id;
@@ -118,4 +123,19 @@ public class Org implements Serializable {
 	this.fullCode = fullCode;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

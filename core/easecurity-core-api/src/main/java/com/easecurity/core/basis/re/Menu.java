@@ -4,6 +4,7 @@
 package com.easecurity.core.basis.re;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.easecurity.core.basis.re.MenuEnum.*;
 
@@ -68,6 +69,9 @@ public class Menu implements Serializable {
      * 访问类型，0匿名访问、1登录用户访问、2授权访问
      */
     public AccessType accessType = AccessType.LOGIN;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public Integer getId() {
         return id;
@@ -179,5 +183,21 @@ public class Menu implements Serializable {
 
     public void setAccessType(AccessType accessType) {
         this.accessType = accessType;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

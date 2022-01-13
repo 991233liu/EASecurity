@@ -49,6 +49,9 @@ public class User implements Serializable {
      */
     public Integer pdErrorTimes = 0;
 
+    public Date dateCreated;
+    public Date lastUpdated;
+
     public String getId() { return id; }
 
     public void setId(String id) {
@@ -99,5 +102,21 @@ public class User implements Serializable {
 
     public void setPdErrorTimes(Integer pdErrorTimes) {
         this.pdErrorTimes = pdErrorTimes;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

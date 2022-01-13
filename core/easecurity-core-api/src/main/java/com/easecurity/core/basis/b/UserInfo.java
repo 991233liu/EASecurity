@@ -4,6 +4,7 @@
 package com.easecurity.core.basis.b;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.easecurity.core.basis.b.UserInfoEnum.*;
 
@@ -36,6 +37,9 @@ public class UserInfo implements Serializable {
      * 用户图标
      */
     public String icon;
+
+    public Date dateCreated;
+    public Date lastUpdated;
 
     public String getId() {
         return id;
@@ -83,5 +87,21 @@ public class UserInfo implements Serializable {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }
