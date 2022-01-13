@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * 登录失败后消息和跳转处理类。处理逻辑：
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * </ul>
  *
  */
-@Service
+@Component
 public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override

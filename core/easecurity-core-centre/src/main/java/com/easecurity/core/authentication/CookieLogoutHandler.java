@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * 基于cookie的登录，统一注销
  *
  */
-@Service
+@Component
 public class CookieLogoutHandler implements LogoutHandler {
     private static final Logger log = LoggerFactory.getLogger(CookieLogoutHandler.class);
 

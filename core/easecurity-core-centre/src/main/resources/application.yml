@@ -3,6 +3,11 @@ server:
    port: 80
    servlet:
       context-path: /SecurityCentre
+      session:
+         timeout: 7200   # 单位秒，最小60秒。如果启用了@EnableRedisHttpSession注解，则此配置失效，由@EnableRedisHttpSession直接控制
+         cookie:
+            name: EASECURITY_S
+            httpOnly: true
 
 spring:
    profiles:

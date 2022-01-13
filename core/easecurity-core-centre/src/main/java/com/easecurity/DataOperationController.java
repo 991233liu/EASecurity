@@ -56,7 +56,7 @@ public class DataOperationController {
 	CustomUserDetails user = ServletUtils.getCurrentUser();
 	// 获取身份
 	UserDo userDo = userService.getUserDoById(user.id);
-	request.getSession(true).setAttribute("userdo", userDo);
+	request.getSession().setAttribute("userdo", userDo);
 	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
 	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
 	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus == UserEnum.PdStatus.ENABLED));

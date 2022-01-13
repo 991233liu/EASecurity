@@ -62,8 +62,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .logoutSuccessUrl("/auth/login?logout")
             .addLogoutHandler(cookieLogoutHandler)
-	// TODO CSRF攻击被关闭了。如何防御？？？
+        .and()
+            .sessionManagement()
+            .maximumSessions(1)
+//            .maxSessionsPreventsLogin(true)	// 当session达到最大有效数的时候，不再允许相同的账户登录。
+//            .expiredSessionStrategy(null)	// 当session过期时的处理
             .and()
-        .csrf().disable();
+	// TODO CSRF攻击被关闭了。如何防御？？？
+        .and()
+            .csrf().disable();
     }
 }

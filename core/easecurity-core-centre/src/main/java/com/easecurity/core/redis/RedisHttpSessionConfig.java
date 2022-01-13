@@ -3,8 +3,8 @@ package com.easecurity.core.redis;
 
 //import org.springframework.beans.factory.ObjectProvider;
 //import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 //import org.springframework.data.redis.connection.RedisConnectionFactory;
 //import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 //import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Configuration;
 //import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 //import org.springframework.session.data.redis.config.annotation.SpringSessionRedisConnectionFactory;
 //import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
-import org.springframework.session.web.http.CookieSerializer;
-import org.springframework.session.web.http.DefaultCookieSerializer;
 //import org.springframework.util.ClassUtils;
 //import org.springframework.util.StringUtils;
 
@@ -22,18 +20,18 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * RedisSession配置
  *
  */
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds=7200)
 @Configuration
-public class RedisHttpSessionConfig {
-//    public class RedisHttpSessionConfig extends RedisHttpSessionConfiguration {
-
-    @Bean
-    public CookieSerializer cookieSerializer() {
-	DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
-	defaultCookieSerializer.setCookiePath("/");
-	defaultCookieSerializer.setCookieName("EASECURITY_S");
-	defaultCookieSerializer.setUseHttpOnlyCookie(true);
-	return defaultCookieSerializer;
-    }
+public class RedisHttpSessionConfig{
+//
+//    @Bean
+//    public CookieSerializer cookieSerializer() {
+//	DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
+//	defaultCookieSerializer.setCookiePath("/");
+//	defaultCookieSerializer.setCookieName("EASECURITY_S");
+//	defaultCookieSerializer.setUseHttpOnlyCookie(true);
+//	return defaultCookieSerializer;
+//    }
 
 //    @Autowired
 //    public void setRedisConnectionFactory(@SpringSessionRedisConnectionFactory ObjectProvider<RedisConnectionFactory> springSessionRedisConnectionFactory,

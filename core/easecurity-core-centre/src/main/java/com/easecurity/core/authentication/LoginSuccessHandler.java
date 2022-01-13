@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * 登录成功后消息和跳转处理类。处理逻辑：
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
  * <li>如果什么参数也没有，则按照{@link org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler}处理</li>
  * </ul>
  */
-@Service
+@Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Override
