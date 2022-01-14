@@ -1,4 +1,4 @@
-package com.easecurity.core.authentication;
+package com.easecurity.core.authentication.form;
 
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 

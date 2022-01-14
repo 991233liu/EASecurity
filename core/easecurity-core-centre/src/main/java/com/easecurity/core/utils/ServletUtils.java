@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import com.easecurity.core.authentication.CustomUserDetails;
+import com.easecurity.core.authentication.form.CustomUserDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

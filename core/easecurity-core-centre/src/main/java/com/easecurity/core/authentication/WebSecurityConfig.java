@@ -12,6 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.easecurity.core.authentication.form.CookieLogoutHandler;
+import com.easecurity.core.authentication.form.LoginFailureHandler;
+import com.easecurity.core.authentication.form.LoginSuccessHandler;
+
 /**
  * @Description: spring security配置类
  *

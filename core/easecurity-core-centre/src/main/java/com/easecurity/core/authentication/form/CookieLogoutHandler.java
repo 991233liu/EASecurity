@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.authentication;
+package com.easecurity.core.authentication.form;
 
 import java.util.List;
 
@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
+
+import com.easecurity.core.authentication.LogoutService;
 
 /**
  * 基于cookie的登录，统一注销

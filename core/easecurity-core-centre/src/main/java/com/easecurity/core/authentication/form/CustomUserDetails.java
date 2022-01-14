@@ -1,4 +1,4 @@
-package com.easecurity.core.authentication;
+package com.easecurity.core.authentication.form;
 
 import java.util.ArrayList;
 import java.util.Collection;

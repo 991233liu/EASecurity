@@ -4,6 +4,7 @@ package com.easecurity.core.authentication;
 //import com.easecurity.core.captcha.GifCaptcha;
 import com.easecurity.util.JsonUtils;
 import com.alibaba.fastjson.JSON;
+import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.ServletUtils;

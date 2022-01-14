@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.easecurity.core.authentication.CustomUserDetails;
+import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;

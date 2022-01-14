@@ -1,4 +1,4 @@
-package com.easecurity.core.authentication;
+package com.easecurity.core.authentication.form;
 
 import javax.annotation.Resource;
 
@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.easecurity.core.authentication.LoginService;
 import com.easecurity.core.basis.s.GifCaptcha;
 
 //@CompileStatic
