@@ -1,15 +1,11 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.authentication;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.easecurity.core.authentication.form.CookieLogoutHandler;
@@ -24,8 +20,6 @@ import com.easecurity.core.authentication.form.LoginSuccessHandler;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
     @Autowired
     CookieLogoutHandler cookieLogoutHandler;
     @Autowired
@@ -59,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .failureHandler(loginFailureHandler)
 //            .failureForwardUrl("/auth/login?aa=aa")
 //            .failureUrl("/auth/login?aa=aa")
-            .authenticationDetailsSource(authenticationDetailsSource)
+//            .authenticationDetailsSource(authenticationDetailsSource)
         .and()
             .logout()
             .logoutUrl("/logout")

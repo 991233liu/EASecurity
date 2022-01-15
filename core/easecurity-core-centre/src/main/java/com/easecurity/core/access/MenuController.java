@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.easecurity.core.authentication.form.CustomUserDetails;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
@@ -36,7 +36,7 @@ public class MenuController {
     public List<MenuDo> myMenu(HttpServletRequest request) {
 	menuService.loadAll();
 	// 获取当前登录人
-	CustomUserDetails user = ServletUtils.getCurrentUser();
+	UserDetails user = ServletUtils.getCurrentUserDetails();
 //	if (user == null || user.isAnonymousUser()) { // TODO 未登录时？
 //	    response.setStatus(203);
 //	    return "anonymousUser";

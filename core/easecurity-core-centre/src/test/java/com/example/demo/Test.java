@@ -2,7 +2,7 @@ package com.example.demo;
 
 import java.util.Map;
 
-import com.easecurity.core.basis.UserDo;
+//import com.easecurity.core.basis.UserDo;
 import com.easecurity.util.JsonUtils;
 
 public class Test {
@@ -12,7 +12,7 @@ public class Test {
 	@SuppressWarnings("rawtypes")
 	Map map = (Map) JsonUtils.jsonToObject(jsonString);
 	System.out.println(map);
-	Object a = null;
-	UserDo userDo = (UserDo) a;
+//	Object a = null;
+//	UserDo userDo = (UserDo) a;
     }
 }

@@ -4,7 +4,6 @@ package com.easecurity.core.authentication;
 //import com.easecurity.core.captcha.GifCaptcha;
 import com.easecurity.util.JsonUtils;
 import com.alibaba.fastjson.JSON;
-import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.ServletUtils;
@@ -64,30 +63,15 @@ class LoginController {
 
     @GetMapping("/currentUser")
     @ResponseBody
-    // TODO 加密？？
+    // TODO 加密？？JWT!
     // TODO 后台访问？？？
     public String currentUser(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
-	CustomUserDetails user = ServletUtils.getCurrentUser();
-	if (user == null || user.isAnonymousUser()) { // TODO 未登录时？
+	UserDetails user = ServletUtils.getCurrentUserDetails();
+	if (user == null) { // 未登录时
 	    response.setStatus(203);
 	    return "anonymousUser";
 	} else { // 登录用户
-	    UserDetails userDetails = new UserDetails();
-	    userDetails.id=user.id;
-	    userDetails.account=user.getUsername();
-	    userDetails.name=user.fullName;
-	    userDetails.icon=user.icon;
-	    userDetails.identities=user.identities;
-	    return JSON.toJSONString(userDetails);
-//	    UserDo userdo = (UserDo) session.getAttribute("userdo");
-//	    if (userdo == null) {
-//		userdo = userService.getUserDoByAccount(user.getUsername());
-//		session.setAttribute("userdo", userdo);
-//	    }
-//	    // 清空密码，不能传递
-//	    userdo.user.pd = null;
-//	    return JSON.toJSONString(userdo);
-//	    return JsonUtils.objectToJson(userdo);
+	    return JSON.toJSONString(user);
 	}
     }
 

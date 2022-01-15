@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -26,10 +24,6 @@ public class LoginService {
 
     private static final Logger log = LoggerFactory.getLogger(LoginService.class);
     private EaSecurityConfiguration eaSecurityConfiguration;
-    private Map<String, String> alias = new HashMap<>();
-    {
-	alias.put("data", "com.easecurity.core.basis.UserDo");
-    }
 
     public LoginService(EaSecurityConfiguration eaSecurityConfiguration) {
 	this.eaSecurityConfiguration = eaSecurityConfiguration;

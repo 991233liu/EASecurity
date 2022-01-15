@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.annotation.EaSecured;
-import com.easecurity.core.authentication.form.CustomUserDetails;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
@@ -52,8 +52,8 @@ public class DataOperationController {
 
     @RequestMapping("/queryData3")
     @EaSecured(org = "{id:['1','4']}")
-    public void queryData3(HttpServletRequest request) {
-	CustomUserDetails user = ServletUtils.getCurrentUser();
+    public UserDo queryData3(HttpServletRequest request) {
+	UserDetails user = ServletUtils.getCurrentUserDetails();
 	// 获取身份
 	UserDo userDo = userService.getUserDoById(user.id);
 	request.getSession().setAttribute("userdo", userDo);
@@ -63,6 +63,7 @@ public class DataOperationController {
 	otherRedises.get("redis1").opsForValue().set("userdo1", userDo);
 	redisUtil.set("userdo2", userDo, "redis2");
 	redisUtil.set("userdo", userDo);
+	return userDo;
     }
 
 //    @PostMapping("/api/addData")
