@@ -2,10 +2,19 @@
 package com.easecurity.core.authentication;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.text.ParseException;
+import java.util.HashMap;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +24,11 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.easecurity.framework.EaSecurityConfiguration;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.util.Base64;
+import com.nimbusds.jwt.SignedJWT;
 
 /**
  * 登录相关服务
@@ -33,26 +47,112 @@ public class LoginService {
      * 获取当前登录人
      * 
      * @param request
+     * @param publicKeyFile RSA公钥证书文件（Base64编码格式）
+     * 
      * @return
      * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     * @throws JWTExpirationException
      */
-    public UserDetails getCurrentUser(HttpServletRequest request) throws IOException {
+    public JWT getCurrentUserJWT(HttpServletRequest request, File publicKeyFile) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JWTExpirationException {
+	return getCurrentUserJWT(request, getRSAPublicKey(publicKeyFile));
+    }
+
+    /**
+     * 获取当前登录人
+     * 
+     * @param request
+     * @param publicKey RSA公钥证书（Base64编码格式）
+     * 
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     * @throws JWTExpirationException
+     */
+    public JWT getCurrentUserJWT(HttpServletRequest request, String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JWTExpirationException {
+	return getCurrentUserJWT(request, getRSAPublicKey(publicKey));
+    }
+
+    /**
+     * 获取当前登录人
+     * 
+     * @param request
+     * @param publicKey RSA公钥证书
+     * 
+     * @return
+     * @throws IOException
+     * @throws JWTExpirationException
+     */
+    public JWT getCurrentUserJWT(HttpServletRequest request, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	Cookie[] cookies = request.getCookies();
 	for (Cookie cookie : cookies) {
 	    if (cookie.getName().equals("EASECURITY_S")) {
-		return _getCurrentUser(cookie);
+		return _getCurrentUserJWT(cookie, publicKey);
 	    }
 	}
-	return _getCurrentUser(null);
+	return _getCurrentUserJWT(null, publicKey);
     }
 
-    private UserDetails _getCurrentUser(Cookie cookie) throws IOException {
+    /**
+     * 
+     * 从文件中读取RSAPublicKey（Base64编码格式）
+     * 
+     * @param publicKeyFile
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public RSAPublicKey getRSAPublicKey(File publicKeyFile) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	BufferedReader br = null;
+	StringBuilder sb = new StringBuilder();
+	try {
+	    br = new BufferedReader(new InputStreamReader(new FileInputStream(publicKeyFile)));
+	    String line;
+	    while ((line = br.readLine()) != null) {
+		if (line.indexOf("BEGIN PUBLIC KEY") > -1)
+		    continue;
+		if (line.indexOf("END PUBLIC KEY") > -1)
+		    break;
+		sb.append(line.trim());
+	    }
+	} finally {
+	    if (br != null)
+		try {
+		    br.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	}
+	String str = sb.toString().trim();
+	return getRSAPublicKey(str);
+    }
+
+    /**
+     * 
+     * 创建RSAPublicKey（Base64编码格式）
+     * 
+     * @param publicKey
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public RSAPublicKey getRSAPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+	X509EncodedKeySpec keySpec = new X509EncodedKeySpec(new Base64(publicKey).decode());
+	KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+    }
+
+    private JWT _getCurrentUserJWT(Cookie cookie, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	if (cookie == null) { // TODO 未登录用户 或者 其它待开发的认证方式
 	    return null;
 	} else { // 存在cookie，从远端获取认证用户
 	    BufferedReader br = null;
 	    try {
-		String uri = eaSecurityConfiguration.getEasCentreUrl() + "/auth/currentUser";
+		String uri = eaSecurityConfiguration.getEasCentreUrl() + "/auth/currentUserJWT";
 		HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
 		connection = eaSecurityConfiguration.setDefaultConfig(connection);
 		connection.setRequestMethod("GET");
@@ -67,7 +167,7 @@ public class LoginService {
 			sb.append(line);
 		    }
 		    String str = sb.toString().trim();
-		    return (UserDetails) JSON.parseObject(str, UserDetails.class);
+		    return getUserJWT(str, publicKey);
 		} else if (state == 203) { // 匿名访问
 		    return null;
 		} else { // 服务器返回错误
@@ -86,5 +186,47 @@ public class LoginService {
 		    }
 	    }
 	}
+    }
+
+    /**
+     * 获取有效的用户认证信息
+     */
+    private JWT getUserJWT(String jwtStr, RSAPublicKey publicKey) throws JWTExpirationException, IOException {
+	try {
+	    String str = decode(jwtStr, publicKey);
+	    @SuppressWarnings("unchecked")
+	    HashMap<String, Object> jwtMap = JSON.parseObject(str, HashMap.class);
+	    JWT jwt = new JWT(jwtMap);
+	    if (jwt.verify()) {
+		if (jwtMap.get("userDetails") != null) {
+		    jwt.userDetails = (UserDetails) JSON.parseObject((String) jwtMap.get("userDetails"), UserDetails.class);
+		    return jwt;
+		}
+	    } else {
+		throw new JWTExpirationException(jwt.sub + " tocken has expiration, exp is:" + jwt.exp);
+	    }
+	} catch (ParseException | JOSEException e) {
+	    log.error("JWT 解码异常", e);
+	    throw new IOException("JWT 解码异常", e);
+	}
+	return null;
+    }
+
+    /**
+     * 解码+验签
+     */
+    private String decode(String jwtStr, RSAPublicKey publicKey) throws ParseException, JOSEException {
+	try {
+	    SignedJWT sjwt = SignedJWT.parse(jwtStr);
+	    JWSVerifier verifier = new RSASSAVerifier(publicKey);
+	    if (sjwt.verify(verifier)) {
+		return sjwt.getPayload().toString();
+	    }
+	} catch (ParseException e) {
+	    throw e;
+	} catch (JOSEException e) {
+	    throw e;
+	}
+	return null;
     }
 }

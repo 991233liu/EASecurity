@@ -16,8 +16,9 @@ dependencies {
 
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'com.alibaba:fastjson:1.2.79'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.10.1'
     
-    compileOnly 'javax.servlet:servlet-api:2.4'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }

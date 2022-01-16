@@ -1,27 +1,31 @@
 package com.easecurity.core.authentication;
 
-//import com.easecurity.admin.core.re.Menu;
-//import com.easecurity.core.captcha.GifCaptcha;
 import com.easecurity.util.JsonUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.ServletUtils;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-//import grails.converters.JSON;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +40,10 @@ class LoginController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    JwtEncoder encoder;
+    @Autowired
+    JwtDecoder decoder;
 
     @Value("${loginCaptcha.disable:true}")
     boolean disable;
@@ -45,6 +53,8 @@ class LoginController {
     Integer gifCaptchaDelay;
     @Value("${loginCaptcha.gifCaptcha.validTime:300000}")
     Integer validTime;
+    @Value("${easecurity.jwt.validTime:300}")
+    Integer JWTValidTime;
 
     @GetMapping("/login")
     public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout", required = false) String logout) {
@@ -61,18 +71,34 @@ class LoginController {
 	return mav;
     }
 
-    @GetMapping("/currentUser")
+    @GetMapping("/currentUserJWT")
     @ResponseBody
-    // TODO 加密？？JWT!
-    // TODO 后台访问？？？
-    public String currentUser(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+    // TODO 后台访问？？？绑定IP
+    public String currentUserJWT(HttpServletResponse response, Authentication authentication) throws IOException {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	if (user == null) { // 未登录时
 	    response.setStatus(203);
 	    return "anonymousUser";
-	} else { // 登录用户
-	    return JSON.toJSONString(user);
 	}
+	Instant now = Instant.now();
+	String scope = JSON.toJSONString(user);
+	JwtClaimsSet claims = JwtClaimsSet.builder()
+			.issuer("SecurityCentre")
+			.issuedAt(now)
+			.expiresAt(now.plusSeconds(JWTValidTime))
+			.subject(authentication.getName())
+			.claim("userDetails", scope)
+			.build();
+	return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+    
+    @GetMapping("/currentUserJWT2")
+    @ResponseBody
+    // TODO 加密？？JWT!
+    // TODO 后台访问？？？
+    public String currentUserJWT2(HttpServletResponse response, Authentication authentication) throws IOException {
+	Jwt jwt = decoder.decode(this.currentUserJWT(response, authentication));
+	return JSON.toJSONString(jwt.getClaims());
     }
 
 //    def allMenu() {

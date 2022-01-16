@@ -1,19 +1,17 @@
 ---
 # 企业安全中心相关配置
 easecurity:
-   server:
-      url: http://127.0.0.1/SecurityCentre
-      connectTimeout: 30000    # 与企业安全中心通信链接超时时间（单位毫秒）。默认30秒。
-      threadSleepTime: 60000   # 与企业安全中心通信间隔（单位毫秒）。默认1分钟
-   verification: dev   # 安全校验模式：dev(development)、prod(production)。在dev模式下，安全校验标签（功能）会正常执行，
-                         # 校验结果会输出到日志中（info级别），但是，无论校验结果如何，被保护（控制）的方法仍会被执行。
-                         # 默认为prod模式。
    cache:
       user:
-         validTime: 3600
+         validTime: 3600   # 有效期。单位秒
    client:
       logout:
          url: http://128.0.0.1:8080/demo/logout,http://128.0.0.2/demo/logout
+   # jwt配置
+   jwt:
+      validTime: 3600   # 有效期。单位秒
+      private.key: classpath:app.key
+      public.key: classpath:app.pub
 
 ---
 # 登录验证码
@@ -72,6 +70,5 @@ redises.datasources:
          value: GenericJackson2JsonRedisSerializer
          hashkey: StringRedisSerializer
          hashvalue: GenericJackson2JsonRedisSerializerrrrr
-
 
          
