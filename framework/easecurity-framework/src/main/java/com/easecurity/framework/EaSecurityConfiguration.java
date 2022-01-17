@@ -11,14 +11,24 @@ import java.net.ProtocolException;
 public class EaSecurityConfiguration {
 
     public ServerProperties server;
+    
+    public JWTProperties jwt;
 
     /**
      * 安全校验模式：dev(development)、prod(production)。在dev模式下，安全校验标签（功能）会正常执行，
      * 校验结果会输出到日志中（info级别），但是，无论校验结果如何，被保护（控制）的方法仍会被执行。 默认为prod模式。
      */
     public String verification = "prod";
-
-    public JWTProperties jwt;
+    
+    /**
+     * 未登录时的跳转页面
+     */
+    public String noLoginUrl;
+    
+    /**
+     * 未登录时的返回信息，此时http.Status为403
+     */
+    public String noLoginMessage;
 
     /**
      * 设置HttpURLConnection的链接属性
@@ -77,6 +87,22 @@ public class EaSecurityConfiguration {
 
     public void setJwt(JWTProperties jwt) {
 	this.jwt = jwt;
+    }
+
+    public String getNoLoginUrl() {
+        return noLoginUrl;
+    }
+
+    public void setNoLoginUrl(String noLoginUrl) {
+        this.noLoginUrl = noLoginUrl;
+    }
+
+    public String getNoLoginMessage() {
+        return noLoginMessage;
+    }
+
+    public void setNoLoginMessage(String noLoginMessage) {
+        this.noLoginMessage = noLoginMessage;
     }
 
     public static class ServerProperties {

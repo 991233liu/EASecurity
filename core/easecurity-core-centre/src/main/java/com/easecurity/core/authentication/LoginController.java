@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -57,16 +58,21 @@ class LoginController {
     Integer JWTValidTime;
 
     @GetMapping("/login")
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout", required = false) String logout) {
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout", required = false) String logout,
+	    HttpServletRequest request) {
 	ModelAndView mav = new ModelAndView();
-	mav.setViewName("/auth/login.html");
+	String srchref = request.getParameter("srchref");
+	String failurehref = request.getParameter("failurehref");
 	if (error != null) {
 //	    mav.addObject("error", "用户名或者密码不正确");
 	    mav.setViewName("/auth/loginError.html");
-	}
-	if (logout != null) {
+	} else if (logout != null) {
 //	    mav.addObject("msg", "退出成功");
 	    mav.setViewName("/auth/logout.html");
+	} else if ((srchref != null && !"".equals(srchref)) || ((failurehref != null && !"".equals(failurehref)))) {
+	    mav.setViewName("/auth/login_ajax.html");
+	} else {
+	    mav.setViewName("/auth/login.html");
 	}
 	return mav;
     }
@@ -74,29 +80,39 @@ class LoginController {
     @GetMapping("/currentUserJWT")
     @ResponseBody
     // TODO 后台访问？？？绑定IP
-    public String currentUserJWT(HttpServletResponse response, Authentication authentication) throws IOException {
+    public String currentUserJWT(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	if (user == null) { // 未登录时
 	    response.setStatus(203);
 	    return "anonymousUser";
 	}
+	String jwt = (String) request.getSession().getAttribute("JWT.str");
+	Long expiresAt = (Long) request.getSession().getAttribute("JWT.expiresAt");
+	// 优先从session中取，还在有效期内的直接返回，不用重新生成
+	if (jwt != null && !"".equals(jwt)) {
+	    if (expiresAt != null && Instant.now().getEpochSecond() < expiresAt)
+		return jwt;
+	}
 	Instant now = Instant.now();
 	String scope = JSON.toJSONString(user);
 	JwtClaimsSet claims = JwtClaimsSet.builder()
-			.issuer("SecurityCentre")
-			.issuedAt(now)
-			.expiresAt(now.plusSeconds(JWTValidTime))
-			.subject(authentication.getName())
-			.claim("userDetails", scope)
-			.build();
-	return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+		.issuer("SecurityCentre")
+		.issuedAt(now)
+		.expiresAt(now.plusSeconds(JWTValidTime))
+		.subject(authentication.getName())
+		.claim("userDetails", scope).build();
+	jwt = encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+	expiresAt = now.plusSeconds(JWTValidTime).getEpochSecond();
+	request.getSession().setAttribute("JWT.str", jwt);
+	request.getSession().setAttribute("JWT.expiresAt", expiresAt);
+	return jwt;
     }
-    
+
     @GetMapping("/currentUserJWT2")
     @ResponseBody
     // TODO 测试用代码，需要删掉
-    public String currentUserJWT2(HttpServletResponse response, Authentication authentication) throws IOException {
-	Jwt jwt = decoder.decode(this.currentUserJWT(response, authentication));
+    public String currentUserJWT2(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+	Jwt jwt = decoder.decode(this.currentUserJWT(request, response, authentication));
 	return JSON.toJSONString(jwt.getClaims());
     }
 

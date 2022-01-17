@@ -39,20 +39,28 @@ public abstract class AbsAuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 	log.debug("---------# AuthFilter.doFilter in");
-	JWT jwt = getCurrentUserJWTFromLocalStore(request);
-	if (jwt == null || !jwt.verify()) {
-	    // 未登录时或者JWT过期时，从远端认证中心拉取最新状态
-	    jwt = getCurrentUserJWTFromSecurityCentre(request);
-	    // 存入本地缓存
-	    if(jwt!=null)SaveUserJWT2LocalStore(request, response, jwt);
-	}
-	if (jwt == null || !jwt.verify()) {
-	    // 远端认证中心没有返回有效的身份时：跳转登录页，或者返回错误信息（http 403）
-	    // TODO
-	} else { // 已登录用户正常响应
-	    LoginService.userDetails.set(jwt.userDetails);
+
+	HttpServletRequest req = (HttpServletRequest) request;
+	String uri = req.getRequestURI();
+	if (uri.endsWith("logout")) { // logout不拦截
 	    chain.doFilter(request, response);
-	    LoginService.userDetails.remove();
+	} else {
+	    JWT jwt = getCurrentUserJWTFromLocalStore(request);
+	    if (jwt == null || !jwt.verify()) {
+		// 未登录时或者JWT过期时，从远端认证中心拉取最新状态
+		jwt = getCurrentUserJWTFromSecurityCentre(request);
+		// 存入本地缓存
+		if (jwt != null)
+		    SaveUserJWT2LocalStore(request, response, jwt);
+	    }
+	    if (jwt == null || !jwt.verify()) {
+		// 远端认证中心没有返回有效的身份时的处理
+		noLogin(request, response, chain, jwt);
+	    } else { // 已登录用户正常响应
+		LoginService.userDetails.set(jwt.userDetails);
+		chain.doFilter(request, response);
+		LoginService.userDetails.remove();
+	    }
 	}
 	System.out.println("Inside ABCFilter: " + ((HttpServletRequest) request).getRequestURI());
 	log.debug("---------# AuthFilter.doFilter out");
@@ -73,14 +81,15 @@ public abstract class AbsAuthFilter implements Filter {
      * @return
      */
     public abstract JWT getCurrentUserJWTFromLocalStore(ServletRequest request);
-    
+
     /**
      * 将当前登录用户的JWT存入应用缓存
+     * 
      * @param request
      * @param jwt
      */
     public abstract void SaveUserJWT2LocalStore(ServletRequest request, ServletResponse response, JWT jwt);
-    
+
     /**
      * 从远端认证中心获取当前登录用户的JWT
      * 
@@ -88,4 +97,13 @@ public abstract class AbsAuthFilter implements Filter {
      * @return
      */
     public abstract JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request);
+    
+    /**
+     * 未登录时的处理。（远端认证中心没有返回有效的身份时的处理）
+     * 
+     * @param request
+     * @param response
+     * @param chain
+     */
+    public abstract void noLogin(ServletRequest request, ServletResponse response, FilterChain chain, JWT jwt);
 }

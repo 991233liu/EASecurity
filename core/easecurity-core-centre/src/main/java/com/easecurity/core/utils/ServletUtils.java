@@ -4,7 +4,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
+import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.UserDo;
@@ -25,7 +25,10 @@ public class ServletUtils {
 	if (principal instanceof UserDetails) { // 数据库登录用户
 	    return (UserDetails) principal;
 	} else if (principal == null || principal instanceof String) { // 匿名登录
-	    return CustomUserDetails.withUsername("anonymousUser").build();
+	    UserBuilder userBuilder = CustomUserDetails.withUsername("anonymousUser");
+	    userBuilder.password("anonymousUser");
+	    userBuilder.authorities("ROLE_ANONYMOUS");
+	    return userBuilder.build();
 	} else { // 其它待开发类型
 	    // TODO 其它待开发类型
 	    return null;

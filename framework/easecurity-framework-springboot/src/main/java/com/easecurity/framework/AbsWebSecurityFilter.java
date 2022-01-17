@@ -3,12 +3,16 @@ package com.easecurity.framework;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,12 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	return eaSecurityConfiguration;
     }
 
+    /**
+     * 从远端认证中心获取当前登录用户的JWT
+     * 
+     * @param request
+     * @return
+     */
     @Override
     public JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request) {
 	try {
@@ -58,6 +68,33 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	    log.error("在处理JWT请求时，RAS证书加载异常", e);
 	}
 	return null;
+    }
+
+    /**
+     * 未登录时的处理。（远端认证中心没有返回有效的身份时的处理）
+     * 
+     * @param request
+     * @param response
+     * @param chain
+     * @param jwt      远端认证中心返回的JWT
+     */
+    @Override
+    public void noLogin(ServletRequest request, ServletResponse response, FilterChain chain, JWT jwt) {
+	HttpServletResponse resp = (HttpServletResponse) response;
+	HttpServletRequest req = (HttpServletRequest) request;
+	try {
+	    if (eaSecurityConfiguration.noLoginUrl != null && !"".equals(eaSecurityConfiguration.noLoginUrl)) {
+		resp.sendRedirect(eaSecurityConfiguration.noLoginUrl);
+	    } else if (eaSecurityConfiguration.noLoginMessage != null && !"".equals(eaSecurityConfiguration.noLoginMessage)) {
+		resp.getWriter().write(eaSecurityConfiguration.noLoginMessage);
+		resp.setStatus(403);
+	    } else {
+		String uri = req.getRequestURI();
+		resp.sendRedirect("/SecurityCentre/auth/login?srchref=" + URLEncoder.encode(uri, "GBK"));
+	    }
+	} catch (Exception e) {
+	    log.error("在处理noLogin请求时，异常", e);
+	}
     }
 
     private RSAPublicKey getRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {

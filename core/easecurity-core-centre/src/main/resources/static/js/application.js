@@ -65,7 +65,9 @@ function onLoginAjax() {
 //		data: {"username":$("#username").val(),"password":$("#password").val(),"gifCaptchaValue":$("#gifCaptchaValue").val()},
 		data: $('#loginForm').serialize(),
         success: (response) => {
-            alert(response);
+//            alert(response);
+			var srchref = $("#srchref").val();
+			if(srchref)$(location).prop('href', srchref)
         },
 		error : function(XMLHttpRequest, ajaxOptions, thrownError) {
 			if(XMLHttpRequest.responseJSON){
@@ -77,4 +79,21 @@ function onLoginAjax() {
 			}
 		}
     });
+}
+
+/**
+ * 获取URL中参数
+ */
+function GetRequest(name){
+	var url = window.location.search;
+	if(url.indexOf("?")!= -1){
+		var str = url.substr(1);
+		var strs = str.split("&");
+		for (var i = 0; i < strs.length; i++){
+			var theRequest = strs[i].split("=");
+			if(theRequest[0]==name)
+				return theRequest[1];
+		}
+	}
+	return null;
 }

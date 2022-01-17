@@ -129,6 +129,10 @@
     <script>
 		$(document).ready(function() {
             flushLoginCaptcha();
+			var srchref = GetRequest('srchref');
+			if(srchref)$("#srchref").val(decodeURIComponent(srchref));
+			var failurehref = GetRequest('failurehref');
+			if(failurehref)$("#failurehref").val(decodeURIComponent(failurehref));
         });
         $(function() {
             $('input').iCheck({

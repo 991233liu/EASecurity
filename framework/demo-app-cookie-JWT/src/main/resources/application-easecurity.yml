@@ -11,4 +11,5 @@ easecurity:
    # jwt配置
    jwt:
       publicKey: classpath:app.pub
-         
+#   noLoginUrl: /SecurityCentre/auth/login   # 未登录时的跳转页面
+#   noLoginMessage: "{\"code\":\"noLogin\",\"message\":\"noLogin\"}"   # 未登录时的返回信息，此时http.Status为403

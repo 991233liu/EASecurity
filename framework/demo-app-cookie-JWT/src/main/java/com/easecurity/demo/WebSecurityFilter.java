@@ -2,6 +2,7 @@
 package com.easecurity.demo;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -53,7 +54,7 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
 	cookie.setPath("/");
 	HttpServletResponse rep = (HttpServletResponse)response;
 	rep.addCookie(cookie);
-	redisTemplate.opsForValue().set("JWT:" + cookie.getValue(), jwt);
+	redisTemplate.opsForValue().set("JWT:" + cookie.getValue(), jwt, 300, TimeUnit.SECONDS);
     }
 
 }
