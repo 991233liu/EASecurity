@@ -94,28 +94,16 @@ class LoginController {
     
     @GetMapping("/currentUserJWT2")
     @ResponseBody
-    // TODO 加密？？JWT!
-    // TODO 后台访问？？？
+    // TODO 测试用代码，需要删掉
     public String currentUserJWT2(HttpServletResponse response, Authentication authentication) throws IOException {
 	Jwt jwt = decoder.decode(this.currentUserJWT(response, authentication));
 	return JSON.toJSONString(jwt.getClaims());
     }
 
-//    def allMenu() {
-//        Map menuTree = getSession().getAttribute('allMenuTree')
-//        if (!menuTree) {
-//            Menu menu = Menu.findByCode('adminRoot')
-//            menuTree = getMenuTree(menu)
-//            getSession().setAttribute('allMenuTree', menuTree)
-//        }
-//        respond menuTree.get('children') ?: [], formats: ['json']
-//    }
-//
     @GetMapping("/gifCaptcha")
     @ResponseBody
     public String gifCaptcha(HttpSession session) {
 	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha(session);
-//        respond map, formats: ['json']
 	return JsonUtils.objectToJson(map);
     }
 
@@ -142,20 +130,4 @@ class LoginController {
 	map.put("image", gifCaptcha.toBase64());
 	return map;
     }
-
-//    private Map getMenuTree(Menu menu) {
-//        Map map = new HashMap();
-//        map.putAll(menu.properties);
-//        map.put('id', menu.id);
-//        map.remove('parent');
-//        List children = [];
-//        (menu.children as List).sort { x, y ->
-//            x.sortNumber.compareTo(y.sortNumber);
-//        }.each {
-//            children.add(getMenuTree(it));
-//        }
-//        if (!children.isEmpty()) map.put('children', children);
-//        else map.remove('children');
-//        return map;
-//    }
 }

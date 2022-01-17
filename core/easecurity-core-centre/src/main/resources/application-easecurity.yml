@@ -10,8 +10,8 @@ easecurity:
    # jwt配置
    jwt:
       validTime: 3600   # 有效期。单位秒
-      private.key: classpath:app.key
-      public.key: classpath:app.pub
+      privateKey: classpath:app.key
+      publicKey: classpath:app.pub
 
 ---
 # 登录验证码

@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.authentication;
+package com.easecurity.framework.authentication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,11 +18,15 @@ import java.util.HashMap;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.easecurity.core.authentication.JWT;
+import com.easecurity.core.authentication.JWTExpirationException;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.EaSecurityConfiguration;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
@@ -38,6 +42,8 @@ public class LoginService {
 
     private static final Logger log = LoggerFactory.getLogger(LoginService.class);
     private EaSecurityConfiguration eaSecurityConfiguration;
+
+    static ThreadLocal<UserDetails> userDetails = new ThreadLocal<UserDetails>();
 
     public LoginService(EaSecurityConfiguration eaSecurityConfiguration) {
 	this.eaSecurityConfiguration = eaSecurityConfiguration;
@@ -146,13 +152,27 @@ public class LoginService {
 	return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     }
 
+    /**
+     * 从本地线程中获取当前登录人授权信息
+     * @param session
+     * @return
+     */
+    public UserDetails getLocalUserDetails(HttpSession session) {
+	if (session != null) {
+	    UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
+	    if (userDetails != null)
+		return userDetails;
+	}
+	return userDetails.get();
+    }
+
     private JWT _getCurrentUserJWT(Cookie cookie, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	if (cookie == null) { // TODO 未登录用户 或者 其它待开发的认证方式
 	    return null;
 	} else { // 存在cookie，从远端获取认证用户
 	    BufferedReader br = null;
 	    try {
-		String uri = eaSecurityConfiguration.getEasCentreUrl() + "/auth/currentUserJWT";
+		String uri = eaSecurityConfiguration.server.getUrl() + "/auth/currentUserJWT";
 		HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
 		connection = eaSecurityConfiguration.setDefaultConfig(connection);
 		connection.setRequestMethod("GET");

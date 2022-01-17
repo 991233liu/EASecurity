@@ -10,5 +10,5 @@ easecurity:
                          # 默认为prod模式。
    # jwt配置
    jwt:
-      public.key: /app.pub
+      publicKey: classpath:app.pub
          

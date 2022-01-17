@@ -3,4 +3,4 @@
  * 身份认证
  *
  */
-package com.easecurity.core.authentication;
+package com.easecurity.framework.authentication;

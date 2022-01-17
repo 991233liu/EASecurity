@@ -1,9 +1,9 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.framework;
 
-import com.easecurity.core.authentication.LoginService;
 import com.easecurity.framework.access.AccessRegister;
 import com.easecurity.framework.access.UriService;
+import com.easecurity.framework.authentication.LoginService;
 
 /**
  * 访问控制层服务工厂，用于获取访问控制service实例。
@@ -38,7 +38,7 @@ public class EaSecurityServiceFactory {
 	    accessRegister = AccessRegister.getInstance(getEaSecurityConfiguration());
 	}
 	if (accessRegister == null)
-	    throw new RuntimeException("---## 初始化AccessRegister时失败，easCentreUrl=" + eaSecurityConfiguration.getEasCentreUrl());
+	    throw new RuntimeException("---## 初始化AccessRegister时失败，easCentreUrl=" + eaSecurityConfiguration.server.getUrl());
 	return accessRegister;
     }
 

@@ -14,14 +14,15 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.authentication.UserDetails;
+import com.easecurity.framework.EaSecurityConfiguration;
 import com.easecurity.framework.access.UriService;
+import com.easecurity.framework.authentication.LoginService;
 
 /**
  * 控制方法访问权限。 多条件时默认使用“or”关系。
@@ -34,10 +35,11 @@ public class EaSecuredAspect {
 
     @Resource
     UriService uriAccessService;
-
-    // 开发模式/生产模式
-    @Value("${easecurity.verification:prod}")
-    private String verification;
+    @Resource
+    LoginService loginService;
+    
+    @Resource
+    EaSecurityConfiguration eaSecurityConfiguration;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {
@@ -60,21 +62,20 @@ public class EaSecuredAspect {
 	    EaSecured eas = method.getAnnotation(EaSecured.class);
 	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	    String uri = request.getRequestURI();
-	    UserDetails user = (UserDetails) request.getSession().getAttribute("userDetails");
-//	    UserDo userDo = (UserDo) request.getSession().getAttribute("userdo");
+	    UserDetails user = loginService.getLocalUserDetails(request.getSession());
 	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={}", methodSignature, eas, user);
 
 	    uriAccessService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
 
 	    if (uriAccessService.validation(eas, uri, user)) { // 有执行权限
-		if (verification.toLowerCase().equals("dev")) {
-		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", verification);
+		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
 		} else {
 		    result = pjp.proceed();
 		}
 	    } else { // 无执行权限
-		if (verification.toLowerCase().equals("dev")) {
-		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, verification);
+		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, eaSecurityConfiguration.verification);
 		} else {
 		    HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 		    httpServletResponse.setStatus(403);
@@ -86,7 +87,7 @@ public class EaSecuredAspect {
 	} catch (Throwable e) {
 	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
 	} finally {
-	    if (verification.toLowerCase().equals("dev"))
+	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
 		try {
 		    result = pjp.proceed();
 		} catch (Throwable e) {

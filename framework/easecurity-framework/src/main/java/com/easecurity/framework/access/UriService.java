@@ -45,35 +45,41 @@ public class UriService {
      */
     public void saveUriPermissions(EaSecured eas, String uri, String classFullName, String methodName, String methodSignature) {
 	UriDo lUriDo = null;
-	boolean lUriDoFirst = false;
-	if (!localeUriDos.containsKey(uri)) { // 启动后第一次被访问
-	    synchronized (this) {
-		if (!localeUriDos.containsKey(uri)) {
-		    lUriDo = createLocaleUriDo(eas, uri, classFullName, methodName, methodSignature);
-		    localeUriDos.put(uri, lUriDo);
-		    lUriDoFirst = true;
-		} else {
-		    lUriDo = localeUriDos.get(uri);
-		}
-	    }
-	}
-	uriDos = accessRegister.getAllUriDos();
-	if (uriDos.containsKey(uri)) {
-	    if (System.currentTimeMillis() > lastModifyTime) { // 每分钟更新一次
-		UriDo uriDo = uriDos.get(uri);
+	UriDo uriDo = null;
+	try {
+	    boolean lUriDoFirst = false;
+	    if (!localeUriDos.containsKey(uri)) { // 启动后第一次被访问
 		synchronized (this) {
-		    updateLocaleUriDoIdAndStatus(lUriDo, uriDo);
-		    lastModifyTime = System.currentTimeMillis() + 60000;
-		}
-		if (lUriDoFirst) {
-		    // 第一次启动时更新一次
-		    accessRegister.saveUriEas(lUriDo);
+		    if (!localeUriDos.containsKey(uri)) {
+			lUriDo = createLocaleUriDo(eas, uri, classFullName, methodName, methodSignature);
+			localeUriDos.put(uri, lUriDo);
+			lUriDoFirst = true;
+		    } else {
+			lUriDo = localeUriDos.get(uri);
+		    }
 		}
 	    }
-	} else { // 不存在时，则新建配置
-	    // 每次启动更新一次
-	    if (lUriDoFirst)
-		accessRegister.saveUriEas(lUriDo);
+	    uriDos = accessRegister.getAllUriDos();
+	    if (uriDos.containsKey(uri)) {
+		lUriDo = localeUriDos.get(uri);
+		if (System.currentTimeMillis() > lastModifyTime) { // 每分钟更新一次
+		    uriDo = uriDos.get(uri);
+		    synchronized (this) {
+			updateLocaleUriDoIdAndStatus(lUriDo, uriDo);
+			lastModifyTime = System.currentTimeMillis() + 60000;
+		    }
+		    if (lUriDoFirst) {
+			// 第一次启动时更新一次
+			accessRegister.saveUriEas(lUriDo);
+		    }
+		}
+	    } else { // 不存在时，则新建配置
+		// 每次启动更新一次
+		if (lUriDoFirst)
+		    accessRegister.saveUriEas(lUriDo);
+	    }
+	} catch (Exception e) {
+	    log.error("更新URI的授权信息时出现异常：" + lUriDo + "==" + uriDo, e);
 	}
     }
 

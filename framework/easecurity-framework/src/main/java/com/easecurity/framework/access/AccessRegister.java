@@ -45,7 +45,7 @@ public class AccessRegister {
 	    public void run() {
 		while (true) {
 		    try {
-			Thread.sleep(eaSecurityConfiguration.getThreadSleepTime());
+			Thread.sleep(eaSecurityConfiguration.server.getThreadSleepTime());
 		    } catch (InterruptedException e) {
 			log.error("定时拉取控制列表时出现异常:", e);
 		    }
@@ -82,7 +82,7 @@ public class AccessRegister {
 	ObjectInputStream ois = null;
 	HashMap<String, Object> map = null;
 	try {
-	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/alleas?lastModified=" + lastModified;
+	    String uri = eaSecurityConfiguration.server.getUrl() + "/data/alleas?lastModified=" + lastModified;
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
 	    connection = eaSecurityConfiguration.setDefaultConfig(connection);
 	    connection.connect();
@@ -143,7 +143,7 @@ public class AccessRegister {
     private boolean sendUriDoToServer(UriDo lUriDo) {
 	ObjectOutputStream oos = null;
 	try {
-	    String uri = eaSecurityConfiguration.getEasCentreUrl() + "/data/saveurido?time=" + System.currentTimeMillis();
+	    String uri = eaSecurityConfiguration.server.getUrl() + "/data/saveurido?time=" + System.currentTimeMillis();
 	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
 	    connection = eaSecurityConfiguration.setDefaultConfig(connection);
 	    connection.connect();

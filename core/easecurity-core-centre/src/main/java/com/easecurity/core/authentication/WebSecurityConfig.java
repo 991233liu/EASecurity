@@ -42,9 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     LoginFailureHandler loginFailureHandler;
     
-    @Value("${easecurity.jwt.public.key}")
+    @Value("${easecurity.jwt.publicKey}")
     RSAPublicKey key;
-    @Value("${easecurity.jwt.private.key}")
+    @Value("${easecurity.jwt.privateKey}")
     RSAPrivateKey priv;
 
     @Override

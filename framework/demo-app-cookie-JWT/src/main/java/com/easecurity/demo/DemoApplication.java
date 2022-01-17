@@ -1,10 +1,10 @@
-package com.easecurity;
+package com.easecurity.demo;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "com.easecurity.demo","com.easecurity.framework" })
 public class DemoApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
