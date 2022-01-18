@@ -1,27 +1,25 @@
 server:
-   port: 8080
+   port: 8081
+#   servlet:
+#      context-path: /demo
 
 spring:
    profiles:
       include: easecurity   # 加载配置文件
    application:
-      name: gateway
+      name: serviceServer
    cloud:
       zookeeper:
          connect-string: 128.0.0.2:2181
          discovery:
             enabled: true
             register: true
-      gateway:
-         routes: #数组形式
-           - id: serviceServer  #路由唯一标识
-             uri: lb://serviceServer  #想要转发到的地址
-             order: 1 #优先级，数字越小优先级越高
-             predicates: #断言 配置哪个路径才转发
-               - Path=/**
-#             filters: #过滤器，请求在传递过程中通过过滤器修改
-#               - StripPrefix=1  #去掉第一层前缀
-
+# 数据库配置
+   datasource:
+      username: easuser
+      password: easuser
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
     
 # 缓存配置
    redis:

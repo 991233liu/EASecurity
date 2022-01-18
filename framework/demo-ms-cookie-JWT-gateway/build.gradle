@@ -19,11 +19,14 @@ dependencyManagement {
 apply from: "../common.gradle"
 
 dependencies {
-    implementation project(":easecurity-framework-springboot")
+    implementation project(":easecurity-framework-springcloud-gateway")
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zookeeper-discovery'
+    
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 //    implementation 'org.springframework.boot:spring-boot-starter-data-rest'

@@ -93,9 +93,11 @@ public class LoginService {
      */
     public JWT getCurrentUserJWT(HttpServletRequest request, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	Cookie[] cookies = request.getCookies();
-	for (Cookie cookie : cookies) {
-	    if (cookie.getName().equals("EASECURITY_S")) {
-		return _getCurrentUserJWT(cookie, publicKey);
+	if (cookies != null) {
+	    for (Cookie cookie : cookies) {
+		if (cookie.getName().equals("EASECURITY_S")) {
+		    return _getCurrentUserJWT(cookie, publicKey);
+		}
 	    }
 	}
 	return _getCurrentUserJWT(null, publicKey);
@@ -154,6 +156,7 @@ public class LoginService {
 
     /**
      * 从本地线程中获取当前登录人授权信息
+     * 
      * @param session
      * @return
      */
