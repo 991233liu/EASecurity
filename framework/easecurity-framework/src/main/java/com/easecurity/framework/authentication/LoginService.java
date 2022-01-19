@@ -93,6 +93,20 @@ public class LoginService {
      */
     public JWT getCurrentUserJWT(HttpServletRequest request, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	Cookie[] cookies = request.getCookies();
+	return getCurrentUserJWT(cookies, publicKey);
+    }
+
+    /**
+     * 获取当前登录人
+     * 
+     * @param cookies
+     * @param publicKey RSA公钥证书
+     * 
+     * @return
+     * @throws IOException
+     * @throws JWTExpirationException
+     */
+    public JWT getCurrentUserJWT(Cookie[] cookies, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	if (cookies != null) {
 	    for (Cookie cookie : cookies) {
 		if (cookie.getName().equals("EASECURITY_S")) {
@@ -213,13 +227,20 @@ public class LoginService {
 
     /**
      * 获取有效的用户认证信息
+     * 
+     * @param jwtStr    JWT密文
+     * @param publicKey RSA公钥
+     * @return
+     * @throws JWTExpirationException
+     * @throws IOException
      */
-    private JWT getUserJWT(String jwtStr, RSAPublicKey publicKey) throws JWTExpirationException, IOException {
+    public JWT getUserJWT(String jwtStr, RSAPublicKey publicKey) throws JWTExpirationException, IOException {
 	try {
 	    String str = decode(jwtStr, publicKey);
 	    @SuppressWarnings("unchecked")
 	    HashMap<String, Object> jwtMap = JSON.parseObject(str, HashMap.class);
 	    JWT jwt = new JWT(jwtMap);
+	    jwt.parsedStr = jwtStr;
 	    if (jwt.verify()) {
 		if (jwtMap.get("userDetails") != null) {
 		    jwt.userDetails = (UserDetails) JSON.parseObject((String) jwtMap.get("userDetails"), UserDetails.class);

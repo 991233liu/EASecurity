@@ -50,8 +50,10 @@ public abstract class AbsAuthFilter implements Filter {
 		// 未登录时或者JWT过期时，从远端认证中心拉取最新状态
 		jwt = getCurrentUserJWTFromSecurityCentre(request);
 		// 存入本地缓存
-		if (jwt != null)
+		if (jwt != null) {
+		    jwt.removeParsedStr();		    
 		    SaveUserJWT2LocalStore(request, response, jwt);
+		}
 	    }
 	    if (jwt == null || !jwt.verify()) {
 		// 远端认证中心没有返回有效的身份时的处理

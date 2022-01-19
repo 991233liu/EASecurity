@@ -49,6 +49,11 @@ public class JWT implements Serializable {
      */
     public UserDetails userDetails;
 
+    /**
+     * 密文
+     */
+    public String parsedStr;
+    
     public JWT() {
     }
 
@@ -93,6 +98,17 @@ public class JWT implements Serializable {
      */
     public boolean verify() {
 	return Instant.now().getEpochSecond() < exp;
+    }
+    
+    /**
+     * 删除密文
+     * 
+     * @return 密文
+     */
+    public String removeParsedStr() {
+	String parsedStr = this.parsedStr;
+	this.parsedStr = null;
+	return parsedStr;
     }
 
     public String getIss() {
@@ -157,6 +173,14 @@ public class JWT implements Serializable {
 
     public void setUserDetails(UserDetails userDetails) {
 	this.userDetails = userDetails;
+    }
+
+    public String getParsedStr() {
+        return parsedStr;
+    }
+
+    public void setParsedStr(String parsedStr) {
+        this.parsedStr = parsedStr;
     }
 
 }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>XXX管理系统</title>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <!-- Font Awesome -->
+    <!-- Ionicons -->
+    <!-- Theme style -->
+    <!-- iCheck -->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/SecurityCentre/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/SecurityCentre/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/SecurityCentre/css/ionicons.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/SecurityCentre/css/AdminLTE.css"/>
+    <link rel="stylesheet" type="text/css" href="/SecurityCentre/css/blue.css"/>
+</head>
+
+<body class="hold-transition login-page">
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 -->
+	<input type="hidden" name="salt" id="salt" value="$2a$10$ayeUQHCANiGOhpO3uBTllu"/>
+	<!-- 加密用盐值，每个系统唯一，需要联系管理员获取 /-->
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">登录系统</p>
+			<div id="message" class="form-message" style="display: none; color: red;">
+                <h5 id="errormessage"></h5>
+            </div>
+            <form action='/SecurityCentre/login' method='POST' id='loginForm' class='cssform' autocomplete='off'>
+                <div class="form-group has-feedback">
+                    <input type="text" name="username" value="" class="form-control" placeholder="Username" id="username" />
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="password" class="form-control" placeholder="Password" value="" id="password" />
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                
+				<div class="form-group has-feedback">
+					<p>
+						<label for="gifCaptchaValue"><img id="gifCaptchaImg" src="" onclick="flushLoginCaptcha()"/>
+						<input type="hidden" name="gifCaptcha" id="gifCaptcha" value="772f3941-9f64-4fca-9cf7-742919a50835"/>
+						<input type="text" style="width: 120px;" class="text_" name="gifCaptchaValue" id="gifCaptchaValue"/>
+						<a href="javascript:;" class="btn btn-default" onclick="flushLoginCaptcha()">
+							刷新
+						</a></label>
+					</p>
+				</div>
+                
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            <label><input type="checkbox"> 记住 下次自动登录</label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-xs-4">
+						<a href="javascript:;" class="btn btn-primary btn-block btn-flat" onclick="onLoginAjax()">
+							登录
+						</a>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+				<input type="hidden" name="srchref" id="srchref" />
+				<input type="hidden" name="failurehref" id="failurehref" />
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+
+    <!-- jQuery 2.2.3 -->
+    <!-- Bootstrap 3.3.6 -->
+    <!-- iCheck -->
+    <script type="text/javascript" src="/SecurityCentre/js/jquery-2.2.3.min.js?compile=false" ></script>
+
+    <script type="text/javascript" src="/SecurityCentre/js/bootstrap.min.js?compile=false" ></script>
+
+    <script type="text/javascript" src="/SecurityCentre/js/icheck.min.js?compile=false" ></script>
+
+    <script type="text/javascript" src="/SecurityCentre/js/application.js?compile=false" ></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/prng/accum.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/prng/isaac.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util/base64.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util/utf8.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/impl.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/util.js"></script>
+	<script type="text/javascript" src="/SecurityCentre/js/bcrypt/bcrypt.js"></script>
+    <script>
+		$(document).ready(function() {
+            flushLoginCaptcha();
+			var srchref = GetRequest('srchref');
+			if(srchref)$("#srchref").val(decodeURIComponent(srchref));
+			var failurehref = GetRequest('failurehref');
+			if(failurehref)$("#failurehref").val(decodeURIComponent(failurehref));
+        });
+        $(function() {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+        });
+    </script>
+</body>
+
+</html>
