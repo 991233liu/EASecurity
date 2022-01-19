@@ -97,7 +97,7 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	}
     }
 
-    private RSAPublicKey getRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+    public RSAPublicKey getRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 	File file = org.springframework.util.ResourceUtils.getFile(eaSecurityConfiguration.jwt.getPublicKey());
 	if (file.isFile()) {
 	    return loginService.getRSAPublicKey(file);

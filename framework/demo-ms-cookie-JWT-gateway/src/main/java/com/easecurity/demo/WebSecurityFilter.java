@@ -81,6 +81,8 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
     public Mono<Void> addJWT2ServiceRequest(String jwtStr, JWT jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
 	// TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
 	// JWT密文最小1K+
-	return Mono.empty();
+	ServerHttpRequest host = exchange.getRequest().mutate().header("Authorization", "Bearer " + jwtStr).build();
+	ServerWebExchange build = exchange.mutate().request(host).build();
+	return chain.filter(build);
     }
 }
