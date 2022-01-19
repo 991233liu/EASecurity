@@ -36,7 +36,7 @@ public class UserDetails implements Serializable {
 
     public UserDetails() {
     }
-    
+
     public UserDetails(UserDo userDo) {
 	this.id = userDo.user.id;
 	this.account = userDo.user.account;
@@ -57,4 +57,9 @@ public class UserDetails implements Serializable {
     }
 
     private Map<String, String> _AllIdentitiesWithMap;
+
+    @Override
+    public String toString() {
+	return "[account=" + account + ", identities=" + identities + "]";
+    }
 }
