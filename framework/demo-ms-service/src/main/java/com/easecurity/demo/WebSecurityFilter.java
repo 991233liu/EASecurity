@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.easecurity.core.authentication.JWT;
 import com.easecurity.core.authentication.JWTExpirationException;
-import com.easecurity.framework.AbsMSWebSecurityFilter;
+import com.easecurity.framework.authentication.AbsMSWebSecurityFilter;
 import com.easecurity.framework.authentication.LoginService;
 
 /**

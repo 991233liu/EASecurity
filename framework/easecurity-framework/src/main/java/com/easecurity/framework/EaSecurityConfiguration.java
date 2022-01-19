@@ -29,6 +29,11 @@ public class EaSecurityConfiguration {
      * 未登录时的返回信息，此时http.Status为403
      */
     public String noLoginMessage;
+    
+    /**
+     * gateway中发现访问没有权限的接口时，返回的提示信息
+     */
+    public String noPermissionMessage;
 
     /**
      * 设置HttpURLConnection的链接属性
@@ -103,6 +108,14 @@ public class EaSecurityConfiguration {
 
     public void setNoLoginMessage(String noLoginMessage) {
         this.noLoginMessage = noLoginMessage;
+    }
+
+    public String getNoPermissionMessage() {
+        return noPermissionMessage;
+    }
+
+    public void setNoPermissionMessage(String noPermissionMessage) {
+        this.noPermissionMessage = noPermissionMessage;
     }
 
     public static class ServerProperties {

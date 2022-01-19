@@ -87,6 +87,7 @@ public class UriService {
      * 校验访问权限
      */
     public boolean validation(EaSecured eas, String uri, UserDetails userDo) {
+	uriDos = accessRegister.getAllUriDos();
 	EasType type = eas.type();
 	Map<String, String> allIdentities = new HashMap<>();
 	if (userDo != null)
@@ -107,6 +108,19 @@ public class UriService {
 	    else
 		uriDo = uriDos.get(uri);
 	}
+	return havePermission(uriDo, allIdentities, uri);
+    }
+
+    /**
+     * 校验访问权限（数据库模式）
+     */
+    public boolean validation(String uri, UserDetails userDo) {
+	uriDos = accessRegister.getAllUriDos();
+	Map<String, String> allIdentities = new HashMap<>();
+	if (userDo != null)
+	    allIdentities = userDo.allIdentitiesWithMap();
+	UriDo uriDo = null;
+	uriDo = uriDos.get(uri);
 	return havePermission(uriDo, allIdentities, uri);
     }
 

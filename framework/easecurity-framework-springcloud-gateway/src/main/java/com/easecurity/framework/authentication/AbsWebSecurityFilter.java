@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.framework;
+package com.easecurity.framework.authentication;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.easecurity.core.authentication.JWT;
 import com.easecurity.core.authentication.JWTExpirationException;
-import com.easecurity.framework.authentication.LoginService;
+import com.easecurity.framework.EaSecurityConfiguration;
 
 import reactor.core.publisher.Mono;
 
@@ -48,7 +48,7 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-	log.debug("---------# AuthFilter.doFilter in");
+	log.debug("---------# AbsWebSecurityFilter.filter in");
 	ServerHttpRequest request = exchange.getRequest();
 	ServerHttpResponse response = exchange.getResponse();
 
@@ -70,13 +70,16 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
 		// 远端认证中心没有返回有效的身份时的处理
 		mono = noLogin(request, response, jwt);
 	    } else { // 已登录用户正常响应
+		LoginService.userDetails.set(jwt.userDetails);
 		mono = addJWT2ServiceRequest(jwt.parsedStr, jwt, exchange, chain);
 	    }
 	}
 
 	System.out.println("Inside ABCFilter: " + uri);
-	log.debug("---------# AuthFilter.doFilter out");
-	return mono;
+	log.debug("---------# AbsWebSecurityFilter.filter out");
+	return mono.doFinally((SignalType) -> {
+	    LoginService.userDetails.remove();
+	});
     }
 
     /**

@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.framework;
+package com.easecurity.framework.authentication;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.easecurity.core.authentication.JWT;
 import com.easecurity.core.authentication.JWTExpirationException;
+import com.easecurity.framework.EaSecurityConfiguration;
 import com.easecurity.framework.authentication.AbsAuthFilter;
 import com.easecurity.framework.authentication.LoginService;
 

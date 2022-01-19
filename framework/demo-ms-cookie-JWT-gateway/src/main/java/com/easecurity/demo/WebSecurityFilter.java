@@ -18,7 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.easecurity.core.authentication.JWT;
-import com.easecurity.framework.AbsWebSecurityFilter;
+import com.easecurity.framework.authentication.AbsWebSecurityFilter;
 
 import reactor.core.publisher.Mono;
 

@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.framework;
+package com.easecurity.framework.authentication;
 
 
 import javax.servlet.ServletRequest;

@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.easecurity.core.authentication.JWT;
-import com.easecurity.framework.AbsWebSecurityFilter;
+import com.easecurity.framework.authentication.AbsWebSecurityFilter;
 
 /**
  * 认证Filter
