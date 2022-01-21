@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.easecurity.core.authentication.JWT;
 import com.easecurity.core.authentication.JWTExpirationException;
 import com.easecurity.framework.EaSecurityConfiguration;
-import com.easecurity.framework.authentication.AbsAuthFilter;
-import com.easecurity.framework.authentication.LoginService;
 
 /**
  * 认证Filter

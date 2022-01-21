@@ -1,16 +1,12 @@
 package com.easecurity.demo;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,15 +23,16 @@ public class LogoutController {
     public void logout(ServerWebExchange exchange) throws IOException {
 	// 不启用session，使用UUID作为主键存入Redis，UUID值放到cookie中返回前台
 	ServerHttpRequest request = exchange.getRequest();
-	ServerHttpResponse response = exchange.getResponse();
 	MultiValueMap<String, HttpCookie> cookies = request.getCookies();
 	if (cookies != null && cookies.containsKey("SESSION_JWT")) {
 	    redisTemplate.delete("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
 	}
-	String id = UUID.randomUUID().toString();
-	ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", id);
-	cookieBuilder.path("/");
-	cookieBuilder.httpOnly(true);
-	response.addCookie(cookieBuilder.build());
+
+	// 如果认证中心主动的撤销了某个jwt的授权，则会将jwt.jti发送过来，要求客户端主动清理本地缓存
+	// jwt.jti信息会放到header中
+	String jti = request.getHeaders().getFirst("jti");
+	if (jti != null) {
+	    redisTemplate.delete("JWT:" + jti);
+	}
     }
 }

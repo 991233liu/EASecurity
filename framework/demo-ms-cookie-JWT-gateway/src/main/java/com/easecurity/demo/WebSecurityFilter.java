@@ -1,7 +1,6 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.demo;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -61,12 +60,11 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
      */
     @Override
     public void SaveUserJWT2LocalStore(ServerHttpRequest request, ServerHttpResponse response, JWT jwt) {
-	String id = UUID.randomUUID().toString();
-	ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", id);
+	ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", jwt.jti);
 	cookieBuilder.path("/");
 	cookieBuilder.httpOnly(true);
 	response.addCookie(cookieBuilder.build());
-	redisTemplate.opsForValue().set("JWT:" + id, jwt, 300, TimeUnit.SECONDS);
+	redisTemplate.opsForValue().set("JWT:" + jwt.jti, jwt, 300, TimeUnit.SECONDS);
     }
 
     /**

@@ -250,7 +250,7 @@ public class LoginService {
 		throw new JWTExpirationException(jwt.sub + " tocken has expiration, exp is:" + jwt.exp);
 	    }
 	} catch (ParseException | JOSEException e) {
-	    log.error("JWT 解码异常", e);
+	    log.error("JWT 解码异常，jwtStr=" + jwtStr, e);
 	    throw new IOException("JWT 解码异常", e);
 	}
 	return null;

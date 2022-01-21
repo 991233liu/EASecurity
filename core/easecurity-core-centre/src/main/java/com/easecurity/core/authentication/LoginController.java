@@ -95,14 +95,17 @@ class LoginController {
 	}
 	Instant now = Instant.now();
 	String scope = JSON.toJSONString(user);
+	String jti = UUID.randomUUID().toString().replaceAll("-", "");
 	JwtClaimsSet claims = JwtClaimsSet.builder()
 		.issuer("SecurityCentre")
 		.issuedAt(now)
 		.expiresAt(now.plusSeconds(JWTValidTime))
 		.subject(authentication.getName())
+		.claim("jti", jti)
 		.claim("userDetails", scope).build();
 	jwt = encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 	expiresAt = now.plusSeconds(JWTValidTime).getEpochSecond();
+	request.getSession().setAttribute("JWT.jti", jti);
 	request.getSession().setAttribute("JWT.str", jwt);
 	request.getSession().setAttribute("JWT.expiresAt", expiresAt);
 	return jwt;
