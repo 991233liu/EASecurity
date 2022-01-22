@@ -102,6 +102,8 @@ public class UriService {
     }
 
     private void saveUriOrg(List<UriOrg> uriOrgs, String uri) {
+	// TODO 有bug，以传过来的为基准？以数据库为基准？
+	// TODO 开发模式下强制更新？？？
 	List<String> ids = jdbcTemplate.queryForList(sql8, String.class, uri);
 	String uriId = ids.get(0);
 	uriOrgs.forEach(item -> {

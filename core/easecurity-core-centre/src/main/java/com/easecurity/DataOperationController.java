@@ -51,7 +51,7 @@ public class DataOperationController {
     }
 
     @RequestMapping("/queryData3")
-    @EaSecured(org = "{id:['1','4']}")
+    @EaSecured(org = "{id:['1','4']}", IP = { "128.0.0.1" })
     public UserDo queryData3(HttpServletRequest request) {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	// 获取身份

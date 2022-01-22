@@ -6,6 +6,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -15,6 +16,7 @@ import java.lang.annotation.Target;
  */
 @Target(METHOD)
 @Retention(RUNTIME)
+@Repeatable(EaSecureds.class)
 @Inherited
 @Documented
 // TODO 支持正则表达式？
@@ -30,7 +32,12 @@ public @interface EaSecured {
     String org() default "";
     
     /**
+     * 基于IP的访问控制。
+     */
+    String[] IP() default {};
+    
+    /**
      * 授权方式，详见{@link EasType}
      */
-    EasType type() default EasType.DATABASE_AND_SOURCE;
+    EasType type() default EasType.DEFAULT;
 }

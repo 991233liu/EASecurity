@@ -4,10 +4,10 @@ package com.easecurity.core.basis.au;
 import java.io.Serializable;
 
 /**
- * au_uri_org表：基于组织的接口（服务）授权
+ * au_uri_ip表：基于ip的接口（服务）授权
  *
  */
-public class UriOrg implements Serializable {
+public class UriIp implements Serializable {
 
     private static final long serialVersionUID = 2796966878732593998L;
     
@@ -17,16 +17,16 @@ public class UriOrg implements Serializable {
      */
     public Integer uriid;
     /**
-     * 组织ID
+     * IP地址，多值","分割
      */
-    public Integer orgid;
+    public String ips;
     /**
      * 分组。同一组内多个条件，满足任一条件则此组为true；多组条件，任一组是false，则最终结果为false。
      * 值的范围1~99
      */
     public Integer group;
     /**
-     * 授权来源，1人工、2程序源代码。如果是来自程序源代码，则只能禁用，不能删除
+     * 授权来源，1人工、2程序源代码。如果是来自程序源代码，则只能禁用和修改，不能删除
      */
     public String fromTo;
     /**
@@ -46,11 +46,11 @@ public class UriOrg implements Serializable {
     public void setUriid(Integer uriid) {
         this.uriid = uriid;
     }
-    public Integer getOrgid() {
-        return orgid;
+    public String getIps() {
+        return ips;
     }
-    public void setOrgid(Integer orgid) {
-        this.orgid = orgid;
+    public void setIps(String ips) {
+        this.ips = ips;
     }
     public Integer getGroup() {
         return group;

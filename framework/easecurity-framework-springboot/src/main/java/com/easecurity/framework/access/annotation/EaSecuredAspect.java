@@ -19,10 +19,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.EaSecureds;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.EaSecurityConfiguration;
 import com.easecurity.framework.access.UriService;
 import com.easecurity.framework.authentication.LoginService;
+import com.easecurity.framework.utils.ServletUtils;
 
 /**
  * 控制方法访问权限。 多条件时默认使用“or”关系。
@@ -37,12 +39,18 @@ public class EaSecuredAspect {
     UriService uriAccessService;
     @Resource
     LoginService loginService;
-    
+
     @Resource
     EaSecurityConfiguration eaSecurityConfiguration;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
     private void controllerMethod() {
+	// @Pointcut定义的是切点
+	System.out.println("这是自定义的切点");
+    }
+
+    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecureds)")
+    private void controllerMethods() {
 	// @Pointcut定义的是切点
 	System.out.println("这是自定义的切点");
     }
@@ -56,32 +64,24 @@ public class EaSecuredAspect {
 	try {
 	    MethodSignature signature = (MethodSignature) pjp.getSignature();
 	    Method method = signature.getMethod();
-	    String classFullName = method.toString();
+	    String classFullName = method.getDeclaringClass().getName();
 	    String methodName = method.getName();
 	    String methodSignature = method.toString();
 	    EaSecured eas = method.getAnnotation(EaSecured.class);
 	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	    String uri = request.getRequestURI();
 	    UserDetails user = loginService.getLocalUserDetails(request.getSession());
-	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={}", methodSignature, eas, user);
+	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
+	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eas, user, clientIp);
 
-	    uriAccessService.saveUriPermissions(eas, uri, classFullName, methodName, methodSignature);
-
-	    if (uriAccessService.validation(eas, uri, user)) { // 有执行权限
-		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
-		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
-		} else {
-		    result = pjp.proceed();
-		}
-	    } else { // 无执行权限
-		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
-		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, eaSecurityConfiguration.verification);
-		} else {
-		    HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-		    httpServletResponse.setStatus(403);
-		    result = null;
-		}
+	    try {
+		EaSecured[] eases = { eas };
+		uriAccessService.saveUriPermissions(eases, uri, classFullName, methodName, methodSignature);
+	    } catch (Exception e) {
+		log.error("更新URI的授权信息时出现异常：", e);
 	    }
+
+	    result = proceed(pjp, uriAccessService.validation(eas, 1, uri, user, clientIp), methodSignature, user);
 	} catch (Exception e) {
 	    log.error("controllerMethodAround 执行时出现异常：", e);
 	} catch (Throwable e) {
@@ -93,6 +93,67 @@ public class EaSecuredAspect {
 		} catch (Throwable e) {
 		    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
 		}
+	}
+	return result;
+    }
+
+    /**
+     * 检查是否有权限执行（多个EaSecured之间是and关系）
+     */
+    @Around("controllerMethods()")
+    public Object controllerMethodsAround(ProceedingJoinPoint pjp) {
+	Object result = null;
+	try {
+	    MethodSignature signature = (MethodSignature) pjp.getSignature();
+	    Method method = signature.getMethod();
+	    String classFullName = method.getDeclaringClass().getName();
+	    String methodName = method.getName();
+	    String methodSignature = method.toString();
+	    EaSecureds eases = method.getAnnotation(EaSecureds.class);
+	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+	    String uri = request.getRequestURI();
+	    UserDetails user = loginService.getLocalUserDetails(request.getSession());
+	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
+	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eases, user, clientIp);
+
+	    try {
+		uriAccessService.saveUriPermissions(eases.value(), uri, classFullName, methodName, methodSignature);
+	    } catch (Exception e) {
+		log.error("更新URI的授权信息时出现异常：", e);
+	    }
+
+	    result = proceed(pjp, uriAccessService.validation(eases.value(), uri, user, clientIp), methodSignature, user);
+	} catch (Exception e) {
+	    log.error("controllerMethodAround 执行时出现异常：", e);
+	} catch (Throwable e) {
+	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+	} finally {
+	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
+		try {
+		    result = pjp.proceed();
+		} catch (Throwable e) {
+		    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+		}
+	}
+	return result;
+    }
+
+    public Object proceed(ProceedingJoinPoint pjp, boolean validation, String methodSignature, UserDetails user) throws Throwable {
+	Object result = null;
+	if (validation) { // 有执行权限
+	    if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+		log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
+	    } else {
+		result = pjp.proceed();
+	    }
+	} else { // 无执行权限
+	    if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+		log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, eaSecurityConfiguration.verification);
+	    } else {
+		HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+		httpServletResponse.setStatus(403);
+		result = null;
+	    }
 	}
 	return result;
     }
