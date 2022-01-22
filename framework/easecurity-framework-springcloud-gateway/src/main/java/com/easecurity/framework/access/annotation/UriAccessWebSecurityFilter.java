@@ -19,6 +19,7 @@ import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.EaSecurityConfiguration;
 import com.easecurity.framework.access.UriService;
 import com.easecurity.framework.authentication.LoginService;
+import com.easecurity.framework.utils.ServletUtils;
 
 import reactor.core.publisher.Mono;
 
@@ -46,9 +47,10 @@ public class UriAccessWebSecurityFilter implements GlobalFilter, Ordered {
 	try {
 	    String uri = request.getURI().getPath();
 	    UserDetails user = loginService.getLocalUserDetails(null);
-	    log.debug("UriAccessWebSecurityFilter, uri={} loginUser={}", uri, user);
+	    String clientIp = ServletUtils.getClientIpAddr(request);
+	    log.debug("UriAccessWebSecurityFilter, uri={} loginUser={} clientIp={}", uri, user, clientIp);
 
-	    if (uriAccessService.validation(uri, user)) { // 有执行权限
+	    if (uriAccessService.validation(uri, user, clientIp)) { // 有执行权限
 		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
 		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
 		}
@@ -67,7 +69,7 @@ public class UriAccessWebSecurityFilter implements GlobalFilter, Ordered {
 	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
 		mono = chain.filter(exchange);
 	}
-	
+
 	log.debug("---------# UriAccessWebSecurityFilter.filter out");
 	return mono;
     }

@@ -148,7 +148,6 @@ public class UriService {
 		validation = false;
 		break;
 	    }
-
 	}
 	return validation;
     }
