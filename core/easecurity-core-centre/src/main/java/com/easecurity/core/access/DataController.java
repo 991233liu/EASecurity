@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.easecurity.core.access.annotation.EaSecuredIP;
 import com.easecurity.core.basis.UriDo;
 import com.easecurity.core.basis.UriService;
 
@@ -43,6 +44,7 @@ public class DataController {
      * 当前登录人的菜单？？？？
      */
     @RequestMapping("/alleas")
+    @EaSecuredIP
     public void getAllEas(HttpServletRequest request, HttpServletResponse response) {
 	String lm = request.getParameter("lastModified");
 	if (!lastModified.equals(lm)) {
@@ -79,6 +81,7 @@ public class DataController {
      * 保存UriDo配置
      */
     @RequestMapping("/saveurido")
+    @EaSecuredIP
     public void saveUriDo(HttpServletRequest request, HttpServletResponse response) {
 	ObjectInputStream ois = null;
 	try {

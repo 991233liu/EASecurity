@@ -5,6 +5,7 @@ easecurity:
       user:
          validTime: 3600   # 有效期。单位秒
    client:
+      ips: 128.0.0.1,128.0.0.2,127.0.0.1
       logout:
          url: http://128.0.0.1:8080/demo/logout,http://128.0.0.2/demo/logout
    # jwt配置

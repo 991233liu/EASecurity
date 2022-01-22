@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.EaSecuredIP;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
@@ -23,13 +23,8 @@ import com.easecurity.core.utils.ServletUtils;
 
 @RestController
 @RequestMapping("/demo")
-public class DataOperationController {
-
-    @Autowired
-    SomeDao service;
-//    @Resource
-//    private RedisTemplate<String, Object> redisTemplate2;
-//    @Autowired
+public class DemoController {
+    
     @Resource
     Map<String, RedisTemplate<Object, Object>> otherRedises;
     @Autowired
@@ -41,8 +36,8 @@ public class DataOperationController {
     UserService userService;
 
     @RequestMapping("/queryData")
-    public List<Object> queryData() {
-	return service.queryForList(null);
+    public List<MenuDo> queryData() {
+	return menuService.loadAll();
     }
 
     @RequestMapping("/queryData2")
@@ -51,7 +46,7 @@ public class DataOperationController {
     }
 
     @RequestMapping("/queryData3")
-    @EaSecured(org = "{id:['1','4']}", IP = { "128.0.0.1" })
+    @EaSecuredIP
     public UserDo queryData3(HttpServletRequest request) {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	// 获取身份
