@@ -30,25 +30,25 @@ class UserIdentitiesJob {
         // 查找没有初始化身份串的人员
         Date lastTime = jobUser ? jobUser.lastTime : new Date(1)
         List<User> userList = User.findAll("from User where identities is null or identities = '' ")
-        System.out.println("-----## UserIdentitiesJob.userList=" + userList)
+        System.out.println("-----## UserIdentitiesJob.userList1=" + userList)
         // 查找组织信息变化的的人员，组织必须启用状态才有效
         lastTime = jobOrg ? jobOrg.lastTime : new Date(1)
         ((List<OrgUser>) OrgUser.findAllByOrgInList(Org.findAll('from Org where lastUpdated > :lastUpdated  and status = 0', [lastUpdated: lastTime]))).each { OrgUser orgUser ->
             if (!userList.contains(orgUser.user)) userList.add(orgUser.user)
         }
-        System.out.println("-----## UserIdentitiesJob.userList=" + userList)
+        System.out.println("-----## UserIdentitiesJob.userList2=" + userList)
         // 查找人员组织关系：新增、修改的人员
         lastTime = jobOrgUser ? jobOrgUser.lastTime : new Date(1)
         ((List<OrgUser>) OrgUser.findAll('from OrgUser where lastUpdated > :lastUpdated', [lastUpdated: lastTime])).each { OrgUser orgUser ->
             if (!userList.contains(orgUser.user)) userList.add(orgUser.user)
         }
-        System.out.println("-----## UserIdentitiesJob.userList=" + userList)
+        System.out.println("-----## UserIdentitiesJob.userList3=" + userList)
         // 查找人员角色关系：新增、修改的人员
         lastTime = jobRoleUser ? jobRoleUser.lastTime : new Date(1)
         ((List<RoleUser>) RoleUser.findAll('from RoleUser where lastUpdated > :lastUpdated or lastUpdated is null', [lastUpdated: lastTime])).each { RoleUser roleUser ->
             if (!userList.contains(roleUser.user)) userList.add(roleUser.user)
         }
-        System.out.println("-----## UserIdentitiesJob.userList=" + userList)
+        System.out.println("-----## UserIdentitiesJob.userList4=" + userList)
 
         // 更新人員身份信息
         userList.each { User user ->
@@ -84,7 +84,7 @@ class UserIdentitiesJob {
         }
         // TODO 删除User关联关系时，怎么处理？方案1，再删除的controller中直接user.updateIdentities；方案2，修改user的lastUpdated
         // TODO failList怎么处理？？？
-        System.out.println("-----## UserIdentitiesJob.failList=" + failList)
+        System.out.println("-----## UserIdentitiesJob.failList5=" + failList)
     }
 
 }

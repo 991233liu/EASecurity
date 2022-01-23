@@ -11,8 +11,8 @@ class RoleGroup extends com.easecurity.core.basis.r.RoleGroup {
     static hasMany = [roles: Role]
 
     static constraints = {
-        name nullable: true
-        code nullable: true
+        name nullable: false
+        code nullable: false
         dateCreated nullable: true
         lastUpdated nullable: true
     }

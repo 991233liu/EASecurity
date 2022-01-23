@@ -50,13 +50,13 @@ public class UserDetails implements Serializable {
      * 获取所有的身份信息
      */
     @SuppressWarnings("unchecked")
-    public Map<String, String> allIdentitiesWithMap() {
+    public Map<String, Map<String, String>> allIdentitiesWithMap() {
 	if (_AllIdentitiesWithMap == null)
-	    _AllIdentitiesWithMap = (Map<String, String>) JsonUtils.jsonToObject(identities);
+	    _AllIdentitiesWithMap = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
 	return _AllIdentitiesWithMap;
     }
 
-    private Map<String, String> _AllIdentitiesWithMap;
+    private Map<String, Map<String, String>> _AllIdentitiesWithMap;
 
     @Override
     public String toString() {

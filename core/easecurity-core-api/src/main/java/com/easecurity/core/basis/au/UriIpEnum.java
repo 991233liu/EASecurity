@@ -1,28 +1,25 @@
-package com.easecurity.core.basis.b;
+package com.easecurity.core.basis.au;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User类下所有枚举类
+ * UriIp类下所有枚举类
  */
-public class UserEnum {
-
+public class UriIpEnum {
     /**
-     * 用户状态<br>
+     * 来源<br>
      */
-    public enum AcStatus {
-        ENABLED("ENABLED", "启用"),
-        DISABLED("DISABLED", "禁用"),
-        DEREGISTRATION("DEREGISTRATION", "注销"),
-        DELETION("DEREGISTRATION", "删除");
+    public enum FromTo {
+        MANUALLY("MANUALLY", "人工"),
+        SOURCECODE("SOURCECODE", "程序源代码");
 
         private String code;
         private String title;
 
         // 普通方法
         public static String getTitle(String code) {
-            for (AcStatus ms : AcStatus.values()) {
+            for (FromTo ms : FromTo.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
@@ -31,7 +28,7 @@ public class UserEnum {
         }
 
         public static String getCode(String title) {
-            for (AcStatus ms : AcStatus.values()) {
+            for (FromTo ms : FromTo.values()) {
                 if (ms.title.equals(title)) {
                     return ms.code;
                 }
@@ -39,8 +36,8 @@ public class UserEnum {
             return null;
         }
 
-        public static AcStatus getAcStatus(String code) {
-            for (AcStatus ms : AcStatus.values()) {
+        public static FromTo getEnumByCode(String code) {
+            for (FromTo ms : FromTo.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
                 }
@@ -48,18 +45,18 @@ public class UserEnum {
             return null;
         }
 
-        public static List<AcStatus> getAllEnum() {
-            List<AcStatus> mss = new ArrayList<AcStatus>();
-            for (AcStatus ms : AcStatus.values()) {
+        public static List<FromTo> getAllEnum() {
+            List<FromTo> mss = new ArrayList<FromTo>();
+            for (FromTo ms : FromTo.values()) {
                 mss.add(ms);
             }
             return mss;
         }
 
-        private AcStatus() {
+        private FromTo() {
         }
 
-        private AcStatus(String code, String title) {
+        private FromTo(String code, String title) {
             this.code = code;
             this.title = title;
         }
@@ -83,19 +80,18 @@ public class UserEnum {
     }
 
     /**
-     * 密码状态<br>
+     * 状态<br>
      */
-    public enum PdStatus {
+    public enum Status {
         ENABLED("ENABLED", "启用"),
-        EXPIRED("EXPIRED", "过期"),
-        MAXTIMES("MAXTIMES", "超过尝试次数");
+        EXPIRED("EXPIRED", "过期");
 
         private String code;
         private String title;
 
         // 普通方法
         public static String getTitle(String code) {
-            for (PdStatus ms : PdStatus.values()) {
+            for (Status ms : Status.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms.title;
                 }
@@ -104,7 +100,7 @@ public class UserEnum {
         }
 
         public static String getCode(String title) {
-            for (PdStatus ms : PdStatus.values()) {
+            for (Status ms : Status.values()) {
                 if (ms.title.equals(title)) {
                     return ms.code;
                 }
@@ -112,8 +108,8 @@ public class UserEnum {
             return null;
         }
 
-        public static PdStatus getEnumByCode(String code) {
-            for (PdStatus ms : PdStatus.values()) {
+        public static Status getEnumByCode(String code) {
+            for (Status ms : Status.values()) {
                 if (ms.getCode().equals(code)) {
                     return ms;
                 }
@@ -121,18 +117,18 @@ public class UserEnum {
             return null;
         }
 
-        public static List<PdStatus> getAllEnum() {
-            List<PdStatus> mss = new ArrayList<PdStatus>();
-            for (PdStatus ms : PdStatus.values()) {
+        public static List<Status> getAllEnum() {
+            List<Status> mss = new ArrayList<Status>();
+            for (Status ms : Status.values()) {
                 mss.add(ms);
             }
             return mss;
         }
 
-        private PdStatus() {
+        private Status() {
         }
 
-        private PdStatus(String code, String title) {
+        private Status(String code, String title) {
             this.code = code;
             this.title = title;
         }
@@ -152,6 +148,5 @@ public class UserEnum {
         public void setTitle(String title) {
             this.title = title;
         }
-
     }
 }

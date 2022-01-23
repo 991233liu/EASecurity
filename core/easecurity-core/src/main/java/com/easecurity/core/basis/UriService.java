@@ -36,13 +36,13 @@ public class UriService {
 
     String sql = "INSERT INTO re_uri (uri, class_full_name, method_name, method_signature, eas_type, from_to, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
     String sql2 = "UPDATE re_uri set class_full_name=?, method_name=?, method_signature=?, eas_type=?, from_to=? where id=?";
-    String sql3 = "INSERT INTO au_uri_org (uriid, orgid, from_to, status) VALUES (?, ?, ?, ?)";
+    String sql3 = "INSERT INTO au_uri_org (uri_id, org_id, from_to, status) VALUES (?, ?, ?, ?)";
     String sql4 = "UPDATE au_uri_org set from_to=? where id=?";
     String sql5 = "SELECT id FROM re_uri where uri = ?";
-    String sql6 = "SELECT * FROM au_uri_org where uriid = ?";
+    String sql6 = "SELECT * FROM au_uri_org where uri_id = ?";
     String sql7 = "SELECT * FROM re_uri";
     String sql8 = "SELECT id FROM re_uri where uri = ?";
-    String sql9 = "SELECT id FROM au_uri_org where uriid = ? and orgid = ?";
+    String sql9 = "SELECT id FROM au_uri_org where uri_id = ? and org_id = ?";
 
     /**
      * 从core初始化URI信息。
@@ -91,10 +91,11 @@ public class UriService {
     public void saveUriDo(UriDo lUriDo) {
 	List<String> ids = jdbcTemplate.queryForList(sql5, String.class, lUriDo.uri.uri);
 	if (ids.size() > 0) { // 存在则更新，不更新状态
-	    jdbcTemplate.update(sql2, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo, ids.get(0));
+	    jdbcTemplate.update(sql2, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo.ordinal(),
+		    ids.get(0));
 	} else { // 不存在则新建
-	    jdbcTemplate.update(sql, lUriDo.uri.uri, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(), lUriDo.uri.fromTo,
-		    lUriDo.uri.status);
+	    jdbcTemplate.update(sql, lUriDo.uri.uri, lUriDo.uri.classFullName, lUriDo.uri.methodName, lUriDo.uri.methodSignature, lUriDo.uri.easType.ordinal(),
+		    lUriDo.uri.fromTo.ordinal(), lUriDo.uri.status.ordinal());
 	}
 	saveUriOrg(lUriDo.uriOrg, lUriDo.uri.uri);
 	// 强制更新缓存
@@ -107,11 +108,11 @@ public class UriService {
 	List<String> ids = jdbcTemplate.queryForList(sql8, String.class, uri);
 	String uriId = ids.get(0);
 	uriOrgs.forEach(item -> {
-	    List<String> ids2 = jdbcTemplate.queryForList(sql9, String.class, uriId, item.orgid);
+	    List<String> ids2 = jdbcTemplate.queryForList(sql9, String.class, uriId, item.orgId);
 	    if (ids2.size() > 0) { // 更新
-		jdbcTemplate.update(sql4, item.fromTo, ids2.get(0));
+		jdbcTemplate.update(sql4, item.fromTo.ordinal(), ids2.get(0));
 	    } else {
-		jdbcTemplate.update(sql3, uriId, item.orgid, item.fromTo, item.status);
+		jdbcTemplate.update(sql3, uriId, item.orgId, item.fromTo.ordinal(), item.status.ordinal());
 	    }
 	});
     }

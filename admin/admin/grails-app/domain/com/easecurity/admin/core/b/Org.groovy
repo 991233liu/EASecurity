@@ -13,7 +13,7 @@ class Org extends com.easecurity.core.basis.b.Org {
 
     static constraints = {
         name length: 100, nullable: false, blank: false
-        code nullable: true
+        code nullable: false
         type length: 2, nullable: true
         status length: 2, nullable: true
         parentId nullable: true

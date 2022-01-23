@@ -31,8 +31,6 @@ public class EaSecuredIPAspect {
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecuredIP)")
     private void controllerMethod() {
-	// @Pointcut定义的是切点
-	System.out.println("这是自定义的切点");
     }
 
     /**

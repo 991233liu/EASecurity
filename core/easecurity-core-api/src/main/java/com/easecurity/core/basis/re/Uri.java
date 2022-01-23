@@ -1,9 +1,12 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
+/**
+ * Copyright © 2021-2050 刘路峰版权所有。
+ */
 package com.easecurity.core.basis.re;
 
 import java.io.Serializable;
 
 import com.easecurity.core.access.annotation.EasType;
+import com.easecurity.core.basis.re.UriEnum.*;
 
 /**
  * re_uri表：接口（服务）
@@ -34,37 +37,77 @@ public class Uri implements Serializable {
     /**
      * 授权（控制）方式
      */
-    public EasType easType;
+    public EasType easType = EasType.DATABASE_ONLY;
     /**
-     * 来源，1人工、2程序源代码。如果是来着程序源代码，则只能禁用，不能删除
+     * 来源，0人工、1程序源代码。如果是来着程序源代码，则只能禁用，不能删除
      */
-    public String fromTo;
+    public FromTo fromTo;
     /**
      * 状态，0启用、1禁用
      */
-    public String status;
+    public Status status;
 
     public Integer getId() {
-	return id;
+        return id;
     }
 
     public void setId(Integer id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getUri() {
-	return uri;
+        return uri;
     }
 
     public void setUri(String uri) {
-	this.uri = uri;
+        this.uri = uri;
     }
 
-    public String getStatus() {
+    public String getClassFullName() {
+        return classFullName;
+    }
+
+    public void setClassFullName(String classFullName) {
+        this.classFullName = classFullName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String getMethodSignature() {
+        return methodSignature;
+    }
+
+    public void setMethodSignature(String methodSignature) {
+        this.methodSignature = methodSignature;
+    }
+
+    public EasType getEasType() {
+        return easType;
+    }
+
+    public void setEasType(EasType easType) {
+        this.easType = easType;
+    }
+
+    public FromTo getFromTo() {
+        return fromTo;
+    }
+
+    public void setFromTo(FromTo fromTo) {
+        this.fromTo = fromTo;
+    }
+
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }

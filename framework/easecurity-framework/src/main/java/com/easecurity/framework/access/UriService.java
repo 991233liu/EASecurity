@@ -1,9 +1,7 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.framework.access;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,10 +11,7 @@ import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.access.annotation.EasType;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.UriDo;
-import com.easecurity.core.basis.au.UriIp;
 import com.easecurity.core.basis.au.UriOrg;
-import com.easecurity.core.basis.re.Uri;
-import com.easecurity.util.JsonUtils;
 
 /**
  * 接口（访问）访问控制服务
@@ -51,7 +46,7 @@ public class UriService {
 	    if (!localeUriDos.containsKey(uri)) { // 启动后第一次被访问
 		synchronized (this) {
 		    if (!localeUriDos.containsKey(uri)) {
-			lUriDo = createLocaleUriDo(eases, uri, classFullName, methodName, methodSignature);
+			lUriDo = UriDo.createLocaleUriDo(eases, uri, classFullName, methodName, methodSignature);
 			localeUriDos.put(uri, lUriDo);
 			lastModifyTime.put(uri, (long) -1);
 		    }
@@ -122,7 +117,7 @@ public class UriService {
 	    log.error("---## 发现了一个不存在的UriDo，请联系管理员，URI为：{}", uri);
 	    return false;
 	}
-	Map<String, String> allIdentities = new HashMap<>();
+	Map<String, Map<String, String>> allIdentities = new HashMap<>();
 	if (userDt != null)
 	    allIdentities = userDt.allIdentitiesWithMap();
 	return havePermission(uriDo, group, allIdentities, uri, clientIp);
@@ -133,7 +128,7 @@ public class UriService {
      */
     public boolean validation(String uri, UserDetails userDt, String clientIp) {
 	uriDos = accessRegister.getAllUriDos();
-	Map<String, String> allIdentities = new HashMap<>();
+	Map<String, Map<String, String>> allIdentities = new HashMap<>();
 	if (userDt != null)
 	    allIdentities = userDt.allIdentitiesWithMap();
 	UriDo uriDo = uriDos.get(uri);
@@ -153,7 +148,7 @@ public class UriService {
     }
 
     // TODO 遍历权限，判断每种情况
-    private boolean havePermission(UriDo uriDo, int group, Map<String, String> allIdentities, String uri, String clientIp) {
+    private boolean havePermission(UriDo uriDo, int group, Map<String, Map<String, String>> allIdentities, String uri, String clientIp) {
 	if (uriDo.havePermissionByIp(clientIp, group)) {
 	    return true;
 	} else {
@@ -163,7 +158,8 @@ public class UriService {
 		case "user":
 		    break;
 		case "org":
-		    for (String id : v.split(",")) {
+		    String ids = v.get("id");
+		    for (String id : ids.split(",")) {
 			if (uriDo.havePermissionByOrgId(id, group)) {
 			    flag[0] = true;
 			    return;
@@ -177,101 +173,6 @@ public class UriService {
     }
 
     /**
-     * 新建本地配置
-     */
-    // TODO 遍历属性
-    private UriDo createLocaleUriDo(EaSecured[] eases, String uri, String classFullName, String methodName, String methodSignature) {
-	UriDo uriDo = new UriDo();
-	Uri u = new Uri();
-	u.id = -1; // 还没有存储在数据库中的数据，ID全部为-1
-	u.uri = uri;
-	u.classFullName = classFullName;
-	u.methodName = methodName;
-	u.methodSignature = methodSignature;
-	u.easType = getEasType(eases);
-	u.fromTo = "2";
-	u.status = "0";
-	uriDo.uri = u;
-	for (int i = 0; i < eases.length; i++) {
-	    EaSecured eas = eases[i];
-	    createUriOrg(uriDo, eas.org(), i + 1);
-	    createUriIp(uriDo, eas.IP(), i + 1);
-	}
-	return uriDo;
-    }
-
-    private void createUriIp(UriDo uriDo, String[] ips, int group) {
-	if (ips != null && ips.length > 0) {
-	    UriIp uip = new UriIp();
-	    uip.uriid = uriDo.uri.id;
-	    uip.status = "0";
-	    uip.fromTo = "2";
-	    uip.group = group;
-	    uip.ips = "";
-	    for (String string : ips) {
-		uip.ips += string + ",";
-	    }
-	    uip.ips = uip.ips.substring(0, uip.ips.length() - 1);
-	    uriDo.uriIp = uip;
-	}
-    }
-
-    // TODO 遍历属性
-    @SuppressWarnings("unchecked")
-    private void createUriOrg(UriDo uriDo, String org, int group) {
-	if (!org.isEmpty()) {
-	    uriDo.uriOrg = new ArrayList<>();
-	    Map<String, Object> allOrgs = (Map<String, Object>) JsonUtils.jsonToObject(org);
-	    for (String k : allOrgs.keySet()) {
-		Object v = allOrgs.get(k);
-		// TODO 遍历，其它方式；其它方式下需要预先转化为id？？？
-		switch (k) {
-		case "id":
-		    if (v instanceof String) {
-			UriOrg uo = new UriOrg();
-			uo.uriid = uriDo.uri.id;
-			uo.orgid = Integer.parseInt((String) v);
-			uo.group = group;
-			uo.status = "0";
-			uo.fromTo = "2";
-			uriDo.uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = new UriOrg();
-			    uo.uriid = uriDo.uri.id;
-			    uo.orgid = Integer.parseInt((String) item);
-			    uo.group = group;
-			    uo.status = "0";
-			    uo.fromTo = "2";
-			    uriDo.uriOrg.add(uo);
-			}
-		    }
-		    break;
-
-		default:
-		    break;
-		}
-	    }
-	}
-    }
-
-    private EasType getEasType(EaSecured[] eases) {
-	boolean havaDb = false;
-	for (EaSecured eaSecured : eases) {
-	    if (eaSecured.type() == EasType.DATABASE_ONLY)
-		havaDb = true;
-	    // TODO 遍历所有配置项，全部为默认配置时，使用数据库
-	    if ("".equals(eaSecured.value()) && "".equals(eaSecured.org()) && eaSecured.IP().length == 0)
-		havaDb = true;
-	}
-	if (havaDb) {
-	    return EasType.DATABASE_ONLY;
-	} else {
-	    return EasType.SOURCE_ONLY;
-	}
-    }
-
-    /**
      * 从数据库汇总更新本地状态和ID
      */
     // TODO 遍历所有属性
@@ -281,9 +182,9 @@ public class UriService {
 	if (lUriDo.uriOrg != null)
 	    lUriDo.uriOrg.forEach(item -> {
 		for (UriOrg uo : uriDo.uriOrg) {
-		    if (item.orgid == uo.orgid && item.group == uo.group) {
+		    if (item.orgId == uo.orgId && item.group1 == uo.group1) {
 			item.id = uo.id;
-			item.uriid = uo.uriid;
+			item.uriId = uo.uriId;
 			item.status = uo.status;
 			break;
 		    }

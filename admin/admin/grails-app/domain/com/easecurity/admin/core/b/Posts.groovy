@@ -10,8 +10,8 @@ class Posts extends com.easecurity.core.basis.b.Posts {
     static hasMany = [orgUsers: OrgUser]
 
     static constraints = {
-        name nullable: true
-        code nullable: true
+        name nullable: false
+        code nullable: false
         ranking nullable: true, range: 1..99
         type nullable: true
         dateCreated nullable: true
