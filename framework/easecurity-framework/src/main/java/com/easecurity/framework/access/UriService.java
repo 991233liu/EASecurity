@@ -88,7 +88,7 @@ public class UriService {
 	boolean validation = true;
 	// 多组为and关系，有一个false则false
 	for (int i = 0; i < eases.length; i++) {
-	    if (!validation(eases[i], i, uri, userDt, clientIp)) {
+	    if (!validation(eases[i], i + 1, uri, userDt, clientIp)) {
 		validation = false;
 		break;
 	    }

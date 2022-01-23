@@ -43,112 +43,127 @@ public class EaSecuredAspect {
     @Resource
     EaSecurityConfiguration eaSecurityConfiguration;
 
-    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
-    private void controllerMethod() {
-	// @Pointcut定义的是切点
-	System.out.println("这是自定义的切点");
+    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecureds)")
+    private void methods() {
     }
 
-    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecureds)")
-    private void controllerMethods() {
-	// @Pointcut定义的是切点
-	System.out.println("这是自定义的切点");
+    @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecured)")
+    private void method() {
+    }
+
+    @Pointcut("@within(com.easecurity.core.access.annotation.EaSecureds)")
+    private void clazzs() {
+    }
+
+    @Pointcut("@within(com.easecurity.core.access.annotation.EaSecured)")
+    private void clazz() {
     }
 
     /**
      * 检查是否有权限执行
+     * 
+     * @throws Throwable
      */
-    @Around("controllerMethod()")
-    public Object controllerMethodAround(ProceedingJoinPoint pjp) {
+    @Around("methods()||method()")
+    public Object methodAround(ProceedingJoinPoint pjp) throws Throwable {
 	Object result = null;
 	try {
-	    MethodSignature signature = (MethodSignature) pjp.getSignature();
-	    Method method = signature.getMethod();
-	    String classFullName = method.getDeclaringClass().getName();
-	    String methodName = method.getName();
-	    String methodSignature = method.toString();
-	    EaSecured eas = method.getAnnotation(EaSecured.class);
-	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-	    String uri = request.getRequestURI();
-	    UserDetails user = loginService.getLocalUserDetails(request.getSession());
-	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
-	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eas, user, clientIp);
-
-	    try {
-		EaSecured[] eases = { eas };
-		uriAccessService.saveUriPermissions(eases, uri, classFullName, methodName, methodSignature);
-	    } catch (Exception e) {
-		log.error("更新URI的授权信息时出现异常：", e);
+	    Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+	    EaSecureds eases = method.getAnnotation(EaSecureds.class);
+	    if (eases == null) {
+		EaSecured eas = method.getAnnotation(EaSecured.class);
+		EaSecured[] teases = { eas };
+		result = proceed(pjp, teases);
+	    } else {
+		result = proceed(pjp, eases.value());
 	    }
-
-	    result = proceed(pjp, uriAccessService.validation(eas, 1, uri, user, clientIp), methodSignature, user);
 	} catch (Exception e) {
-	    log.error("controllerMethodAround 执行时出现异常：", e);
+	    log.error("classAround 执行时出现异常：", e);
+	    throw e;
 	} catch (Throwable e) {
-	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
-	} finally {
-	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
-		try {
-		    result = pjp.proceed();
-		} catch (Throwable e) {
-		    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
-		}
+	    log.error("classAround 执行后续方法时出现异常：", e);
+	    throw e;
 	}
 	return result;
     }
 
     /**
      * 检查是否有权限执行（多个EaSecured之间是and关系）
+     * 
+     * @throws Throwable
      */
-    @Around("controllerMethods()")
-    public Object controllerMethodsAround(ProceedingJoinPoint pjp) {
+    @Around("clazzs()||clazz()")
+    public Object classAround(ProceedingJoinPoint pjp) throws Throwable {
 	Object result = null;
 	try {
-	    MethodSignature signature = (MethodSignature) pjp.getSignature();
-	    Method method = signature.getMethod();
-	    String classFullName = method.getDeclaringClass().getName();
-	    String methodName = method.getName();
-	    String methodSignature = method.toString();
-	    EaSecureds eases = method.getAnnotation(EaSecureds.class);
-	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-	    String uri = request.getRequestURI();
-	    UserDetails user = loginService.getLocalUserDetails(request.getSession());
-	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
-	    log.debug("controllerMethodAround, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eases, user, clientIp);
-
-	    try {
-		uriAccessService.saveUriPermissions(eases.value(), uri, classFullName, methodName, methodSignature);
-	    } catch (Exception e) {
-		log.error("更新URI的授权信息时出现异常：", e);
-	    }
-
-	    result = proceed(pjp, uriAccessService.validation(eases.value(), uri, user, clientIp), methodSignature, user);
-	} catch (Exception e) {
-	    log.error("controllerMethodAround 执行时出现异常：", e);
-	} catch (Throwable e) {
-	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
-	} finally {
-	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
-		try {
-		    result = pjp.proceed();
-		} catch (Throwable e) {
-		    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+	    Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+	    EaSecureds meases = method.getAnnotation(EaSecureds.class);
+	    EaSecured meas = method.getAnnotation(EaSecured.class);
+	    // 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	    if (meases == null && meas == null) {
+		EaSecureds eases = method.getDeclaringClass().getAnnotation(EaSecureds.class);
+		if (eases == null) {
+		    EaSecured eas = method.getDeclaringClass().getAnnotation(EaSecured.class);
+		    EaSecured[] teases = { eas };
+		    result = proceed(pjp, teases);
+		} else {
+		    result = proceed(pjp, eases.value());
 		}
+	    } else {
+		result = pjp.proceed();
+	    }
+	} catch (Exception e) {
+	    log.error("classAround 执行时出现异常：", e);
+	    throw e;
+	} catch (Throwable e) {
+	    log.error("classAround 执行后续方法时出现异常：", e);
+	    throw e;
 	}
 	return result;
     }
 
-    public Object proceed(ProceedingJoinPoint pjp, boolean validation, String methodSignature, UserDetails user) throws Throwable {
+    @SuppressWarnings("finally")
+    private Object proceed(ProceedingJoinPoint pjp, EaSecured[] eases) throws Throwable {
+	UserDetails user = null;
+	String methodSignature = null;
+	boolean validation = false;
+	try {
+	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+	    String uri = request.getRequestURI();
+	    user = loginService.getLocalUserDetails(request.getSession());
+	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
+	    MethodSignature signature = (MethodSignature) pjp.getSignature();
+	    Method method = signature.getMethod();
+	    String classFullName = method.getDeclaringClass().getName();
+	    String methodName = method.getName();
+	    methodSignature = method.toString();
+	    log.debug("proceed, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eases, user, clientIp);
+
+	    try {
+		uriAccessService.saveUriPermissions(eases, uri, classFullName, methodName, methodSignature);
+	    } catch (Exception e) {
+		log.error("更新URI的授权信息时出现异常：", e);
+	    }
+
+	    validation = uriAccessService.validation(eases, uri, user, clientIp);
+	} catch (Throwable e) {
+	    log.error("检查是否有权限执行时出现异常：", e);
+	} finally {
+	    return proceed(pjp, validation, methodSignature, user);
+	}
+    }
+
+    private Object proceed(ProceedingJoinPoint pjp, boolean validation, String methodSignature, UserDetails user) throws Throwable {
 	Object result = null;
 	if (validation) { // 有执行权限
 	    if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
 		log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
-	    } else {
-		result = pjp.proceed();
 	    }
+	    result = pjp.proceed();
 	} else { // 无执行权限
 	    if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
 		log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", methodSignature, user, eaSecurityConfiguration.verification);
+		result = pjp.proceed();
 	    } else {
 		HttpServletResponse httpServletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 		httpServletResponse.setStatus(403);

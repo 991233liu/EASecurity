@@ -3,6 +3,7 @@ package com.easecurity.core.authentication;
 import com.easecurity.util.JsonUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.easecurity.core.access.annotation.EaSecuredIP;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.ServletUtils;
@@ -79,7 +80,7 @@ class LoginController {
 
     @GetMapping("/currentUserJWT")
     @ResponseBody
-    // TODO 后台访问？？？绑定IP
+    @EaSecuredIP
     public String currentUserJWT(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	if (user == null) { // 未登录时

@@ -17,6 +17,7 @@ import com.easecurity.framework.authentication.LoginService;
 
 @RestController
 @RequestMapping("/demo")
+@EaSecured(org = "{id:['3','4']}")
 public class DemoController {
 
     @Autowired
@@ -46,7 +47,6 @@ public class DemoController {
     }
 
     @RequestMapping("/queryData3")
-    @EaSecured(org = "{id:['1','4']}")
     public UserDetails queryData3(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);
