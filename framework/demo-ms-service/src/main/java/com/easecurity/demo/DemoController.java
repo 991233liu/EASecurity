@@ -53,4 +53,11 @@ public class DemoController {
 	return userDetails;
     }
 
+    @RequestMapping("/queryData4")
+    @EaSecured(org = "{id:['2','8'], code:['abumen','bbumen']}")
+    public UserDetails queryData4(HttpServletRequest request) {
+	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+	System.out.println("-----## 当前登录人userDetails：" + userDetails);
+	return userDetails;
+    }
 }

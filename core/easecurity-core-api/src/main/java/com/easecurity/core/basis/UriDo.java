@@ -42,30 +42,94 @@ public class UriDo implements Serializable {
      */
     private int maxGroup = -1;
 
-    private String _auOrgStr;
+    private String _auOrgIdStr;
+    private String _auOrgCodeStr;
+    private String _auOrgNameStr;
+    private String _auOrgFullCodeStr;
+    private String _auOrgFullNameStr;
 
     /**
      * 从组织判断是否拥有此接口的权限。
      *
      * @return true 有权限；false 无权限。
      */
-    // TODO 需要优化，临时凑合着写的
-    public boolean havePermissionByOrgId(String orgId, int group) {
+    public boolean havePermissionByOrg(Map<String, String> org, int group) {
 	if (uriOrg != null && !uriOrg.isEmpty()) {
-	    if (_auOrgStr == null) {
-		_auOrgStr = ",";
+	    if (_auOrgIdStr == null) {
+		_auOrgIdStr = ",";
+		_auOrgCodeStr = ",";
+		_auOrgNameStr = ",";
+		_auOrgFullCodeStr = ",";
+		_auOrgFullNameStr = ",";
 		for (UriOrg uo : uriOrg) {
-		    if (uo.status == UriOrgEnum.Status.ENABLED)
-			_auOrgStr += uo.getGroup1() + "." + uo.orgId + ",";
+		    if (uo.status == UriOrgEnum.Status.ENABLED) {
+			if (uo.orgId != null)
+			    _auOrgIdStr += uo.getGroup1() + "." + uo.orgId + ",";
+			if (uo.code != null && !uo.code.trim().isEmpty())
+			    _auOrgCodeStr += uo.getGroup1() + "." + uo.code + ",";
+			if (uo.name != null && !uo.name.trim().isEmpty())
+			    _auOrgNameStr += uo.getGroup1() + "." + uo.name + ",";
+			if (uo.fullCode != null && !uo.fullCode.trim().isEmpty())
+			    _auOrgFullCodeStr += uo.getGroup1() + "." + uo.fullCode + ",";
+			if (uo.fullName != null && !uo.fullName.trim().isEmpty())
+			    _auOrgFullNameStr += uo.getGroup1() + "." + uo.fullName + ",";
+		    }
 		}
 	    }
-	    return _auOrgStr.indexOf("," + group + "." + orgId + ",") > -1;
 	} else
 	    return false;
+	for (String k : org.keySet()) {
+	    String[] vs = org.get(k).split(",");
+	    for (String v : vs) {
+		switch (k) {
+		case "id":
+		    if (_auOrgIdStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "code":
+		    if (_auOrgCodeStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "name":
+		    if (_auOrgNameStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "fullCode":
+		    if (_auOrgFullCodeStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "fullName":
+		    if (_auOrgFullNameStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		default:
+		    break;
+		}
+	    }
+	}
+	return false;
     }
+//    public boolean havePermissionByOrgId(String orgId, int group) {
+//	if (uriOrg != null && !uriOrg.isEmpty()) {
+//	    if (_auOrgStr == null) {
+//		_auOrgStr = ",";
+//		for (UriOrg uo : uriOrg) {
+//		    if (uo.status == UriOrgEnum.Status.ENABLED)
+//			_auOrgStr += uo.getGroup1() + "." + uo.orgId + ",";
+//		}
+//	    }
+//	    return _auOrgStr.indexOf("," + group + "." + orgId + ",") > -1;
+//	} else
+//	    return false;
+//    }
 
     /**
-     * 从组织判断是否拥有此接口的权限。
+     * 从IP判断是否拥有此接口的权限。
      *
      * @return true 有权限；false 无权限。
      */

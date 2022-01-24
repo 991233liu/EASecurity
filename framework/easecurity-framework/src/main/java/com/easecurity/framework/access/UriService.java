@@ -139,7 +139,7 @@ public class UriService {
 	boolean validation = true;
 	// 多组为and关系，有一个false则false
 	for (int i = 0; i < uriDo.getMaxGroup(); i++) {
-	    if (!havePermission(uriDo, 0, allIdentities, uri, clientIp)) {
+	    if (!havePermission(uriDo, i + 1, allIdentities, uri, clientIp)) {
 		validation = false;
 		break;
 	    }
@@ -152,23 +152,18 @@ public class UriService {
 	if (uriDo.havePermissionByIp(clientIp, group)) {
 	    return true;
 	} else {
-	    boolean[] flag = { false };
-	    allIdentities.forEach((k, v) -> {
+	    for (String k : allIdentities.keySet()) {
 		switch (k) {
 		case "user":
 		    break;
 		case "org":
-		    String ids = v.get("id");
-		    for (String id : ids.split(",")) {
-			if (uriDo.havePermissionByOrgId(id, group)) {
-			    flag[0] = true;
-			    return;
-			}
+		    if (uriDo.havePermissionByOrg(allIdentities.get(k), group)) {
+			return true;
 		    }
 		    break;
 		}
-	    });
-	    return flag[0];
+	    }
+	    return false;
 	}
     }
 
