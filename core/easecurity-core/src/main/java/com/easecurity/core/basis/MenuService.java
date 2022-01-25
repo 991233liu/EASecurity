@@ -14,8 +14,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.au.MenuOrg;
 import com.easecurity.core.basis.re.Menu;
+import com.easecurity.core.basis.re.MenuEnum.*;
 import com.easecurity.core.redis.RedisUtil;
 import com.easecurity.util.JsonUtils;
 
@@ -40,8 +42,8 @@ public class MenuService {
     private static volatile List<MenuDo> rootMenuDoList = null; // 根list，支持多棵树
     // TODO 内存强制失效?
     private static volatile long validTime = -1;
-    
-    String sql = "SELECT * FROM re_menu order by sort_number";
+
+    String sql = "SELECT * FROM re_menu order by level, sort_number";
     String sql2 = "SELECT * FROM au_menu_org where menuid = ?";
     String sql3 = "SELECT id FROM re_menu where parent_id = ? order by sort_number";
 
@@ -53,7 +55,7 @@ public class MenuService {
 	// 有效期内直接返回内存缓存的数据
 	if (System.currentTimeMillis() < validTime)
 	    return allMenuDoList;
-	
+
 	// 如果Redis中有缓存，则使用Redis中；如果没有，则加载数据库并缓存到Redis
 	if (redisUtil.hasKey("menu:rootList")) {
 	    allMenuDoMap = (Map<String, MenuDo>) redisUtil.get("menu:all");
@@ -72,7 +74,7 @@ public class MenuService {
 		mdo.childMenuIds = jdbcTemplate.queryForList(sql3, String.class, menu.id);
 		mdoAll.add(mdo);
 		amdoAllMap.put("menu:" + menu.id, mdo);
-		if (menu.parentId == null || menu.parentId < 1)
+		if (menu.level == Level.ROOT || menu.parentId == null)
 		    rootMdo.add(mdo);
 		redisUtil.set("menu:" + menu.id, mdo, MENU_TIMEOUT);
 	    }
@@ -87,53 +89,135 @@ public class MenuService {
 	return allMenuDoList;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<MenuDo> getMenuByUser(UserDo user) {
-	List<MenuDo> allMenuDo = new ArrayList<MenuDo>();
-	Map<String, String> allIdentities = (Map<String, String>) JsonUtils.jsonToObject(user.allIdentities());
-	// 遍历所有根菜单，并递归每个有权限的子菜单
-	rootMenuDoList.forEach(item -> {
-	    _getMenuDoByIdentities(allIdentities, item, allMenuDo);
-	});
-	return allMenuDo;
-    }
-
-    private void _getMenuDoByIdentities(Map<String, String> allIdentities, MenuDo menuDo, List<MenuDo> all) {
-	allIdentities.forEach((k, v) -> {
-	    if (_havePermission(k, v, menuDo)) {
-		all.add(menuDo);
-		List<MenuDo> child = getChildMenuDoByIdentities(allIdentities, menuDo);
-		// 递归，遍历所有子节点
-		child.forEach(item -> {
-		    _getMenuDoByIdentities(allIdentities, item, all);
-		});
-	    }
-	});
+    /**
+     * 制定人员的的菜单
+     * 
+     * @param user         用户
+     * @param rootMenuCode 根菜单code
+     * @return
+     */
+    public List<MenuVo> getMenuByUser(UserDo user, String rootMenuCode) {
+	return getMenuByUserIdentities(user.allIdentities(), rootMenuCode);
     }
 
     /**
-     * 遍历权限，找到有权限的子菜单
+     * 制定人员的的菜单
      * 
-     * @param allIdentities 权限集合
-     * @param menuDo        父菜单
-     * @return 有权限的子菜单列表
+     * @param user         用户
+     * @param rootMenuCode 根菜单code
+     * @return
      */
-    public List<MenuDo> getChildMenuDoByIdentities(Map<String, String> allIdentities, MenuDo menuDo) {
-	List<MenuDo> childMenuDo = new ArrayList<MenuDo>();
-	// 遍历子菜单，找到有权限的子菜单
-	getChildMenuDo(menuDo).forEach(item -> {
-	    allIdentities.forEach((k, v) -> {
-		if (_havePermission(k, v, item))
-		    childMenuDo.add(item);
+    public List<MenuVo> getMenuByUser(UserDetails user, String rootMenuCode) {
+	return getMenuByUserIdentities(user.identities, rootMenuCode);
+    }
+
+    /**
+     * 制定人员的的菜单
+     * 
+     * @param identities
+     * @param rootMenuCode 根菜单code
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<MenuVo> getMenuByUserIdentities(String identities, String rootMenuCode) {
+	List<MenuVo> allMenuDo = new ArrayList<MenuVo>();
+	Map<String, Map<String, String>> allIdentities = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
+	if (rootMenuCode == null || "".equals(rootMenuCode)) {
+	    // 遍历所有根菜单，并递归每个有权限的子菜单
+	    rootMenuDoList.forEach(item -> {
+		_getMenuDoByIdentities(allIdentities, item, allMenuDo);
 	    });
-	});
-	return childMenuDo;
+	} else {
+	    MenuDo root = null;
+	    for (MenuDo menuDo : rootMenuDoList) {
+		if (rootMenuCode.equals(menuDo.menu.code)) {
+		    root = menuDo;
+		    break;
+		}
+	    }
+	    if (root == null)
+		return null;
+	    _getMenuDoByIdentities(allIdentities, root, allMenuDo);
+	}
+	return allMenuDo;
+    }
+
+    // TODO 有个bug，禁用隐藏和无权限隐藏的关系？？？？
+    private void _getMenuDoByIdentities(Map<String, Map<String, String>> allIdentities, MenuDo menuDo, List<MenuVo> all) {
+	// 判断菜单状态
+	MenuVo menuVo = null;
+	switch (menuDo.menu.displayStatus) {
+	case DISPLAY: // 始终显示
+	    menuVo = new MenuVo(menuDo);
+	    all.add(menuVo);
+	    menuVo.hasPermission = _havePermission(allIdentities, menuDo);
+	    if (menuDo.menu.status == Status.ENABLED) {
+		List<MenuDo> allChild = getChildMenuDo(menuDo);
+		List<MenuVo> child = new ArrayList<>();
+		// 递归，遍历所有子节点
+		allChild.forEach(item -> {
+		    _getMenuDoByIdentities(allIdentities, item, child);
+		});
+		if (!child.isEmpty()) {
+		    menuVo.childMenu = child;
+		    menuVo.childMenuIds = new ArrayList<>();
+		    for (MenuVo menuVo2 : child) {
+			menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
+		    }
+		}
+	    }
+	    break;
+	case HIDDEN: // 始终隐藏
+	    return;
+	case DISABLEDHIDDEN: // 禁用隐藏
+	    if (menuDo.menu.status == Status.DISABLED) {
+		return;
+	    }
+	case NOPERMISSIONSHIDDEN: // 无权限隐藏
+	default:
+	    // 启用状态下，且有权限的菜单，可以显示
+	    if (menuDo.menu.status == Status.ENABLED && _havePermission(allIdentities, menuDo)) {
+		menuVo = new MenuVo(menuDo);
+		all.add(menuVo);
+		List<MenuDo> allChild = getChildMenuDo(menuDo);
+		List<MenuVo> child = new ArrayList<>();
+		// 递归，遍历所有子节点
+		allChild.forEach(item -> {
+		    _getMenuDoByIdentities(allIdentities, item, child);
+		});
+		if (!child.isEmpty()) {
+		    menuVo.childMenu = child;
+		    menuVo.childMenuIds = new ArrayList<>();
+		    for (MenuVo menuVo2 : child) {
+			menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
+		    }
+		}
+	    }
+	    break;
+	}
+    }
+
+    private boolean _havePermission(Map<String, Map<String, String>> allIdentities, MenuDo menuDo) {
+	if (menuDo.menu.accessType == AccessType.ANONYMOUS) {
+	    return true;
+	} else if (menuDo.menu.accessType == AccessType.LOGIN && allIdentities != null) {
+	    return true;
+	} else {
+	    for (String k : allIdentities.keySet()) {
+		if (_havePermission(k, allIdentities.get(k).get("id"), menuDo)) {
+		    return true;
+		}
+	    }
+	}
+	return false;
     }
 
     private boolean _havePermission(String identitiesType, String Identities, MenuDo menuDo) {
 	// TODO 遍历权限，判定是否有菜单权限
 	switch (identitiesType) {
-	case "user":
+	case "role":
+	    break;
+	case "roleGroup":
 	    break;
 	case "org":
 	    for (String id : Identities.split(",")) {
@@ -141,6 +225,10 @@ public class MenuService {
 		    return true;
 		}
 	    }
+	    break;
+	case "posts":
+	    break;
+	case "user":
 	    break;
 	}
 	return false;

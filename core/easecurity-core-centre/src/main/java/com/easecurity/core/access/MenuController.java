@@ -1,6 +1,7 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.access;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.authentication.UserDetails;
-import com.easecurity.core.basis.MenuDo;
 import com.easecurity.core.basis.MenuService;
-import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.MenuVo;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.utils.ServletUtils;
 
@@ -33,17 +33,22 @@ public class MenuController {
      * 当前登录人的菜单
      */
     @RequestMapping("/myMenu")
-    public List<MenuDo> myMenu(HttpServletRequest request) {
+    @SuppressWarnings("unchecked")
+    public List<MenuVo> myMenu(HttpServletRequest request) {
 	menuService.loadAll();
 	// 获取当前登录人
 	UserDetails user = ServletUtils.getCurrentUserDetails();
-//	if (user == null || user.isAnonymousUser()) { // TODO 未登录时？
-//	    response.setStatus(203);
-//	    return "anonymousUser";
-//	} else { // 登录用户
-	// 获取身份
-	UserDo userDo = userService.getUserDoById(user.id);
+	if (user == null) {
+	    // TODO 未登录时？
+	    return new ArrayList<>();
+	}
+	String rootMenuCode = request.getParameter("rootMenuCode") == null ? "" : request.getParameter("rootMenuCode");
+	List<MenuVo> myMenu = (List<MenuVo>) request.getSession().getAttribute("myMenu:" + rootMenuCode);
+	if (myMenu == null) {
+	    myMenu = menuService.getMenuByUser(user, rootMenuCode);
+	    request.getSession().setAttribute("myMenu:" + rootMenuCode, myMenu);
+	}
 	// 获取有权限的菜单
-	return menuService.getMenuByUser(userDo);
+	return myMenu;
     }
 }

@@ -83,8 +83,8 @@ public class MenuEnum {
      * 显示状态<br>
      */
     public enum DisplayStatus {
-        DISPLAY("DISPLAY", "始终隐藏"),
-        HIDDEN("HIDDEN", "始终显示"),
+        DISPLAY("DISPLAY", "始终显示"),
+        HIDDEN("HIDDEN", "始终隐藏"),
         DISABLEDHIDDEN("DISABLEDHIDDEN", "禁用隐藏"),
         NOPERMISSIONSHIDDEN("NOPERMISSIONSHIDDEN", "无权限隐藏");
 

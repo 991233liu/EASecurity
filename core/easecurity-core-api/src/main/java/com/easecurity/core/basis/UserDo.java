@@ -41,8 +41,6 @@ public class UserDo implements Serializable {
      * 获取所有的身份信息
      */
     public String allIdentities() {
-	// TODO 初始化？
-	// TODO 时间戳，最后更新时间
 	return user.identities;
     }
 }
