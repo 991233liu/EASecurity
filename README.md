@@ -9,7 +9,24 @@
 软件架构说明
 基于java开发，核心代码100%使用原生Java或者独立的公共组件，避免以依赖上的冲突。在外围嵌入代码层面（或者说集成代码），支持多种开发框架的集成（如spring boot）。  
 平台采用分布式架构设计。
+#### 软件架构图
+功能图
+![image](doc/功能图.svg "功能图")
 
+技术栈
+![image](doc/技术栈.svg "技术栈")
+
+认证模式：基于session共享
+
+![image](doc/认证模式/1基于session共享.svg "基于session共享")
+
+认证模式：基于cookie的JWT
+
+![image](doc/认证模式/2基于cookie的JWT.svg "基于cookie的JWT")
+
+认证模式：基于AccessToken的JWT
+
+![image](doc/认证模式/3基于AccessToken的JWT.svg "基于AccessToken的JWT")
 #### 安装教程
 
 1.  xxxx
