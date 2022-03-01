@@ -11,10 +11,10 @@
 平台采用分布式架构设计。
 #### 软件架构图
 功能图
-![image](doc/功能图.svg "功能图")
+![image](doc/1.png "功能图")
 
 技术栈
-![image](doc/技术栈.svg "技术栈")
+![image](doc/技术栈.png "技术栈")
 
 认证模式：基于session共享
 
