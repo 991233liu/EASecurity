@@ -11,14 +11,14 @@
 平台采用分布式架构设计。
 #### 软件架构图
 功能图
-![image](./doc/1.svg "功能图")
+![image](doc/功能图.svg "功能图")
 
 技术栈
-![image](doc/2.svg "技术栈")
+![image](doc/技术栈.svg "技术栈")
 
 认证模式：基于session共享
 
-![image](doc/认证模式/1.svg "基于session共享")
+![image](doc/认证模式/1基于session共享.svg "基于session共享")
 
 认证模式：基于cookie的JWT
 
