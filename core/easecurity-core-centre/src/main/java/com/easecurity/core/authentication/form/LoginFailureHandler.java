@@ -35,8 +35,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	    failurehref = response.encodeRedirectURL(failurehref);
 	    response.sendRedirect(failurehref);
 	} else if ((accept != null && accept.toLowerCase().indexOf("application/json") > -1)
-		|| (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) {
-	    // Ajax请求，直接返回错误消息
+		|| (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) { // Ajax请求，直接返回错误消息
 //	    if (ajaxsubmit != null && "token".equals(ajaxsubmit)) { // Ajax请求下，目标想要返回token
 //	    }
 //	    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
@@ -44,8 +43,13 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	    response.getWriter().write("{\"status\":401,\"code\":401,\"message\":\"");
 	    response.getWriter().write(exception.getMessage());
 	    response.getWriter().write("\"}");
+	} else if (exception instanceof BadGifCaptchaException) {
+	    getRedirectStrategy().sendRedirect(request, response, "/auth/login?errorGifCaptcha");
 	} else {
-	    super.onAuthenticationFailure(request, response, exception);
+	    getRedirectStrategy().sendRedirect(request, response, "/auth/login?error");
 	}
+//    } else {
+//	super.onAuthenticationFailure(request, response, exception);
+//    }
     }
 }

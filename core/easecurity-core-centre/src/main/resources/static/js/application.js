@@ -74,6 +74,7 @@ function onLoginAjax() {
 				var response = XMLHttpRequest.responseJSON;
 				$('#errormessage').text(response.message);
 				$('#message').css('display','block'); 
+				flushLoginCaptcha();
 			} else {
 				alert("服务器异常！" + XMLHttpRequest.status + ":" + XMLHttpRequest.responseText);
 			}

@@ -59,21 +59,21 @@ class LoginController {
     Integer JWTValidTime;
 
     @GetMapping("/login")
-    public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout", required = false) String logout,
+    public ModelAndView login(@RequestParam(value = "error", required = false) String error,
+	    @RequestParam(value = "errorGifCaptcha", required = false) String errorGifCaptcha, @RequestParam(value = "logout", required = false) String logout,
 	    HttpServletRequest request) {
 	ModelAndView mav = new ModelAndView();
 	String srchref = request.getParameter("srchref");
 	String failurehref = request.getParameter("failurehref");
+	mav.setViewName("/auth/login.html");
 	if (error != null) {
-//	    mav.addObject("error", "用户名或者密码不正确");
-	    mav.setViewName("/auth/loginError.html");
+	    mav.addObject("message", "用户名或者密码不正确");
+	} else if (errorGifCaptcha != null) {
+	    mav.addObject("message", "验证码错误");
 	} else if (logout != null) {
-//	    mav.addObject("msg", "退出成功");
-	    mav.setViewName("/auth/logout.html");
+	    mav.addObject("message", "退出成功");
 	} else if ((srchref != null && !"".equals(srchref)) || ((failurehref != null && !"".equals(failurehref)))) {
 	    mav.setViewName("/auth/login_ajax.html");
-	} else {
-	    mav.setViewName("/auth/login.html");
 	}
 	return mav;
     }

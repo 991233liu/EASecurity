@@ -44,14 +44,14 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	System.out.println("-------# 输入的验证码key为：" + gifCaptcha);
 	System.out.println("-------# 输入的验证码value为：" + gifCaptchaValue);
 	GifCaptcha gifCaptcha1 = (GifCaptcha) ServletUtils.getSession().getAttribute("GifCaptcha");
-	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
+//	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
 	// TODO 数据库验证
 	// TODO Redis验证
 	if (!loginCaptchaDisable && ((gifCaptcha1 == null) || !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.value.equals(gifCaptchaValue.toLowerCase())))) {
 	    logger.debug("Authentication failed: gifCaptcha note valid");
-	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+	    throw new BadGifCaptchaException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
 	}
-	 ServletUtils.getSession().removeAttribute("GifCaptcha");
+	ServletUtils.getSession().removeAttribute("GifCaptcha");
 
 	// 校验密码
 	System.out.println("-------# 1=" + userDetails.getUsername() + userDetails.getPassword());

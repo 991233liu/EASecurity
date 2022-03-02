@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,7 +33,7 @@
         <!-- /.login-logo -->
         <div class="login-box-body">
             <p class="login-box-msg">登录系统</p>
-			<p class="form-message" style="color: red;">
+            <p th:if="${message}" th:text="${message}" class="form-message" style="color: red;">
                 用户名或者密码不正确
             </p>
             <form action='/SecurityCentre/login' method='POST' id='loginForm' class='cssform' autocomplete='off'>
