@@ -22,7 +22,7 @@ import com.easecurity.core.utils.BeanUtils;
 public class CustomConcurrentSessionControlAuthenticationStrategy extends ConcurrentSessionControlAuthenticationStrategy {
 
     private SessionRepository<?> sessionRepository;
-    LogoutService logoutService;
+    private LogoutService logoutService;
     private List<String> logoutUrls;
 
     public CustomConcurrentSessionControlAuthenticationStrategy(SessionRegistry sessionRegistry) {

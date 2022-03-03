@@ -36,12 +36,12 @@ public class EaSecuredAspect {
     private static final Logger log = LoggerFactory.getLogger(EaSecuredAspect.class);
 
     @Resource
-    UriService uriAccessService;
+    private UriService uriAccessService;
     @Resource
-    LoginService loginService;
+    private LoginService loginService;
 
     @Resource
-    EaSecurityConfiguration eaSecurityConfiguration;
+    private EaSecurityConfiguration eaSecurityConfiguration;
 
     @Pointcut("@annotation(com.easecurity.core.access.annotation.EaSecureds)")
     private void methods() {

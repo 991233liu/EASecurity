@@ -23,7 +23,7 @@ public class CookieLogoutHandler implements LogoutHandler {
 //    private static final Logger log = LoggerFactory.getLogger(CookieLogoutHandler.class);
 
     @Autowired
-    LogoutService logoutService;
+    private LogoutService logoutService;
 
     @Value("${easecurity.client.logout.url:}")
     private List<String> urls;

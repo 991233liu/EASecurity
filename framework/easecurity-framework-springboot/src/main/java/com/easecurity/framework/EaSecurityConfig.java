@@ -21,7 +21,7 @@ import com.easecurity.framework.authentication.LoginService;
 public class EaSecurityConfig implements EnvironmentAware{
 //    private static final Logger log = LoggerFactory.getLogger(AccessConfig.class);
     
-    EaSecurityConfiguration eaSecurityConfiguration;
+    private EaSecurityConfiguration eaSecurityConfiguration;
 
     @Bean
     public EaSecurityConfiguration eaSecurityConfiguration() {

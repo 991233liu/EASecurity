@@ -18,7 +18,7 @@ public class DemoApplication implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
 
     public static void main(String[] args) {
 	SpringApplication.run(DemoApplication.class, args);

@@ -50,13 +50,13 @@ class LoginController {
     @Value("${loginCaptcha.disable:true}")
     boolean disable;
     @Value("${loginCaptcha.gifCaptcha.length:5}")
-    Integer gifCaptchaLength;
+    private Integer gifCaptchaLength;
     @Value("${loginCaptcha.gifCaptcha.delay:100}")
-    Integer gifCaptchaDelay;
+    private Integer gifCaptchaDelay;
     @Value("${loginCaptcha.gifCaptcha.validTime:300000}")
-    Integer validTime;
+    private Integer validTime;
     @Value("${easecurity.jwt.validTime:300}")
-    Integer JWTValidTime;
+    private Integer JWTValidTime;
 
     @GetMapping("/login")
     public ModelAndView login(@RequestParam(value = "error", required = false) String error,

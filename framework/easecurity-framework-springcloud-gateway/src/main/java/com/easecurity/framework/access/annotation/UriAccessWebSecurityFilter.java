@@ -32,11 +32,11 @@ public class UriAccessWebSecurityFilter implements GlobalFilter, Ordered {
     private static final Logger log = LoggerFactory.getLogger(UriAccessWebSecurityFilter.class);
 
     @Resource
-    UriService uriAccessService;
+    private UriService uriAccessService;
     @Resource
-    LoginService loginService;
+    private LoginService loginService;
     @Resource
-    EaSecurityConfiguration eaSecurityConfiguration;
+    private EaSecurityConfiguration eaSecurityConfiguration;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

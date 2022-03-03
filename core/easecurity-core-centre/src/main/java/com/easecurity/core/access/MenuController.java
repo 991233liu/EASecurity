@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.MenuVo;
-import com.easecurity.core.basis.UserService;
 import com.easecurity.core.utils.ServletUtils;
 
 /**
@@ -25,9 +24,7 @@ import com.easecurity.core.utils.ServletUtils;
 public class MenuController {
 
     @Autowired
-    MenuService menuService;
-    @Autowired
-    UserService userService;
+    private MenuService menuService;
 
     /**
      * 当前登录人的菜单

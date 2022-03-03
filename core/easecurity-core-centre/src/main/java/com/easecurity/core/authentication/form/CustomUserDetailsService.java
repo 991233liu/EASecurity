@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 

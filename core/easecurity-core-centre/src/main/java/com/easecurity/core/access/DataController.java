@@ -29,7 +29,7 @@ public class DataController {
     private static final Logger log = LoggerFactory.getLogger(DataController.class);
 
     @Autowired
-    UriService uriService;
+    private UriService uriService;
 
     /**
      * 最后修改时间，"0"标示不存在

@@ -43,16 +43,16 @@ import com.nimbusds.jose.proc.SecurityContext;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    CookieLogoutHandler cookieLogoutHandler;
+    private CookieLogoutHandler cookieLogoutHandler;
     @Autowired
-    LoginSuccessHandler loginSuccessHandler;
+    private LoginSuccessHandler loginSuccessHandler;
     @Autowired
-    LoginFailureHandler loginFailureHandler;
+    private LoginFailureHandler loginFailureHandler;
     
     @Value("${easecurity.jwt.publicKey}")
-    RSAPublicKey key;
+    private RSAPublicKey key;
     @Value("${easecurity.jwt.privateKey}")
-    RSAPrivateKey priv;
+    private RSAPrivateKey priv;
     @Value("${easecurity.client.logout.url:}")
     private List<String> logoutUrls;
 

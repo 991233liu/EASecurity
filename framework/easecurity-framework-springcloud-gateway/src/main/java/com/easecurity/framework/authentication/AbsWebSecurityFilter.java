@@ -40,11 +40,11 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
     private static final Logger log = LoggerFactory.getLogger(AbsWebSecurityFilter.class);
 
     @Autowired
-    EaSecurityConfiguration eaSecurityConfiguration;
+    private EaSecurityConfiguration eaSecurityConfiguration;
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
-    RSAPublicKey rsaPublicKey;
+    private RSAPublicKey rsaPublicKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

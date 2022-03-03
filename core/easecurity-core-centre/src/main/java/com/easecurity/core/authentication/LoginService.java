@@ -20,11 +20,11 @@ public class LoginService {
 //    private static final Logger log = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-    String sql5 = "UPDATE b_user set pd_Error_Times=? where id=?";
-    String sql6 = "UPDATE b_user set pd_Error_Times=?, pd_Status=? where id=?";
-    String sql7 = "UPDATE b_user set pd_Error_Times=?, last_Login_Ttime=? where id=?";
+    private String sql5 = "UPDATE b_user set pd_Error_Times=? where id=?";
+    private String sql6 = "UPDATE b_user set pd_Error_Times=?, pd_Status=? where id=?";
+    private String sql7 = "UPDATE b_user set pd_Error_Times=?, last_Login_Ttime=? where id=?";
 
     /*
      * 密码校验失败

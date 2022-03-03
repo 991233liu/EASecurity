@@ -33,7 +33,7 @@ public class WebSecurityFilter extends AbsMSWebSecurityFilter {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
     /**
      * 从HttpServletRequest中取出JWT密文，然后解码。

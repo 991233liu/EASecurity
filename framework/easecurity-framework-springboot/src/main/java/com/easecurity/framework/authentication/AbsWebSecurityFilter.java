@@ -30,11 +30,11 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
     private static final Logger log = LoggerFactory.getLogger(AbsWebSecurityFilter.class);
 
     @Autowired
-    EaSecurityConfiguration eaSecurityConfiguration;
+    private EaSecurityConfiguration eaSecurityConfiguration;
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
-    RSAPublicKey rsaPublicKey;
+    private RSAPublicKey rsaPublicKey;
 
     @Override
     public EaSecurityConfiguration getConfig() {

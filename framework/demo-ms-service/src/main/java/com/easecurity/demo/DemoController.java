@@ -21,7 +21,7 @@ import com.easecurity.framework.authentication.LoginService;
 public class DemoController {
 
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
     /**
      * 两个条件（IP和org）为“or”的关系
