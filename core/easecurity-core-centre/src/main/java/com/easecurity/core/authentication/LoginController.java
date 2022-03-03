@@ -4,8 +4,8 @@ import com.easecurity.util.JsonUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.easecurity.core.access.annotation.EaSecuredIP;
-import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.s.GifCaptcha;
+import com.easecurity.core.utils.MessageSourceUtil;
 import com.easecurity.core.utils.ServletUtils;
 
 import java.io.IOException;
@@ -41,11 +41,11 @@ class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    UserService userService;
+    private JwtEncoder encoder;
     @Autowired
-    JwtEncoder encoder;
+    private JwtDecoder decoder;
     @Autowired
-    JwtDecoder decoder;
+    private MessageSourceUtil messageSourceUtil;
 
     @Value("${loginCaptcha.disable:true}")
     boolean disable;
@@ -67,11 +67,11 @@ class LoginController {
 	String failurehref = request.getParameter("failurehref");
 	mav.setViewName("/auth/login.html");
 	if (error != null) {
-	    mav.addObject("message", "用户名或者密码不正确");
+	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	} else if (errorGifCaptcha != null) {
-	    mav.addObject("message", "验证码错误");
+	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
 	} else if (logout != null) {
-	    mav.addObject("message", "退出成功");
+	    mav.addObject("message", messageSourceUtil.getMessage("LoginController.logout", "Succeed logout"));
 	} else if ((srchref != null && !"".equals(srchref)) || ((failurehref != null && !"".equals(failurehref)))) {
 	    mav.setViewName("/auth/login_ajax.html");
 	}

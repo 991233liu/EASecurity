@@ -1,6 +1,7 @@
 package com.easecurity.core.authentication.form;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,19 +32,15 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 	CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
-	System.out.println("-------# a1");
 	// 校验图片动态验证码
-//	Object details = authentication.getDetails();
-//	if (!(details instanceof TwoFactorAuthenticationDetails)) {
-//	    logger.debug("Authentication failed: authenticationToken principal is not a TwoFactorPrincipal");
-//	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-//	}
-//	TwoFactorAuthenticationDetails twoFactorAuthenticationDetails = (TwoFactorAuthenticationDetails) details;
 	String gifCaptcha = ServletUtils.getRequest().getParameter("gifCaptcha");
 	String gifCaptchaValue = ServletUtils.getRequest().getParameter("gifCaptchaValue");
-	System.out.println("-------# 输入的验证码key为：" + gifCaptcha);
-	System.out.println("-------# 输入的验证码value为：" + gifCaptchaValue);
-	GifCaptcha gifCaptcha1 = (GifCaptcha) ServletUtils.getSession().getAttribute("GifCaptcha");
+	if (logger.isDebugEnabled()) {
+	    logger.debug("-------# 输入的验证码key为：" + gifCaptcha);
+	    logger.debug("-------# 输入的验证码value为：" + gifCaptchaValue);
+	}
+	HttpSession session = ServletUtils.getSession();
+	GifCaptcha gifCaptcha1 = session == null ? null : (GifCaptcha) session.getAttribute("GifCaptcha");
 //	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
 	// TODO 数据库验证
 	// TODO Redis验证
@@ -54,9 +51,8 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	ServletUtils.getSession().removeAttribute("GifCaptcha");
 
 	// 校验密码
-	System.out.println("-------# 1=" + userDetails.getUsername() + userDetails.getPassword());
-//        System.out.println("-------# 1=" + userDetails.properties);
-	System.out.println("-------# 1=" + authentication.getName());
+	if (logger.isDebugEnabled())
+	    logger.debug("-------# 1=" + userDetails.getUsername() + userDetails.getPassword());
 	if (authentication.getCredentials() == null) {
 	    loginService.loginFail(customUserDetails);
 	    logger.debug("Authentication failed: no credentials provided1");
@@ -64,22 +60,12 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	}
 
 	String presentedPassword = authentication.getCredentials().toString();
-	System.out.println("-------# 1=" + presentedPassword);
 	if (presentedPassword.length() < 60) {
 	    loginService.loginFail(customUserDetails);
 	    logger.debug("Authentication failed: no credentials provided2");
 	    throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	}
 	presentedPassword = presentedPassword.substring(presentedPassword.length() - 31);
-	System.out.println("-------# 1=" + presentedPassword);
-	BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(5);
-	System.out.println("-------# 1=" + bcryptPasswordEncoder.encode(presentedPassword));
-//	String customUser = customUserDetails.getPassword();
-//	String userSalt = customUser.substring(0, customUser.length() - 31);
-//	String userPassword = customUser.substring(customUser.length() - 31);
-//	System.out.println("-------# 1=" + userSalt);
-//	System.out.println("-------# 1=" + bcryptPasswordEncoder.matches(presentedPassword, customUserDetails.getPassword()));
-
 	if (!new BCryptPasswordEncoder().matches(presentedPassword, customUserDetails.getPassword())) {
 	    loginService.loginFail(customUserDetails);
 	    logger.debug("Authentication failed: password does not match stored value3");
@@ -87,7 +73,6 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	}
 
 	loginService.loginSuccess(customUserDetails);
-	System.out.println("-------# a5");
     }
 
     /*

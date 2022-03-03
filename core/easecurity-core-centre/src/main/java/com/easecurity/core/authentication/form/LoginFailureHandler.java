@@ -39,6 +39,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 //	    if (ajaxsubmit != null && "token".equals(ajaxsubmit)) { // Ajax请求下，目标想要返回token
 //	    }
 //	    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
+	    response.setCharacterEncoding("utf-8");
 	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
 	    response.getWriter().write("{\"status\":401,\"code\":401,\"message\":\"");
 	    response.getWriter().write(exception.getMessage());

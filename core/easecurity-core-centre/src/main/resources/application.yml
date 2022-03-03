@@ -11,6 +11,9 @@ server:
             httpOnly: true
 
 spring:
+   messages:
+      basename: i18n/messages
+      encoding: UTF-8
    profiles:
       include: easecurity
 # 数据库配置
