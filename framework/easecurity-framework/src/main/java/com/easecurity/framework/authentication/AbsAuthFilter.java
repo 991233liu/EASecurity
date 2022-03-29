@@ -61,6 +61,7 @@ public abstract class AbsAuthFilter implements Filter {
 	    } else { // 已登录用户正常响应
 		LoginService.userDetails.set(jwt.userDetails);
 		chain.doFilter(request, response);
+		// TODO bug，放到finally
 		LoginService.userDetails.remove();
 	    }
 	}

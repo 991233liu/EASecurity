@@ -1,32 +1,31 @@
 # EASecurity
 
 #### 介绍
-企业级应用安全中心（Enterprise Application Security Center）。
-满足安全三要素CIA（保密性Confidentiality、完整性Integrity、可用性Availability），符合安全架构5A方法论（身份认证Authentication、授权Authorization、访问控制Access Control、可审计Auditable、资产保护Asset Protection）。
-符合中国国内各大央企的安全管理要求，在保证开发人员易用性（符合国内编程人员使用习惯）前提下，最大程度的做到可配置和易管理。开发和运维分离，做到上线后运维维护权限变更不用再次发版。
+企业级应用安全中心（Enterprise Application Security Center）。  
+满足安全三要素CIA（保密性Confidentiality、完整性Integrity、可用性Availability），符合安全架构5A方法论（身份认证Authentication、授权Authorization、访问控制Access Control、可审计Auditable、资产保护Asset Protection）。  
+符合中国国内各大央企的安全管理要求，在保证开发人员易用性（符合国内编程人员使用习惯）前提下，最大程度的做到可配置和易管理。开发和运维分离，做到上线后运维维护权限变更不用再次发版。  
 
 #### 软件架构
-软件架构说明
-基于java开发，核心代码100%使用原生Java或者独立的公共组件，避免以依赖上的冲突。在外围嵌入代码层面（或者说集成代码），支持多种开发框架的集成（如spring boot）。  
+软件架构说明  
+基于java开发，核心代码100%使用原生Java或者独立的公共组件，避免以依赖上的冲突。在外围嵌入代码层面（或者说集成代码），支持多种开发框架的集成（如spring boot）。    
 平台采用分布式架构设计。
+
 #### 软件架构图
-功能图
+功能图  
 ![image](doc/功能图.png "功能图")
 
-技术栈
+技术栈  
 ![image](doc/技术栈.png "技术栈")
 
-认证模式：基于session共享
-
+认证模式：基于session共享  
 ![image](doc/认证模式/1基于session共享.png "基于session共享")
 
-认证模式：基于cookie的JWT
-
+认证模式：基于cookie的JWT  
 ![image](doc/认证模式/2基于cookie的JWT.png "基于cookie的JWT")
 
-认证模式：基于AccessToken的JWT
-
+认证模式：基于AccessToken的JWT  
 ![image](doc/认证模式/3基于AccessToken的JWT.png "基于AccessToken的JWT")
+
 #### 安装教程
 
 1.  xxxx

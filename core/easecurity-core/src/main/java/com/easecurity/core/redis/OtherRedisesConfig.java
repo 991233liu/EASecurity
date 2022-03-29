@@ -187,6 +187,7 @@ public class OtherRedisesConfig implements EnvironmentAware {
     /**
      * 读取副Redis配置
      */
+    // TODO "REDISES_PREFIX"的key不存在时异常
     @Override
     public void setEnvironment(Environment environment) {
 	// 如果配置文件不包含相关配置，则不进行任何操作
