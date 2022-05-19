@@ -5,12 +5,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author liulf
@@ -26,55 +22,100 @@ public class BlowfishTest {
 	System.out.println(BlowfishBox.pbox_init.length);
 	System.out.println(BlowfishBox.sbox_init.length);
 	System.out.println(BlowfishBox.sbox_init[0].length);
+	System.out.println(BlowfishBox2.pbox_init[0]);
+	System.out.println(BlowfishBox2.pbox_init.length);
+	System.out.println(BlowfishBox2.sbox_init.length);
+	System.out.println(BlowfishBox2.sbox_init[0].length);
+//	for (int a : BlowfishBox2.sbox_init[0]) {
+//	    System.out.println(a);
+//	}
 
 	String key = "testKey111111111";
 	BlowfishECB be = new BlowfishECB(key, BlowfishBox2.pbox_init, BlowfishBox2.sbox_init);
 	String buffer = "1234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxy"
 		+ "z1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz123";
-	System.out.println("---1");
+	String str = be.encrypt(buffer);
+	System.out.println("明文：" + buffer);
+	System.out.println("密文：" + str);
+	System.out.println("---大字符串10000万次加密耗时：");
 	long start = System.currentTimeMillis();
 	for (int i = 0; i < 10000; i++) {
 	    be.encrypt(buffer);
 	}
 	System.out.println(System.currentTimeMillis() - start);
-	String str = be.encrypt(buffer);
-	System.out.println(buffer);
-	System.out.println(str);
 	start = System.currentTimeMillis();
 	for (int i = 0; i < 10000; i++) {
 	    be.decrypt(str);
 	}
+	System.out.println("---大字符串10000万次解码耗时：");
 	System.out.println(System.currentTimeMillis() - start);
-
-	// create a key generator based upon the Blowfish cipher
-	KeyGenerator keygenerator = KeyGenerator.getInstance("Blowfish");
-	keygenerator.init(256);
-
-	// create a key
-	SecretKey secretkey = keygenerator.generateKey();
-
-	// create a cipher based upon Blowfish
-	Cipher cipher = Cipher.getInstance("Blowfish");
-
-	// initialise cipher to with secret key
-	cipher.init(Cipher.ENCRYPT_MODE, secretkey);
-
-	// get the text to encrypt
-	String inputText = "MyTextToEncrypt";
-
-	// encrypt message
-	byte[] encrypted = cipher.doFinal(inputText.getBytes());
-
-	System.out.println(encrypted.length);
-
-	String Key = "Something";
-	byte[] KeyData = Key.getBytes();
-	SecretKeySpec KS = new SecretKeySpec(KeyData, "Blowfish");
-	cipher = Cipher.getInstance("Blowfish");
-	cipher.init(Cipher.ENCRYPT_MODE, KS);
-	encrypted = cipher.doFinal(inputText.getBytes());
-
-	System.out.println(encrypted.length);
+	System.out.println(be.weakKeyCheck());
+//	System.out.println("---1");
+//	long start = System.currentTimeMillis();
+//	for (int i = 0; i < 10000; i++) {
+//	    be.encrypt(buffer);
+//	}
+//	System.out.println(System.currentTimeMillis() - start);
+//	String str = be.encrypt(buffer);
+//	System.out.println(buffer);
+//	System.out.println(str);
+//	start = System.currentTimeMillis();
+//	for (int i = 0; i < 10000; i++) {
+//	    be.decrypt(str);
+//	}
+//	System.out.println(System.currentTimeMillis() - start);
+//
+//	// create a key generator based upon the Blowfish cipher
+//	KeyGenerator keygenerator = KeyGenerator.getInstance("Blowfish");
+//	SecureRandom random = new SecureRandom();
+//	Random random2 = new Random();
+//	keygenerator.init(256, random);
+//
+//	// create a key
+//	SecretKey secretkey = keygenerator.generateKey();
+//	byte bytes[] = secretkey.getEncoded();
+//	System.out.println(Arrays.toString(bytes));
+////	String strHexBytes =  Integer.toHexString(268435456);
+////	String strHexBytes = DatatypeConverter.printInt(0x10000000);
+////	double a=Math.random()*10;
+//	for (int i = 0; i < 100; i++) {
+//	    double a = random2.nextDouble() * 10;
+////	    System.out.println(a);
+//	    String strHexBytes = Double.toHexString(a);
+//	    strHexBytes = strHexBytes.substring(strHexBytes.indexOf(".") + 1);
+//	    if (strHexBytes.startsWith("0") || strHexBytes.length() < 8)
+//		System.out.println("----------");
+//	    else
+//		System.out.print("0x" + strHexBytes.substring(0, 8));
+//	    System.out.print(", ");
+//	}
+//	System.out.println("");
+//
+//	// create a cipher based upon Blowfish
+//	Cipher cipher = Cipher.getInstance("Blowfish");
+//
+//	// initialise cipher to with secret key
+//	cipher.init(Cipher.ENCRYPT_MODE, secretkey);
+//
+//	// get the text to encrypt
+//	String inputText = "MyTextToEncrypt";
+//
+//	// encrypt message
+//	byte[] encrypted = cipher.doFinal(inputText.getBytes());
+//
+//	System.out.println(encrypted.length);
+//
+//	String Key = "Something";
+//	byte[] KeyData = Key.getBytes();
+//	SecretKeySpec KS = new SecretKeySpec(KeyData, "Blowfish");
+//	cipher = Cipher.getInstance("Blowfish");
+//	cipher.init(Cipher.ENCRYPT_MODE, KS);
+//	encrypted = cipher.doFinal(inputText.getBytes());
+//
+//	System.out.println(encrypted.length);
+//
+//	main2(args);
+//	main3(args);
 
 //	byte[] buf;
 ////	byte[] b = Base642.encode(buffer).getBytes();
@@ -180,4 +221,66 @@ public class BlowfishTest {
 //	System.arraycopy(array2, 0, concatArray, array1.length, array2.length);
 //	return concatArray;
 //    }
+
+//    public static void main2(String[] args) {
+//	MessageDigest messageDigest = null;
+//	try {
+//	    String str = "测试字符串";
+//	    messageDigest = MessageDigest.getInstance("SHA1");
+//	    messageDigest.update(str.getBytes("UTF-8"));
+//	    byte bytes[] = messageDigest.digest();
+//
+//	    BigInteger bigInteger = new BigInteger(1, bytes);
+//	    System.out.println(bigInteger.toString(16));
+//
+//	    String strHexBytes = DatatypeConverter.printHexBinary(bytes);
+//	    System.out.println(strHexBytes);
+//
+//	    System.out.println(bytes2hex(bytes));
+//	} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+//	    e.printStackTrace();
+//	}
+//    }
+//
+//    public static String bytes2hex(byte[] bytes) {
+//	StringBuilder sb = new StringBuilder();
+//	String tmp = null;
+//	for (byte b : bytes) {
+//	    // 将每个字节与0xFF进行与运算，然后转化为10进制，然后借助于Integer再转化为16进制
+//	    tmp = Integer.toHexString(0xFF & b);
+//	    if (tmp.length() == 1) {
+//		tmp = "0" + tmp;
+//	    }
+//	    sb.append(tmp);
+//	}
+//	return sb.toString();
+//
+//    }
+//
+//    public static void main3(String args[]) {
+//	System.out.println(bytesToHexString("中华人民共和国".getBytes()));
+//    }
+//
+//    public static String bytesToHexString(byte[] src) {
+//	StringBuilder stringBuilder = new StringBuilder("");
+//	if (src == null || src.length <= 0) {
+//	    return null;
+//	}
+//	for (int i = 0; i < src.length; i++) {
+//	    int v = src[i] & 0xFF;
+//	    stringBuilder.append("0x");
+//
+//	    String hv = Integer.toHexString(v);
+//	    if (hv.length() < 2) {
+//		stringBuilder.append(0);
+//	    }
+//	    stringBuilder.append(hv);
+//	    if (i != src.length - 1) {
+//		stringBuilder.append(",");
+//
+//	    }
+//	}
+//	return stringBuilder.toString();
+//    }
+
 }
