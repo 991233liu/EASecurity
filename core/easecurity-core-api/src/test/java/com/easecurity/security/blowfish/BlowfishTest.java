@@ -1,6 +1,17 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.security.blowfish;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 /**
  * @author liulf
  *
@@ -10,14 +21,14 @@ public class BlowfishTest {
 //    private static Base64.Decoder b64_d = Base64.getDecoder();
 //    private static Base64.Encoder b64_e = Base64.getEncoder();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 	System.out.println(BlowfishBox.pbox_init[0]);
 	System.out.println(BlowfishBox.pbox_init.length);
 	System.out.println(BlowfishBox.sbox_init.length);
 	System.out.println(BlowfishBox.sbox_init[0].length);
 
 	String key = "testKey111111111";
-	BlowfishECB be = new BlowfishECB(key.getBytes(), 0, key.getBytes().length);
+	BlowfishECB be = new BlowfishECB(key, BlowfishBox2.pbox_init, BlowfishBox2.sbox_init);
 	String buffer = "1234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxy"
 		+ "z1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz1231234567890abcdefghijklmnopqrstuvwxyz123";
 	System.out.println("---1");
@@ -27,11 +38,44 @@ public class BlowfishTest {
 	}
 	System.out.println(System.currentTimeMillis() - start);
 	String str = be.encrypt(buffer);
+	System.out.println(buffer);
+	System.out.println(str);
 	start = System.currentTimeMillis();
 	for (int i = 0; i < 10000; i++) {
-	    be.encrypt(str);
+	    be.decrypt(str);
 	}
 	System.out.println(System.currentTimeMillis() - start);
+
+	// create a key generator based upon the Blowfish cipher
+	KeyGenerator keygenerator = KeyGenerator.getInstance("Blowfish");
+	keygenerator.init(256);
+
+	// create a key
+	SecretKey secretkey = keygenerator.generateKey();
+
+	// create a cipher based upon Blowfish
+	Cipher cipher = Cipher.getInstance("Blowfish");
+
+	// initialise cipher to with secret key
+	cipher.init(Cipher.ENCRYPT_MODE, secretkey);
+
+	// get the text to encrypt
+	String inputText = "MyTextToEncrypt";
+
+	// encrypt message
+	byte[] encrypted = cipher.doFinal(inputText.getBytes());
+
+	System.out.println(encrypted.length);
+
+	String Key = "Something";
+	byte[] KeyData = Key.getBytes();
+	SecretKeySpec KS = new SecretKeySpec(KeyData, "Blowfish");
+	cipher = Cipher.getInstance("Blowfish");
+	cipher.init(Cipher.ENCRYPT_MODE, KS);
+	encrypted = cipher.doFinal(inputText.getBytes());
+
+	System.out.println(encrypted.length);
+
 //	byte[] buf;
 ////	byte[] b = Base642.encode(buffer).getBytes();
 //	byte[] b = buffer.getBytes();
