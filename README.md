@@ -12,20 +12,20 @@
 
 ## 软件架构图  
 - **功能图**  
-<a href="doc/功能图.png"><img src="doc/功能图.png" width="80%"></a>  
+<a href="doc/架构/功能图.png"><img src="doc/架构/功能图.png" width="80%"></a>  
 <br>  
 - **技术栈**  
-<a href="doc/技术栈.png"><img src="doc/技术栈.png" width="80%"></a>  
+<a href="doc/架构/技术栈.png"><img src="doc/架构/技术栈.png" width="80%"></a>  
 <br>  
 - **认证模式：基于session共享**  
-<a href="doc/认证模式/1基于session共享.png"><img src="doc/认证模式/1基于session共享.png" width="40%"></a>  
+<a href="doc/架构/认证模式/1基于session共享.png"><img src="doc/架构/认证模式/1基于session共享.png" width="40%"></a>  
 <br>  
 - **认证模式：基于cookie的JWT**  
-<a href="doc/认证模式/2基于cookie的JWT.png"><img src="doc/认证模式/2基于cookie的JWT.png" width="40%"></a>  
+<a href="doc/架构/认证模式/2基于cookie的JWT.png"><img src="doc/架构/认证模式/2基于cookie的JWT.png" width="40%"></a>  
 <br>  
 - **认证模式：基于AccessToken的JWT**  
 AccessToken和JWT（Json web token）是2种token认证模式。AccessToken是一串随机字符串，从中不能获取到任何信息，你需要将它发送到服务器进行解析。JWT 中包含了主体、受众、权限、颁发时间、过期时间、用户信息字段等内容且具备签名，不可篡改，因此无需发送到服务器，可以本地验证。  
-<a href="doc/认证模式/3基于AccessToken的JWT.png"><img src="doc/认证模式/3基于AccessToken的JWT.png" width="40%"></a>  
+<a href="doc/架构/认证模式/3基于AccessToken的JWT.png"><img src="doc/架构/认证模式/3基于AccessToken的JWT.png" width="40%"></a>  
 
 ## 安装教程  
 EASecurity应用程序共分3部分：  
