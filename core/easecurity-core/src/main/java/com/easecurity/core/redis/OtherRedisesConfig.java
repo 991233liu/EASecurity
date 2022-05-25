@@ -37,9 +37,9 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 /**
  * 多Redis支持，在“redises.datasources.xxx”下配置。
  * 副Redis可以在RedisUtil中指定Redis连接的名称“xxx”；或者在需用的service中注入：
- * @Resource
-   Map<String, RedisTemplate<Object, Object>> otherRedises;
- * Map的key是Redis连接的名称“xxx”
+ * 
+ * @Resource Map<String, RedisTemplate<Object, Object>> otherRedises;
+ *           Map的key是Redis连接的名称“xxx”
  */
 @Configuration
 public class OtherRedisesConfig implements EnvironmentAware {
@@ -187,11 +187,10 @@ public class OtherRedisesConfig implements EnvironmentAware {
     /**
      * 读取副Redis配置
      */
-    // TODO "REDISES_PREFIX"的key不存在时异常
     @Override
     public void setEnvironment(Environment environment) {
 	// 如果配置文件不包含相关配置，则不进行任何操作
-	if (environment.containsProperty(REDISES_PREFIX)) {
+	if (!environment.containsProperty(REDISES_PREFIX)) {
 	    return;
 	}
 	otherRedisProperties = Binder.get(environment).bind(REDISES_PREFIX, OtherRedisProperties.class).get();
