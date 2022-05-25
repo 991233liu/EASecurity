@@ -51,7 +51,7 @@ public abstract class AbsAuthFilter implements Filter {
 		jwt = getCurrentUserJWTFromSecurityCentre(request);
 		// 存入本地缓存
 		if (jwt != null) {
-		    jwt.removeParsedStr();		    
+		    jwt.removeParsedStr();
 		    SaveUserJWT2LocalStore(request, response, jwt);
 		}
 	    }
@@ -60,9 +60,11 @@ public abstract class AbsAuthFilter implements Filter {
 		noLogin(request, response, chain, jwt);
 	    } else { // 已登录用户正常响应
 		LoginService.userDetails.set(jwt.userDetails);
-		chain.doFilter(request, response);
-		// TODO bug，放到finally
-		LoginService.userDetails.remove();
+		try {
+		    chain.doFilter(request, response);
+		} finally {
+		    LoginService.userDetails.remove();
+		}
 	    }
 	}
 	System.out.println("Inside ABCFilter: " + ((HttpServletRequest) request).getRequestURI());
@@ -100,7 +102,7 @@ public abstract class AbsAuthFilter implements Filter {
      * @return
      */
     public abstract JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request);
-    
+
     /**
      * 未登录时的处理。（远端认证中心没有返回有效的身份时的处理）
      * 
