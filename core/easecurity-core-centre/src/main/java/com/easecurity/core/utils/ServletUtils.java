@@ -6,7 +6,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.easecurity.core.authentication.form.CustomUserDetails;
+
+import com.easecurity.core.authentication.session.CustomUserDetails;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
 

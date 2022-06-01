@@ -1,4 +1,4 @@
-package com.easecurity.core.authentication.form;
+package com.easecurity.core.authentication.session;
 
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;

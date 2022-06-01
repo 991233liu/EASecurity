@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.easecurity.core.authentication.form.CustomUserDetails;
+import com.easecurity.core.authentication.session.CustomUserDetails;
 import com.easecurity.core.basis.b.UserEnum;
 
 /**

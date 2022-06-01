@@ -3,4 +3,4 @@
  * 基于from的身份认证
  *
  */
-package com.easecurity.core.authentication.form;
+package com.easecurity.core.authentication.session;

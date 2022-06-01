@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.authentication.form;
+package com.easecurity.core.authentication.session;
 
 import java.io.IOException;
 
@@ -28,17 +28,20 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 	String failurehref = request.getParameter("failurehref");
-//	String ajaxsubmit = request.getParameter("ajaxsubmit");
 	String contentType = request.getHeader("Content-Type");
 	String accept = request.getHeader("Accept");
+	String loginType = request.getParameter("loginType");
+	// TODO 做个开关，选择走哪种认证模式，session(cookie)/accessToken
+	if (loginType != null && "accessToken".equals(loginType)) {
+
+	} else { // 默认走session(cookie)
+
+	}
 	if (failurehref != null && !"".equals(failurehref)) { // 跳转到目标想要的地址
 	    failurehref = response.encodeRedirectURL(failurehref);
 	    response.sendRedirect(failurehref);
 	} else if ((accept != null && accept.toLowerCase().indexOf("application/json") > -1)
 		|| (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) { // Ajax请求，直接返回错误消息
-//	    if (ajaxsubmit != null && "token".equals(ajaxsubmit)) { // Ajax请求下，目标想要返回token
-//	    }
-//	    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
 	    response.setCharacterEncoding("utf-8");
 	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
 	    response.getWriter().write("{\"status\":401,\"code\":401,\"message\":\"");
@@ -49,8 +52,5 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	} else {
 	    getRedirectStrategy().sendRedirect(request, response, "/auth/login?error");
 	}
-//    } else {
-//	super.onAuthenticationFailure(request, response, exception);
-//    }
     }
 }

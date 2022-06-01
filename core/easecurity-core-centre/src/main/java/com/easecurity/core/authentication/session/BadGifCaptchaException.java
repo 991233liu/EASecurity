@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.authentication.form;
+package com.easecurity.core.authentication.session;
 
 import org.springframework.security.authentication.BadCredentialsException;
 

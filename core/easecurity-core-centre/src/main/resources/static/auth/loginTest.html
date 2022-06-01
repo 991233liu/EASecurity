@@ -74,19 +74,19 @@
                 </div>
 				<div class="form-group has-feedback">
 					<p>
-						<!-- srchref为验证成功后的跳转地址 -->
-						<label>srchref</label>
-						<input type="text" name="srchref" value="/demo/login" id="srchref" />
+						<!-- loginType为登录类型，默认使用cookie，token为一次性会话 -->
+						<label>loginType</label>
+						<select name="loginType" id="loginType">
+							<option value="cookie" selected="selected">session(cookie)</option>
+							<option value="accessToken">Access Token</option>
+						</select>
 					</p>
                 </div>
 				<div class="form-group has-feedback">
 					<p>
-						<!-- ajaxsubmit为登录类型，默认使用cookie，token为一次性会话 -->
-						<label>ajaxsubmit</label>
-						<select name="ajaxsubmit" id="ajaxsubmit">
-							<option value="" selected="selected"></option>
-							<option value="token">token</option>
-						</select>
+						<!-- srchref为验证成功后的跳转地址 -->
+						<label>srchref</label>
+						<input type="text" name="srchref" value="/demo/queryData4" id="srchref" />
 					</p>
                 </div>
 				<div class="form-group has-feedback">
