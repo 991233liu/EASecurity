@@ -92,9 +92,9 @@ public class OtherRedisesConfig implements EnvironmentAware {
     @Bean
     public Map<String, RedisTemplate<Object, Object>> otherRedises(RedisConnectionFactory redisConnectionFactory, Map<String, RedisSerializer<Object>> serializer,
 	    ObjectProvider<RedisConnectionFactory> redisConnectionFactory2) {
+	Map<String, RedisTemplate<Object, Object>> otherRedises = new HashMap<String, RedisTemplate<Object, Object>>();
 	// 如果存在多Redis配置时，则建立多Redis链接
 	if (otherRedisProperties != null && otherRedisProperties.getDatasources() != null && !otherRedisProperties.getDatasources().isEmpty()) {
-	    Map<String, RedisTemplate<Object, Object>> otherRedises = new HashMap<String, RedisTemplate<Object, Object>>();
 	    otherRedisProperties.getDatasources().forEach((String k, CustomRedisProperties v) -> {
 		RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
 		Map<String, RedisSerializer<Object>> serializer1 = redisSerializer2(k, v);
@@ -146,10 +146,8 @@ public class OtherRedisesConfig implements EnvironmentAware {
 		redisTemplate.afterPropertiesSet();
 		otherRedises.put(k, redisTemplate);
 	    });
-	    return otherRedises;
-	} else {
-	    return null;
 	}
+	return otherRedises;
     }
 
     @SuppressWarnings("rawtypes")
