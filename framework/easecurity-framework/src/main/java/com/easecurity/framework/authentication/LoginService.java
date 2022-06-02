@@ -189,7 +189,7 @@ public class LoginService {
 	} else { // 存在cookie，从远端获取认证用户
 	    BufferedReader br = null;
 	    try {
-		String uri = eaSecurityConfiguration.server.getUrl() + "/auth/currentUserJWT";
+		String uri = eaSecurityConfiguration.server.getUrl() + "/jwt/currentUserJWT";
 		HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
 		connection = eaSecurityConfiguration.setDefaultConfig(connection);
 		connection.setRequestMethod("GET");
