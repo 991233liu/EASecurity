@@ -23,10 +23,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.easecurity.core.authentication.session.CookieLogoutHandler;
-import com.easecurity.core.authentication.session.CustomConcurrentSessionControlAuthenticationStrategy;
-import com.easecurity.core.authentication.session.LoginFailureHandler;
-import com.easecurity.core.authentication.session.LoginSuccessHandler;
+import com.easecurity.core.authentication.form.CookieLogoutHandler;
+import com.easecurity.core.authentication.form.CustomConcurrentSessionControlAuthenticationStrategy;
+import com.easecurity.core.authentication.form.LoginFailureHandler;
+import com.easecurity.core.authentication.form.LoginSuccessHandler;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

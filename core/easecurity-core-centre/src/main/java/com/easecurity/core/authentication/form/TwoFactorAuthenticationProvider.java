@@ -1,4 +1,4 @@
-package com.easecurity.core.authentication.session;
+package com.easecurity.core.authentication.form;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;

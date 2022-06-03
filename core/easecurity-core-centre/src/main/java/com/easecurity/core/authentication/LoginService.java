@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.easecurity.core.authentication.session.CustomUserDetails;
+import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.b.UserEnum;
 import com.easecurity.core.basis.s.UserToken;
 import com.easecurity.util.JsonUtils;
