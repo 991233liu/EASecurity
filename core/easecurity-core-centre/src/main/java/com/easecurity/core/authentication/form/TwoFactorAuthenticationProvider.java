@@ -39,6 +39,7 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	    logger.debug("-------# 输入的验证码key为：" + gifCaptcha);
 	    logger.debug("-------# 输入的验证码value为：" + gifCaptchaValue);
 	}
+	// TODO 如果是跨域登录，且没有使用EASecurity的登录页面，则session无效。此时提交登录包含key和输入的吗
 	HttpSession session = ServletUtils.getSession();
 	GifCaptcha gifCaptcha1 = session == null ? null : (GifCaptcha) session.getAttribute("GifCaptcha");
 //	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);

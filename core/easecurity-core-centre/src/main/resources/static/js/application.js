@@ -66,8 +66,8 @@ function onLoginAjax() {
 		data: $('#loginForm').serialize(),
         success: (response) => {
 //            alert(response);
-			var srchref = $("#srchref").val();
-			if(srchref)$(location).prop('href', srchref)
+			var redirect_url = $("#redirect_url").val();
+			if(redirect_url)$(location).prop('href', redirect_url)
         },
 		error : function(XMLHttpRequest, ajaxOptions, thrownError) {
 			if(XMLHttpRequest.responseJSON){

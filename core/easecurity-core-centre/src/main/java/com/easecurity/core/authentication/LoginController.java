@@ -44,8 +44,8 @@ class LoginController {
     public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "errorGifCaptcha", required = false) String errorGifCaptcha,
 	    @RequestParam(value = "logout", required = false) String logout, HttpServletRequest request) {
 	ModelAndView mav = new ModelAndView();
-	String srchref = request.getParameter("srchref");
-	String failurehref = request.getParameter("failurehref");
+	String redirect_url = request.getParameter("redirect_url");
+	String faile_url = request.getParameter("faile_url");
 	mav.setViewName("/auth/login.html");
 	if (error != null) {
 	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
@@ -53,7 +53,7 @@ class LoginController {
 	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
 	} else if (logout != null) {
 	    mav.addObject("message", messageSourceUtil.getMessage("LoginController.logout", "Succeed logout"));
-	} else if ((srchref != null && !"".equals(srchref)) || ((failurehref != null && !"".equals(failurehref)))) {
+	} else if ((redirect_url != null && !"".equals(redirect_url)) || ((faile_url != null && !"".equals(faile_url)))) {
 	    mav.setViewName("/auth/login_ajax.html");
 	}
 	return mav;
@@ -62,6 +62,7 @@ class LoginController {
     @GetMapping("/gifCaptcha")
     @ResponseBody
     public String gifCaptcha(HttpSession session) {
+	// TODO 如果是跨域登录，且没有使用EASecurity的登录页面，则session无效。此时提交登录包含key和输入的吗
 	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha(session);
 	return JsonUtils.objectToJson(map);
     }

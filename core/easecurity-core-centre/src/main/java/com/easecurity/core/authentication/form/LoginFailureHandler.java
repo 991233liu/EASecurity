@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  * 登录失败后消息和跳转处理类。处理逻辑：
  * <p>
  * <ul>
- * <li>如果带有failurehref参数，直接跳转此参数表示的链接；</li>
- * <li>如果没有failurehref参数且为Ajax请求，则返回Ajax消息；</li>
+ * <li>如果带有faile_url参数，直接跳转此参数表示的链接；</li>
+ * <li>如果没有faile_url参数且为Ajax请求，则返回Ajax消息；</li>
  * <li>其它情况，则按照{@link org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler}处理</li>
  * </ul>
  *
@@ -27,7 +27,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-	String failurehref = request.getParameter("failurehref");
+	String faile_url = request.getParameter("faile_url");
 	String contentType = request.getHeader("Content-Type");
 	String accept = request.getHeader("Accept");
 	String loginType = request.getParameter("loginType");
@@ -37,9 +37,9 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	} else { // 默认走session(cookie)
 
 	}
-	if (failurehref != null && !"".equals(failurehref)) { // 跳转到目标想要的地址
-	    failurehref = response.encodeRedirectURL(failurehref);
-	    response.sendRedirect(failurehref);
+	if (faile_url != null && !"".equals(faile_url)) { // 跳转到目标想要的地址
+	    faile_url = response.encodeRedirectURL(faile_url);
+	    response.sendRedirect(faile_url);
 	} else if ((accept != null && accept.toLowerCase().indexOf("application/json") > -1)
 		|| (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) { // Ajax请求，直接返回错误消息
 	    response.setCharacterEncoding("utf-8");

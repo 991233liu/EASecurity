@@ -4,6 +4,8 @@ package com.easecurity.core.authentication.form;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -15,6 +17,7 @@ import org.springframework.util.Assert;
 
 import com.easecurity.core.authentication.LogoutService;
 import com.easecurity.core.utils.BeanUtils;
+import com.easecurity.core.utils.ServletUtils;
 
 /**
  * 并发登录时，被踢掉的用户需要通知远程系统
@@ -35,18 +38,27 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
 	    sessionRepository = (SessionRepository<?>) BeanUtils.getBean("sessionRepository");
 	if (logoutService == null)
 	    logoutService = (LogoutService) BeanUtils.getBean("logoutService");
-	// 新登录的session会把旧的session踢掉，被踢掉session需要通知远端服务器，进行退出登录操作
-	sessions.sort(Comparator.comparing(SessionInformation::getLastRequest));
-	int maximumSessionsExceededBy = sessions.size() - allowableSessions + 1;
-	List<SessionInformation> sessionsToBeExpired = sessions.subList(0, maximumSessionsExceededBy);
-	for (SessionInformation session : sessionsToBeExpired) {
-	    Session session1 = sessionRepository.findById(session.getSessionId());
-	    if (session1 != null && logoutUrls != null && !logoutUrls.isEmpty()) {
-		String jti = session1.getAttribute("JWT.jti");
-		logoutService.asynLogoutByCookie(logoutUrls, jti);
+	HttpServletRequest request = ServletUtils.getRequest();
+	String loginType = "cookie";
+	if (request != null)
+	    loginType = request.getParameter("loginType");
+	if (loginType != null && "accessToken".equals(loginType)) { // AccessToken模式
+	    // TODO 应该做点什么吗？
+	    sessions.clear();
+	} else { // 默认走session(cookie)
+	    // 新登录的session会把旧的session踢掉，被踢掉session需要通知远端服务器，进行退出登录操作
+	    sessions.sort(Comparator.comparing(SessionInformation::getLastRequest));
+	    int maximumSessionsExceededBy = sessions.size() - allowableSessions + 1;
+	    List<SessionInformation> sessionsToBeExpired = sessions.subList(0, maximumSessionsExceededBy);
+	    for (SessionInformation session : sessionsToBeExpired) {
+		Session session1 = sessionRepository.findById(session.getSessionId());
+		if (session1 != null && logoutUrls != null && !logoutUrls.isEmpty()) {
+		    String jti = session1.getAttribute("JWT.jti");
+		    logoutService.asynLogoutByCookie(logoutUrls, jti);
+		}
 	    }
+	    super.allowableSessionsExceeded(sessions, allowableSessions, registry);
 	}
-	super.allowableSessionsExceeded(sessions, allowableSessions, registry);
     }
 
     public void setMessageSource(MessageSourceAccessor messageSource) {

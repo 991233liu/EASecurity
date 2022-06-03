@@ -73,8 +73,8 @@
                     <!-- /.col -->
                 </div>
             </form>
-				<input type="hidden" name="srchref" id="srchref" />
-				<input type="hidden" name="failurehref" id="failurehref" />
+				<input type="hidden" name="redirect_url" id="redirect_url" />
+				<input type="hidden" name="faile_url" id="faile_url" />
         </div>
         <!-- /.login-box-body -->
     </div>
@@ -100,10 +100,10 @@
     <script>
 		$(document).ready(function() {
             flushLoginCaptcha();
-			var srchref = GetRequest('srchref');
-			if(srchref)$("#srchref").val(decodeURIComponent(srchref));
-			var failurehref = GetRequest('failurehref');
-			if(failurehref)$("#failurehref").val(decodeURIComponent(failurehref));
+			var redirect_url = GetRequest('redirect_url');
+			if(redirect_url)$("#redirect_url").val(decodeURIComponent(redirect_url));
+			var faile_url = GetRequest('faile_url');
+			if(faile_url)$("#faile_url").val(decodeURIComponent(faile_url));
         });
         $(function() {
             $('input').iCheck({
