@@ -42,6 +42,8 @@ public class JsonUtils {
      * @return Object
      */
     public static Object jsonToObject(String jsonString) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
 	try {
 	    JsonBean jsonBean = new JsonBean(jsonString, null);
 	    return getValue(jsonBean, null, null);
@@ -60,14 +62,46 @@ public class JsonUtils {
      *                   com.sgcc.orderbuild.Data.class)
      * @return Object
      */
-    // TODO 目前最外层对象只支持map（即以“{”开头，以“}”结尾），不支持自定义。
     public static Object jsonToObject(String jsonString, Map<?, ?> alias) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
 	try {
 	    JsonBean jsonBean = new JsonBean(jsonString, alias);
 	    return getValue(jsonBean, null, null);
 	} catch (Exception e) {
 	    throw new IllegalArgumentException("Json解析错误。Json串原始信息如下：" + jsonString + "\n", e);
 	}
+    }
+
+    /**
+     * 解析json串为自定义数据类型。
+     * 
+     * @param jsonString 需要解析的 json字符串
+     * @param clazz      Class
+     * @return Class
+     */
+    public static <T> T jsonToObject(String jsonString, Class<T> clazz) {
+	return jsonToObject(jsonString, clazz, new HashMap<>());
+    }
+
+    /**
+     * 解析json串为自定义数据类型。
+     * 
+     * @param jsonString 需要解析的 json字符串
+     * @param clazz      Class
+     * @param alias      自定义的数据类型配置。Map的key为待转换的json中的key，Map的value为json中的value所对应的数据类型
+     *                   。例如：将名为data的属性转换为com.sgcc.orderbuild.Data，则：alias.put("data",
+     *                   "com.sgcc.orderbuild.Data") 或者 alias.put("data",
+     *                   com.sgcc.orderbuild.Data.class)
+     * @return Class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T jsonToObject(String jsonString, Class<T> clazz, @SuppressWarnings("rawtypes") Map alias) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
+	jsonString = "{'data_root':" + jsonString + "}";
+	alias.put("data_root", clazz);
+	return (T) ((Map<String, Object>) jsonToObject(jsonString, alias)).get("data_root");
     }
 
     /**
