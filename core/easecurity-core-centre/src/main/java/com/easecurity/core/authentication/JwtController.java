@@ -69,7 +69,7 @@ class JwtController {
     @ResponseBody
     @EaSecuredIP
     public String getJWT(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	String at = getAccessToken(request);
+	String at = ServletUtils.getAccessToken();
 	UserToken userToken = loginService.getValidUserToken(at);
 	if (userToken == null) { // 未登录时
 	    response.setStatus(203);
@@ -123,20 +123,5 @@ class JwtController {
 //	request.getSession().setAttribute("JWT.str", encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
 //	request.getSession().setAttribute("JWT.expiresAt", claims.getExpiresAt().getEpochSecond());
 //	return jwt;
-    }
-
-    /**
-     * 获取AccessToken（如果存在的话）
-     */
-    private String getAccessToken(HttpServletRequest request) {
-	String accessToken = request.getHeader("authorization");
-	if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
-	    return accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
-	} else if (request.getHeader("access_token") != null && !request.getHeader("access_token").trim().isEmpty()) {
-	    return request.getHeader("access_token").trim();
-	} else if (request.getParameter("access_token") != null && !request.getParameter("access_token").trim().isEmpty()) {
-	    return request.getParameter("access_token").trim();
-	}
-	return null;
     }
 }

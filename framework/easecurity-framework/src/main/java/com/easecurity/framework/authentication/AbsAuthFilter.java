@@ -22,8 +22,9 @@ import com.easecurity.framework.EaSecurityConfiguration;
  * 登录认证连接器。当有请求进入时，判断是否已登录：
  * <P>
  * <ul>
- * <li>已登录，则放行；</li>
- * <li>未登录，则先从SecurityCentre获取登录信息，获取成功放行，失败跳转到登录也。</li>
+ * <li>已登录，放行；</li>
+ * <li>未登录，可匿名访问，则放行；</li>
+ * <li>未登录，登录用户可访问，则先从SecurityCentre获取登录信息，获取成功放行，失败跳转到登录也。</li>
  * </ul>
  *
  */
@@ -42,7 +43,7 @@ public abstract class AbsAuthFilter implements Filter {
 
 	HttpServletRequest req = (HttpServletRequest) request;
 	String uri = req.getRequestURI();
-	if (uri.endsWith("logout")) { // logout不拦截
+	if (canAnonymousAccess(uri, request)) { // 可匿名访问的，直接放行
 	    chain.doFilter(request, response);
 	} else {
 	    JWT jwt = getCurrentUserJWTFromLocalStore(request);
@@ -102,6 +103,15 @@ public abstract class AbsAuthFilter implements Filter {
      * @return
      */
     public abstract JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request);
+    
+    /**
+     * 是否可匿名访问
+     * 
+     * @param uri
+     * @param request
+     * @return
+     */
+    public abstract boolean canAnonymousAccess(String uri, ServletRequest request);
 
     /**
      * 未登录时的处理。（远端认证中心没有返回有效的身份时的处理）

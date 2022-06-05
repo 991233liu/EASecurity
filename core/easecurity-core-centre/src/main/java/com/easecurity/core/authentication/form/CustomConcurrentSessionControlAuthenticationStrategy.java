@@ -1,9 +1,11 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.authentication.form;
 
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.support.MessageSourceAccessor;
@@ -26,7 +28,6 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
 
     private SessionRepository<?> sessionRepository;
     private LogoutService logoutService;
-    private List<String> logoutUrls;
 
     public CustomConcurrentSessionControlAuthenticationStrategy(SessionRegistry sessionRegistry) {
 	super(sessionRegistry);
@@ -52,9 +53,11 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
 	    List<SessionInformation> sessionsToBeExpired = sessions.subList(0, maximumSessionsExceededBy);
 	    for (SessionInformation session : sessionsToBeExpired) {
 		Session session1 = sessionRepository.findById(session.getSessionId());
-		if (session1 != null && logoutUrls != null && !logoutUrls.isEmpty()) {
+		if (session1 != null) {
 		    String jti = session1.getAttribute("JWT.jti");
-		    logoutService.asynLogoutByCookie(logoutUrls, jti);
+		    // TODO name应该读取配置文件
+		    Cookie cookie = new Cookie("EASECURITY_S", new String(Base64.getEncoder().encode(session1.getId().getBytes())));
+		    logoutService.asynLogout(new Cookie[] { cookie }, null, jti);
 		}
 	    }
 	    super.allowableSessionsExceeded(sessions, allowableSessions, registry);
@@ -64,13 +67,5 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
     public void setMessageSource(MessageSourceAccessor messageSource) {
 	Assert.notNull(messageSource, "messageSource cannot be null");
 	this.messages = messageSource;
-    }
-
-    public List<String> getLogoutUrls() {
-	return logoutUrls;
-    }
-
-    public void setLogoutUrls(List<String> logoutUrls) {
-	this.logoutUrls = logoutUrls;
     }
 }

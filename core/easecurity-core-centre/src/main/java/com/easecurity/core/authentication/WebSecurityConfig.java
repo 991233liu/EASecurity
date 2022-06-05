@@ -4,7 +4,6 @@ package com.easecurity.core.authentication;
 import java.lang.reflect.Field;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.easecurity.core.authentication.form.CookieLogoutHandler;
+import com.easecurity.core.authentication.form.LogoutHandler;
 import com.easecurity.core.authentication.form.CustomConcurrentSessionControlAuthenticationStrategy;
 import com.easecurity.core.authentication.form.LoginFailureHandler;
 import com.easecurity.core.authentication.form.LoginSuccessHandler;
@@ -43,7 +42,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private CookieLogoutHandler cookieLogoutHandler;
+    private LogoutHandler logoutHandler;
     @Autowired
     private LoginSuccessHandler loginSuccessHandler;
     @Autowired
@@ -53,8 +52,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RSAPublicKey key;
     @Value("${easecurity.jwt.privateKey}")
     private RSAPrivateKey priv;
-    @Value("${easecurity.client.logout.url:}")
-    private List<String> logoutUrls;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -88,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logoutUrl("/logout")
             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .logoutSuccessUrl("/auth/login?logout")
-            .addLogoutHandler(cookieLogoutHandler)
+            .addLogoutHandler(logoutHandler)
         .and()
             .sessionManagement()
             .maximumSessions(1)
@@ -130,7 +127,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	    field = object.getClass().getDeclaredField("maximumSessions");
 	    field.setAccessible(true);
 	    custom.setMaximumSessions((int) field.get(object));
-	    custom.setLogoutUrls(logoutUrls);
 	    return custom;
 	} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 	    e.printStackTrace();

@@ -11,6 +11,7 @@ import javax.servlet.http.Cookie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,12 +22,28 @@ import org.springframework.stereotype.Service;
 public class LogoutService {
     private static final Logger log = LoggerFactory.getLogger(LogoutService.class);
 
+    @Value("${easecurity.client.logout.url:}")
+    private List<String> logoutUrls;
+
     /**
      * 远程系统退出登录（清除缓存）
+     * 
      * @param urls
      * @param cookies
+     * @param accessToken
      */
-    public void asynLogoutByCookie(List<String> urls, Cookie[] cookies) {
+    public void asynLogout(Cookie[] cookies, String accessToken, String jti) {
+	asynLogout(logoutUrls, cookies, accessToken, jti);
+    }
+
+    /**
+     * 远程系统退出登录（清除缓存）
+     * 
+     * @param urls
+     * @param cookies
+     * @param accessToken
+     */
+    public void asynLogout(List<String> urls, Cookie[] cookies, String accessToken, String jti) {
 	try {
 	    if (urls != null) {
 		// 起个线程异步注销其它应用。不管其它应用是否注销成功，主中心必须注销成功
@@ -34,7 +51,7 @@ public class LogoutService {
 		    public void run() {
 			urls.forEach((it) -> {
 			    try {
-				logoutByCookie(it, cookies);
+				logout(it, cookies, accessToken, jti);
 			    } catch (Exception e) {
 				log.error("注销远端系统登录时，出现异常，url:" + it, e);
 			    }
@@ -46,34 +63,8 @@ public class LogoutService {
 	    log.error("注销远端系统登录时，出现异常", e);
 	}
     }
-    
-    /**
-     * 远程系统退出登录（清除缓存）
-     * @param urls
-     * @param jti
-     */
-    public void asynLogoutByCookie(List<String> urls, String jti) {
-	try {
-	    if (urls != null) {
-		// 起个线程异步注销其它应用。不管其它应用是否注销成功，主中心必须注销成功
-		new Thread("logout2") {
-		    public void run() {
-			urls.forEach((it) -> {
-			    try {
-				logoutByCookie(it, jti);
-			    } catch (Exception e) {
-				log.error("注销远端系统登录2时，出现异常，url:" + it, e);
-			    }
-			});
-		    }
-		}.start();
-	    }
-	} catch (Exception e) {
-	    log.error("注销远端系统登录2时，出现异常", e);
-	}
-    }
 
-    private void logoutByCookie(String url, Cookie[] cookies) {
+    private void logout(String url, Cookie[] cookies, String accessToken, String jti) {
 	try {
 	    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 	    setDefaultConfig(connection);
@@ -84,6 +75,10 @@ public class LogoutService {
 		}
 		connection.addRequestProperty("Cookie", cookiestr.substring(1));
 	    }
+	    if (accessToken != null)
+		connection.addRequestProperty("access_token", accessToken);
+	    if (jti != null)
+		connection.addRequestProperty("jti", jti);
 	    connection.connect();
 	    int state = connection.getResponseCode();
 	    if (state == 200) { // 服务器处理正常
@@ -96,30 +91,13 @@ public class LogoutService {
 	}
     }
 
-    private void logoutByCookie(String url, String jti) {
-	try {
-	    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-	    setDefaultConfig(connection);
-	    connection.addRequestProperty("jti", jti);
-	    connection.connect();
-	    int state = connection.getResponseCode();
-	    if (state == 200) { // 服务器处理正常
-		log.debug("远程系统退出登录2成功：{}", url);
-	    } else { // 服务器返回错误
-		log.info("远程系统退出登录2失败：state={} url={}", state, url);
-	    }
-	} catch (IOException e) {
-	    log.error("远程系统退出登录2异常:" + url, e);
-	}
-    }
-
     /**
      * 设置HttpURLConnection的链接属性
      * 
      */
     private void setDefaultConfig(HttpURLConnection connection) throws ProtocolException {
 	connection.setConnectTimeout(3000);
-	connection.setReadTimeout(1000);
+	connection.setReadTimeout(2000);
 	connection.setDoInput(true);
 	connection.setDoOutput(false);
 	connection.setUseCaches(false);

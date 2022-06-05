@@ -70,6 +70,18 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
     }
 
     /**
+     * 是否可匿名访问
+     * 
+     * @param uri
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean canAnonymousAccess(String uri, ServletRequest request) {
+	return uri.endsWith("logout");
+    }
+
+    /**
      * 未登录时的处理。（远端认证中心没有返回有效的身份时的处理）
      * 
      * @param request

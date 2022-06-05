@@ -143,4 +143,22 @@ public class ServletUtils {
 	    ip = ip.substring(0, ip.indexOf(","));
 	return ip;
     }
+
+    /**
+     * 获取AccessToken（如果存在的话）
+     */
+    public static String getAccessToken() {
+	HttpServletRequest request = getRequest();
+	if (request != null) {
+	    String accessToken = request.getHeader("authorization");
+	    if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
+		return accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
+	    } else if (request.getHeader("access_token") != null && !request.getHeader("access_token").trim().isEmpty()) {
+		return request.getHeader("access_token").trim();
+	    } else if (request.getParameter("access_token") != null && !request.getParameter("access_token").trim().isEmpty()) {
+		return request.getParameter("access_token").trim();
+	    }
+	}
+	return null;
+    }
 }

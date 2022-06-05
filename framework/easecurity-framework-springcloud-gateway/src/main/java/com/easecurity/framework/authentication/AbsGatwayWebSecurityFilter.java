@@ -54,7 +54,7 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 
 	String uri = request.getURI().toString();
 	Mono<Void> mono = Mono.empty();
-	if (uri.endsWith("logout")) { // logout不拦截
+	if (canAnonymousAccess(uri, request)) { // canAnonymousAccess
 	    mono = Mono.empty();
 	} else {
 	    JWT jwt = getCurrentUserJWTFromLocalStore(request);
@@ -155,6 +155,17 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 	    log.error("在处理JWT请求时，RAS证书加载异常", e);
 	}
 	return null;
+    }
+    
+    /**
+     * 是否可匿名访问
+     * 
+     * @param uri
+     * @param request
+     * @return
+     */
+    public boolean canAnonymousAccess(String uri, ServerHttpRequest request) {
+	return uri.endsWith("logout");
     }
 
     /**
