@@ -30,13 +30,13 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	String faile_url = request.getParameter("faile_url");
 	String contentType = request.getHeader("Content-Type");
 	String accept = request.getHeader("Accept");
-	String loginType = request.getParameter("loginType");
-	// TODO 做个开关，选择走哪种认证模式，session(cookie)/accessToken
-	if (loginType != null && "accessToken".equals(loginType)) {
-
-	} else { // 默认走session(cookie)
-
-	}
+//	String loginType = request.getParameter("loginType");
+//	// TODO 做个开关，选择走哪种认证模式，session(cookie)/accessToken
+//	if (loginType != null && "accessToken".equals(loginType)) {
+//
+//	} else { // 默认走session(cookie)
+//
+//	}
 	if (faile_url != null && !"".equals(faile_url)) { // 跳转到目标想要的地址
 	    faile_url = response.encodeRedirectURL(faile_url);
 	    response.sendRedirect(faile_url);

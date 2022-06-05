@@ -83,13 +83,22 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	HttpServletRequest req = (HttpServletRequest) request;
 	try {
 	    if (eaSecurityConfiguration.noLoginUrl != null && !"".equals(eaSecurityConfiguration.noLoginUrl)) {
-		resp.sendRedirect(eaSecurityConfiguration.noLoginUrl);
+		String uri = req.getRequestURI();
+		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+		if (uri.indexOf("/SecurityCentre/") < 0)
+		    resp.sendRedirect(eaSecurityConfiguration.noLoginUrl);
+		else
+		    resp.setStatus(403);
 	    } else if (eaSecurityConfiguration.noLoginMessage != null && !"".equals(eaSecurityConfiguration.noLoginMessage)) {
 		resp.getWriter().write(eaSecurityConfiguration.noLoginMessage);
 		resp.setStatus(403);
 	    } else {
 		String uri = req.getRequestURI();
-		resp.sendRedirect("/SecurityCentre/auth/login?srchref=" + URLEncoder.encode(uri, "GBK"));
+		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+		if (uri.indexOf("/SecurityCentre/") < 0)
+		    resp.sendRedirect("/SecurityCentre/auth/login?redirect_url=" + URLEncoder.encode(uri, "GBK"));
+		else
+		    resp.setStatus(403);
 	    }
 	} catch (Exception e) {
 	    log.error("在处理noLogin请求时，异常", e);

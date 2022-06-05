@@ -36,8 +36,8 @@ import reactor.core.publisher.Mono;
  * 认证Filter
  *
  */
-public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
-    private static final Logger log = LoggerFactory.getLogger(AbsWebSecurityFilter.class);
+public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordered {
+    private static final Logger log = LoggerFactory.getLogger(AbsGatwayWebSecurityFilter.class);
 
     @Autowired
     private EaSecurityConfiguration eaSecurityConfiguration;
@@ -130,7 +130,18 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
 		    cookies.add(new Cookie(k, mcookies.getFirst(k).getValue()));
 		}
 	    }
-	    JWT jwt = loginService.getCurrentUserJWT(cookies.toArray(new Cookie[cookies.size()]), rsaPublicKey);
+	    String accessToken = request.getHeaders().getFirst("authorization");
+	    MultiValueMap<String, String> params = request.getQueryParams();
+	    if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
+		accessToken = accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
+	    } else if (request.getHeaders().getFirst("access_token") != null && !request.getHeaders().getFirst("access_token").trim().isEmpty()) {
+		accessToken = request.getHeaders().getFirst("access_token").trim();
+	    } else if (params.containsKey("access_token") && !params.getFirst("access_token").trim().isEmpty()) {
+		accessToken = params.getFirst("access_token").trim();
+	    } else {
+		accessToken = null;
+	    }
+	    JWT jwt = loginService.getCurrentUserJWT(cookies.toArray(new Cookie[cookies.size()]), accessToken, rsaPublicKey);
 	    if (log.isDebugEnabled())
 		System.out.println("-----## 登录消耗时间为：" + (System.currentTimeMillis() - s));
 	    if (log.isDebugEnabled() && jwt != null && jwt.userDetails != null)
@@ -157,8 +168,14 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
     public Mono<Void> noLogin(ServerHttpRequest request, ServerHttpResponse response, JWT jwt) {
 	try {
 	    if (eaSecurityConfiguration.noLoginUrl != null && !"".equals(eaSecurityConfiguration.noLoginUrl)) {
-		response.setStatusCode(HttpStatus.SEE_OTHER);
-		response.getHeaders().set("Location", eaSecurityConfiguration.noLoginUrl);
+		String uri = request.getURI().getPath();
+		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+		if (uri.indexOf("/SecurityCentre/") < 0) {
+		    response.setStatusCode(HttpStatus.SEE_OTHER);
+		    response.getHeaders().set("Location", eaSecurityConfiguration.noLoginUrl);
+		} else {
+		    response.setStatusCode(HttpStatus.FORBIDDEN);
+		}
 		return response.setComplete();
 	    } else if (eaSecurityConfiguration.noLoginMessage != null && !"".equals(eaSecurityConfiguration.noLoginMessage)) {
 		response.setStatusCode(HttpStatus.FORBIDDEN);
@@ -166,8 +183,13 @@ public abstract class AbsWebSecurityFilter implements GlobalFilter, Ordered {
 		return response.writeWith(Mono.just(data));
 	    } else {
 		String uri = request.getURI().getPath();
-		response.setStatusCode(HttpStatus.SEE_OTHER);
-		response.getHeaders().set("Location", "/SecurityCentre/auth/login?srchref=" + URLEncoder.encode(uri, "GBK"));
+		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+		if (uri.indexOf("/SecurityCentre/") < 0) {
+		    response.setStatusCode(HttpStatus.SEE_OTHER);
+		    response.getHeaders().set("Location", "/SecurityCentre/auth/login?redirect_url=" + URLEncoder.encode(uri, "GBK"));
+		} else {
+		    response.setStatusCode(HttpStatus.FORBIDDEN);
+		}
 		return response.setComplete();
 	    }
 	} catch (Exception e) {

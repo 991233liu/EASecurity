@@ -27,9 +27,12 @@ class TokenController {
      */
     @RequestMapping("/refreshToken")
     @ResponseBody
-    public String refreshToken(String token) throws IOException {
-	log.debug("TokenController.refreshToken.token={}", token);
-	Token newToken = loginService.refreshToken(token);
+    public String refreshToken(String refresh_token) throws IOException {
+	// TODO authorization = Bearer 7b2a9b9b9c3f480bb8641c2cf0dd74c6
+	// access_token=mF_9.B5f-4.1JqM
+	// or 参数access_token=mF_9.B5f-4.1JqM
+	log.debug("TokenController.refreshToken.token={}", refresh_token);
+	Token newToken = loginService.refreshToken(refresh_token);
 	return JSON.toJSONString(newToken);
 //	return JsonUtils.objectToJson(newToken);
     }

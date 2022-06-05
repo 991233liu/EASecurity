@@ -17,7 +17,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.easecurity.core.authentication.JWT;
-import com.easecurity.framework.authentication.AbsWebSecurityFilter;
+import com.easecurity.framework.authentication.AbsGatwayWebSecurityFilter;
 
 import reactor.core.publisher.Mono;
 
@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Component
-public class WebSecurityFilter extends AbsWebSecurityFilter {
+public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -79,7 +79,7 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
     public Mono<Void> addJWT2ServiceRequest(String jwtStr, JWT jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
 	// TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
 	// JWT密文最小1K+
-	ServerHttpRequest host = exchange.getRequest().mutate().header("Authorization", "Bearer " + jwtStr).build();
+	ServerHttpRequest host = exchange.getRequest().mutate().header("authorization", "Bearer " + jwtStr).header("jwt.jti", jwt.jti).build();
 	ServerWebExchange build = exchange.mutate().request(host).build();
 	return chain.filter(build);
     }

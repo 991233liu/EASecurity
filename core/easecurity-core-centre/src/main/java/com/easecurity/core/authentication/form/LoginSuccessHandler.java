@@ -44,7 +44,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		str = URLEncoder.encode(str, "GBK");
 		if (redirect_url.indexOf("?") < 0)
 		    redirect_url += "?";
-		redirect_url += "token=" + str;
+		if (redirect_url.indexOf("&") < 0)
+		    redirect_url += "1=1";
+		redirect_url += "&access_token=" + token.access_token + "&token=" + str;
+		response.setHeader("authorization", "Bearer " + token.access_token);
 	    } else { // 没有指定跳转连接时，直接返回JSON串
 		response.setCharacterEncoding("utf-8");
 		response.getWriter().write(str);

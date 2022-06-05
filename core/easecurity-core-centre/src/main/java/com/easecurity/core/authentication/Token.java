@@ -15,32 +15,22 @@ public class Token implements Serializable {
     /**
      * Access Token
      */
-    public String accessToken;
+    public String access_token;
     /**
-     * Refresh Token
+     * Token Type
      */
-    public String refreshToken;
+    public String token_type="Bearer";
     /**
      * expires
      */
     public Instant expires;
+    /**
+     * expires
+     */
+    public long expires_in;
+    /**
+     * Refresh Token
+     */
+    public String refresh_token;
     
-    public String getAccessToken() {
-        return accessToken;
-    }
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-    public Instant getExpires() {
-        return expires;
-    }
-    public void setExpires(Instant expires) {
-        this.expires = expires;
-    }
 }
