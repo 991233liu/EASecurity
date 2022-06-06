@@ -1,6 +1,7 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.framework.access;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.EaSecuredAnonymous;
+import com.easecurity.core.access.annotation.EaSecureds;
 import com.easecurity.core.access.annotation.EasType;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.UriDo;
@@ -74,6 +77,75 @@ public class UriService {
 	} catch (Exception e) {
 	    log.error("更新URI的授权信息时出现异常：" + lUriDo + "==" + uriDo, e);
 	}
+    }
+
+    /**
+     * 获取Method上的EaSecured配置
+     * 
+     * @param method
+     * @return
+     */
+    public EaSecured[] getEaSecuredWithoutAnonymous(Method method) {
+	EaSecured[] teases = null;
+	EaSecureds meases = method.getAnnotation(EaSecureds.class);
+	EaSecured meas = method.getAnnotation(EaSecured.class);
+	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	if (meases != null) {
+	    teases = meases.value();
+	} else if (meas != null) {
+	    teases = new EaSecured[] { meas };
+	} else {
+	    EaSecureds eases = method.getDeclaringClass().getAnnotation(EaSecureds.class);
+	    EaSecured eas = method.getDeclaringClass().getAnnotation(EaSecured.class);
+	    if (eases != null) {
+		teases = eases.value();
+	    } else if (eas != null) {
+		teases = new EaSecured[] { eas };
+	    }
+	}
+	return teases;
+    }
+
+    /**
+     * 判断Method是否受EaSecured注解管理的方法
+     * 
+     * @param method
+     * @return
+     */
+    public boolean isEaSecured(Method method) {
+	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	// Method上的控制器
+	if (method.isAnnotationPresent(EaSecured.class) || method.isAnnotationPresent(EaSecureds.class) || method.isAnnotationPresent(EaSecuredAnonymous.class)) {
+	    return true;
+	}
+	// 类上的控制器
+	if (method.getDeclaringClass().isAnnotationPresent(EaSecured.class) || method.getDeclaringClass().isAnnotationPresent(EaSecureds.class)
+		|| method.getDeclaringClass().isAnnotationPresent(EaSecuredAnonymous.class)) {
+	    return true;
+	}
+	return false;
+    }
+
+    /**
+     * 判断Method是否EaSecuredAnonymous注解方法
+     * 
+     * @param method
+     * @return
+     */
+    public boolean isEaSecuredAnonymous(Method method) {
+	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	// Method上的控制器
+	if (method.isAnnotationPresent(EaSecuredAnonymous.class)) {
+	    return true;
+	}
+	if (method.isAnnotationPresent(EaSecured.class) || method.isAnnotationPresent(EaSecureds.class)) {
+	    return false;
+	}
+	// 类上的控制器
+	if (method.getDeclaringClass().isAnnotationPresent(EaSecuredAnonymous.class)) {
+	    return true;
+	}
+	return false;
     }
 
     /**

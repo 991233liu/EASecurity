@@ -19,6 +19,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.EaSecuredAnonymous;
 import com.easecurity.core.access.annotation.EaSecureds;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.EaSecurityConfiguration;
@@ -97,10 +98,8 @@ public class EaSecuredAspect {
 	Object result = null;
 	try {
 	    Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-	    EaSecureds meases = method.getAnnotation(EaSecureds.class);
-	    EaSecured meas = method.getAnnotation(EaSecured.class);
 	    // 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
-	    if (meases == null && meas == null) {
+	    if (!method.isAnnotationPresent(EaSecureds.class) && !method.isAnnotationPresent(EaSecured.class) && !method.isAnnotationPresent(EaSecuredAnonymous.class)) {
 		EaSecureds eases = method.getDeclaringClass().getAnnotation(EaSecureds.class);
 		if (eases == null) {
 		    EaSecured eas = method.getDeclaringClass().getAnnotation(EaSecured.class);

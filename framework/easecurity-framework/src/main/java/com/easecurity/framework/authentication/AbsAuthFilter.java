@@ -2,6 +2,8 @@
 package com.easecurity.framework.authentication;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,6 +37,16 @@ public abstract class AbsAuthFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
 	log.debug("---------# AuthFilter.init");
 	Filter.super.init(filterConfig);
+	List<Method> allMethod = loadAllUriWithAnnotation();
+	if (allMethod != null) {
+	    for (Method method : allMethod) {
+		try {
+		    saveUri(method);
+		} catch (Exception e) {
+		    log.error("保存EaSecured注解管理的URI到安全认证中心时异常：" + method.getDeclaringClass().getName() + method.getName() + method.toString(), e);
+		}
+	    }
+	}
     }
 
     @Override
@@ -81,6 +93,18 @@ public abstract class AbsAuthFilter implements Filter {
     public abstract EaSecurityConfiguration getConfig();
 
     /**
+     * 加载所有EaSecured注解管理的URI，进行进行初始化
+     * 
+     * @return
+     */
+    public abstract List<Method> loadAllUriWithAnnotation();
+
+    /**
+     * 保存EaSecured注解管理的URI到安全认证中心
+     */
+    public abstract void saveUri(Method method);
+
+    /**
      * 从应用缓存中获取当前登录用户的JWT
      * 
      * @param request
@@ -103,7 +127,7 @@ public abstract class AbsAuthFilter implements Filter {
      * @return
      */
     public abstract JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request);
-    
+
     /**
      * 是否可匿名访问
      * 

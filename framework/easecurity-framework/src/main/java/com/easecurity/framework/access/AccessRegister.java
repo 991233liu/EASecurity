@@ -157,7 +157,7 @@ public class AccessRegister {
 		return false;
 	    }
 	} catch (IOException e) {
-	    log.error("发送UriDo到远端服务器时，数据流推送异常:", e);
+	    log.error("发送UriDo到远端服务器时，数据流推送异常:" + lUriDo.uri.uri, e);
 	} finally {
 	    if (null != oos) {
 		try {

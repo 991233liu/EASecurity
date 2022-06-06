@@ -1,17 +1,13 @@
 package com.easecurity.demo;
 
-//import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.easecurity.core.access.annotation.EaSecured;
-//import com.easecurity.core.authentication.LoginService;
+import com.easecurity.core.access.annotation.EaSecuredAnonymous;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.framework.authentication.LoginService;
 
@@ -54,7 +50,7 @@ public class DemoController {
     }
 
     @RequestMapping("/queryData4")
-    @EaSecured(org = "{id:['2','8'], code:['abumen','bbumen']}")
+    @EaSecuredAnonymous
     public UserDetails queryData4(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);

@@ -17,6 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Inherited
 @Documented
+@EaSecured
 public @interface EaSecuredIP {
     String value() default "";
 }
