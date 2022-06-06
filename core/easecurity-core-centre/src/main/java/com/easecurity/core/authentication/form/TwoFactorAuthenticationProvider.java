@@ -45,7 +45,7 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 //	System.out.println("-------# 本地的验证码value为：" + gifCaptcha1.value);
 	// TODO 数据库验证
 	// TODO Redis验证
-	if (!loginCaptchaDisable && ((gifCaptcha1 == null) || !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.value.equals(gifCaptchaValue.toLowerCase())))) {
+	if (!loginCaptchaDisable && ((gifCaptcha1 == null) || !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.gvalue.equals(gifCaptchaValue.toLowerCase())))) {
 	    logger.debug("Authentication failed: gifCaptcha note valid");
 	    throw new BadGifCaptchaException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
 	}

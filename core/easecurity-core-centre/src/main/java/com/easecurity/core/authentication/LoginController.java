@@ -72,9 +72,8 @@ class LoginController {
 	String key = UUID.randomUUID().toString();
 	String verCode = gifCaptcha.text().toLowerCase();
 	GifCaptcha dDifCaptcha1 = new GifCaptcha();
-	dDifCaptcha1.sessionId = session.getId();
-	dDifCaptcha1.key2 = key;
-	dDifCaptcha1.value = verCode;
+	dDifCaptcha1.gkey = key;
+	dDifCaptcha1.gvalue = verCode;
 	dDifCaptcha1.validTime = System.currentTimeMillis() + validTime;
 //        DGifCaptcha.withTransaction {
 //            dDifCaptcha1.save(flush: true);

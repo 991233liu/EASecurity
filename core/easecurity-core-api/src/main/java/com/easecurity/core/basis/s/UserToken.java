@@ -3,6 +3,7 @@ package com.easecurity.core.basis.s;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 
 /**
  * s_user_token表：用户token。?
@@ -37,6 +38,8 @@ public class UserToken implements Serializable {
      * UserDetails
      */
     public String userDetails;
+    
+    public Date dateCreated;
     
     public Integer getId() {
         return id;
@@ -79,5 +82,11 @@ public class UserToken implements Serializable {
     }
     public void setUserDetails(String userDetails) {
         this.userDetails = userDetails;
+    }
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }
