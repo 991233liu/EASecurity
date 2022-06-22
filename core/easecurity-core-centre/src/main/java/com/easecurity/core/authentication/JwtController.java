@@ -14,16 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * jwt相关（不对外网开发）
  */
-@Controller
+@RestController
 @RequestMapping("/jwt")
 class JwtController {
     private static final Logger log = LoggerFactory.getLogger(JwtController.class);
@@ -42,7 +43,7 @@ class JwtController {
     public String currentUserJWT(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	UserDetails user = ServletUtils.getCurrentUserDetails();
 	if (user == null) { // 未登录时
-	    response.setStatus(203);
+	    response.setStatus(HttpStatus.FORBIDDEN.value());
 	    log.info("这里发现一个未授权访问");
 	    return "anonymousUser";
 	}
@@ -70,9 +71,8 @@ class JwtController {
     @EaSecuredIP
     public String getJWT(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	String at = ServletUtils.getAccessToken();
-	UserToken userToken = loginService.getValidUserToken(at);
-	if (userToken == null) { // 未登录时
-	    response.setStatus(203);
+	if (at == null) {
+	    response.setStatus(HttpStatus.FORBIDDEN.value());
 	    log.info("这里发现一个未授权访问");
 	    return "anonymousUser";
 	}
@@ -83,19 +83,18 @@ class JwtController {
 	    if (expiresAt != null && Instant.now().getEpochSecond() < expiresAt)
 		return jwt;
 	}
-	JwtClaimsSet claims = loginService.getJwt(at);
-	if (claims != null) {
-	    jwt = loginService.getJwtTokenValue(claims);
-	    long timeOut = claims.getExpiresAt().getEpochSecond() - Instant.now().getEpochSecond();
-	    if (timeOut > 0) {
-		redisUtil.set("JWT:" + at + ":str", jwt, timeOut);
-		redisUtil.set("JWT:" + at + ":expiresAt", String.valueOf(claims.getExpiresAt().getEpochSecond()), timeOut);
-	    }
-	    return jwt;
+	// 缓存中不存在，则新建
+	UserToken userToken = loginService.getValidUserToken(at);
+	if (userToken == null) { // 未登录时或者已经过期
+	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+	    log.info("这里发现一个过期的访问");
+	    return "expired";
+	} else {
+	    long timeOut = userToken.accessTokenExpires.getEpochSecond() - Instant.now().getEpochSecond();
+	    redisUtil.set("JWT:" + at + ":str", userToken.jwt, timeOut);
+	    redisUtil.set("JWT:" + at + ":expiresAt", String.valueOf(userToken.accessTokenExpires.getEpochSecond()), timeOut);
+	    return userToken.jwt;
 	}
-	response.setStatus(203);
-	log.info("这里发现一个过期的访问");
-	return "expired";
     }
 
     /**

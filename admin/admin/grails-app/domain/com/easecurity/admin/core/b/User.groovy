@@ -19,7 +19,7 @@ class User extends com.easecurity.core.basis.b.User {
         pd length: 100, nullable: true
         acStatus nullable: true
         pdStatus nullable: true
-        identities length: 4000, nullable: true
+        identities nullable: true
         userinfo nullable: true
         lastLoginTtime nullable: true
         pdErrorTimes nullable: true
@@ -32,6 +32,7 @@ class User extends com.easecurity.core.basis.b.User {
         id generator: 'uuid'
         acStatus enumType: "ordinal"
         pdStatus enumType: "ordinal"
+		identities type: 'text'
 //	    password column: '`password`'
         version false
     }

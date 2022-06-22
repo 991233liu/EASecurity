@@ -14,12 +14,15 @@ class UserToken extends com.easecurity.core.basis.s.UserToken {
         accessTokenExpires nullable: false
         refreshToken length: 100, nullable: false, blank: false
         refreshTokenExpires nullable: false
-        userDetails length: 4000, nullable: false
+        userDetails nullable: false
+        jwt nullable: false
         dateCreated nullable: true
     }
 
     static mapping = {
         table 's_user_token'
+		userDetails type: 'text'
+		jwt type: 'text'
         version false
     }
 }

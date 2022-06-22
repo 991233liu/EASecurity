@@ -11,12 +11,13 @@ class UserJwt extends com.easecurity.core.basis.s.UserJwt {
         account nullable: false, blank: false
         jti length: 100, nullable: false, blank: false
         expires nullable: false
-        jwt length: 4000, nullable: false
+        jwt nullable: false
         dateCreated nullable: true
     }
 
     static mapping = {
         table 's_user_jwt'
+		jwt type: 'text'
         version false
     }
 }

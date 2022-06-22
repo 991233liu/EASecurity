@@ -2,12 +2,12 @@
 package com.easecurity.core.basis.s;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 
 /**
  * s_user_jwt表：用户jwt。
- * // TODO 存库？先存Redis吧，存库似乎没有意义
- *
+ * TODO 这是个冗余类，目前没意义。将来支持多token时，也许会用到。
  */
 public class UserJwt implements Serializable {
 
@@ -25,7 +25,7 @@ public class UserJwt implements Serializable {
     /**
      * expires
      */
-    public Date expires;
+    public Instant expires;
     /**
      * jwt
      */
@@ -57,11 +57,11 @@ public class UserJwt implements Serializable {
         this.jti = jti;
     }
 
-    public Date getExpires() {
+    public Instant getExpires() {
         return expires;
     }
 
-    public void setExpires(Date expires) {
+    public void setExpires(Instant expires) {
         this.expires = expires;
     }
 

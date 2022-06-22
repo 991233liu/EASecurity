@@ -6,13 +6,13 @@ import java.time.Instant;
 import java.util.Date;
 
 /**
- * s_user_token表：用户token。?
+ * s_user_token表：用户token。
  *
  */
 public class UserToken implements Serializable {
 
     private static final long serialVersionUID = 6506441051359837625L;
-   
+
     public Integer id;
     /**
      * 登录账号
@@ -38,55 +38,82 @@ public class UserToken implements Serializable {
      * UserDetails
      */
     public String userDetails;
-    
+    /**
+     * jwt
+     */
+    public String jwt;
+
     public Date dateCreated;
-    
+
     public Integer getId() {
-        return id;
+	return id;
     }
+
     public void setId(Integer id) {
-        this.id = id;
+	this.id = id;
     }
+
     public String getAccount() {
-        return account;
+	return account;
     }
+
     public void setAccount(String account) {
-        this.account = account;
+	this.account = account;
     }
+
     public String getAccessToken() {
-        return accessToken;
+	return accessToken;
     }
+
     public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+	this.accessToken = accessToken;
     }
+
     public Instant getAccessTokenExpires() {
-        return accessTokenExpires;
+	return accessTokenExpires;
     }
+
     public void setAccessTokenExpires(Instant accessTokenExpires) {
-        this.accessTokenExpires = accessTokenExpires;
+	this.accessTokenExpires = accessTokenExpires;
     }
+
     public String getRefreshToken() {
-        return refreshToken;
+	return refreshToken;
     }
+
     public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+	this.refreshToken = refreshToken;
     }
+
     public Instant getRefreshTokenExpires() {
-        return refreshTokenExpires;
+	return refreshTokenExpires;
     }
+
     public void setRefreshTokenExpires(Instant refreshTokenExpires) {
-        this.refreshTokenExpires = refreshTokenExpires;
+	this.refreshTokenExpires = refreshTokenExpires;
     }
+
     public String getUserDetails() {
-        return userDetails;
+	return userDetails;
     }
+
     public void setUserDetails(String userDetails) {
-        this.userDetails = userDetails;
+	this.userDetails = userDetails;
     }
+
+    public String getJwt() {
+	return jwt;
+    }
+
+    public void setJwt(String jwt) {
+	this.jwt = jwt;
+    }
+    
     public Date getDateCreated() {
-        return dateCreated;
+	return dateCreated;
     }
+    
     public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+	this.dateCreated = dateCreated;
     }
 }
