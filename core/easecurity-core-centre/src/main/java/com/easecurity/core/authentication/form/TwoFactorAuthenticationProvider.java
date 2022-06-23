@@ -1,6 +1,7 @@
 package com.easecurity.core.authentication.form;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,12 +10,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.easecurity.core.authentication.LoginService;
+import com.easecurity.core.basis.UserDo;
+import com.easecurity.core.basis.UserService;
+import com.easecurity.core.basis.b.UserEnum;
 import com.easecurity.core.basis.s.GifCaptcha;
 import com.easecurity.core.utils.CacheUtil;
 import com.easecurity.core.utils.ServletUtils;
@@ -22,16 +28,16 @@ import com.easecurity.core.utils.ServletUtils;
 @Service
 public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    @Resource
-    public UserDetailsService userDetailsService;
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private UserService userService;
 
     @Value("${loginCaptcha.disable:true}")
     private boolean loginCaptchaDisable;
 
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-	CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+	SecurityCentreUserDetails customUserDetails = (SecurityCentreUserDetails) userDetails;
 	// 校验图片动态验证码
 	if (!loginCaptchaDisable) {
 	    String gifCaptcha = ServletUtils.getRequest().getParameter("gifCaptcha");
@@ -80,16 +86,38 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
      */
     @Override
     protected Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user) {
-	if (principal instanceof CustomUserDetails) {
-	    CustomUserDetails customUserDetails = (CustomUserDetails) principal;
-	    principal = CustomUserDetails.withUserDetails(customUserDetails).build();
+	if (principal instanceof SecurityCentreUserDetails) {
+	    SecurityCentreUserDetails userDetails = (SecurityCentreUserDetails) principal;
+	    principal = SecurityCentreUserDetails.withUserDetails(userDetails).build();
 	}
 	return super.createSuccessAuthentication(principal, authentication, user);
     }
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-	UserDetails loadedUser = userDetailsService.loadUserByUsername(username);
+	UserDetails loadedUser = loadUserByUsername(username);
 	return loadedUser;
+    }
+
+    // TODO 登录性能待优化
+    private UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	UserDo user = userService.getUserDoForLogin(username);
+	if (user == null)
+	    throw new UsernameNotFoundException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+
+	// TODO 大角色？？？
+	// or if you are using role groups:
+	// def roles = user.authorities.collect { it.authorities }.flatten().unique()
+
+	Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+	user.roleUsers.forEach(it -> {
+	    authorities.add(new SimpleGrantedAuthority(it.roleCode));
+	});
+	
+//	return new User(username, user.user.pd, user.user.acStatus == UserEnum.AcStatus.ENABLED, !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED),
+//		!(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED, authorities);
+	return new SecurityCentreUserDetails(username, user.user.pd, user.user.acStatus == UserEnum.AcStatus.ENABLED, !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED),
+		!(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED, authorities, user.user.id, user.userinfo.name,
+		user.userinfo.icon, user.user.identities, user.user.lastLoginTtime, user.user.pdErrorTimes);
     }
 }

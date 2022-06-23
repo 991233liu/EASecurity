@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-public class CustomUserDetails extends User {
+public class SecurityCentreUserDetails extends User {
 
     private static final long serialVersionUID = -7665150614803466540L;
 
@@ -20,7 +20,7 @@ public class CustomUserDetails extends User {
     public final Integer pdErrorTimes;
     public final Boolean isAnonymousUser;
 
-    public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+    public SecurityCentreUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
 	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, String identities, Date lastLoginTime, Integer pdErrorTimes) {
 	super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
@@ -35,7 +35,7 @@ public class CustomUserDetails extends User {
 //	    authorities, id, fullName, icon, lastLoginTime, pdErrorTimes, Boolean.FALSE);
     }
 
-    public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+    public SecurityCentreUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
 	    Collection<GrantedAuthority> authorities, String id, String fullName, String icon, String identities, Date lastLoginTime, Integer pdErrorTimes, Boolean isAnonymousUser) {
 	super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 
@@ -51,12 +51,12 @@ public class CustomUserDetails extends User {
     /**
      * 获取一个匿名登录用户
      */
-    public static CustomUserDetails getAnonymousUser() {
+    public static SecurityCentreUserDetails getAnonymousUser() {
 //	return new CustomUserDetails("anonymousUser", "", true, true, true, true, (Collection<GrantedAuthority>) new ArrayList<GrantedAuthority>(), "anonymousUser", "", "",
 //		new Date(), Integer.valueOf(0), Boolean.TRUE);
 	Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) new ArrayList<GrantedAuthority>();
 	authorities.add((GrantedAuthority) new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
-	return new CustomUserDetails("anonymousUser", "", true, true, true, true, authorities, "anonymousUser", null, null, null, null, null, Boolean.TRUE);
+	return new SecurityCentreUserDetails("anonymousUser", "", true, true, true, true, authorities, "anonymousUser", null, null, null, null, null, Boolean.TRUE);
     }
 
     public boolean isAnonymousUser() {

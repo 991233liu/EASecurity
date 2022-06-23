@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.easecurity.core.authentication.form.CustomUserDetails;
+import com.easecurity.core.authentication.form.SecurityCentreUserDetails;
 import com.easecurity.core.basis.b.UserEnum;
 import com.easecurity.core.basis.s.UserToken;
 import com.easecurity.core.utils.CacheUtil;
@@ -51,7 +51,7 @@ public class LoginService {
     /*
      * 密码校验失败
      */
-    public void loginFail(CustomUserDetails user) {
+    public void loginFail(SecurityCentreUserDetails user) {
 	int pdErrorTimes = 0;
 	if (user.pdErrorTimes != null)
 	    pdErrorTimes = user.pdErrorTimes;
@@ -65,7 +65,7 @@ public class LoginService {
     /*
      * 成功登录
      */
-    public void loginSuccess(CustomUserDetails user) {
+    public void loginSuccess(SecurityCentreUserDetails user) {
 	jdbcTemplate.update(sql7, 0, new Date(), user.id);
     }
 
