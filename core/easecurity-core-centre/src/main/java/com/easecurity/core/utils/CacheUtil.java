@@ -103,7 +103,7 @@ public class CacheUtil {
      * @return true成功 false 失败
      */
     public static boolean setCache(String key, Object value, long time) {
-	return redisUtil.set("cc:" + key, value);
+	return redisUtil.set("cc:" + key, value, time);
     }
 
     /**
