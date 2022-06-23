@@ -48,7 +48,7 @@ public class DemoController {
     @RequestMapping("/queryData3")
     @EaSecuredIP
     public UserDo queryData3(HttpServletRequest request) {
-	UserDetails user = ServletUtils.getCurrentUserDetails();
+	UserDetails user = ServletUtils.getCurrentUser();
 	// 获取身份
 	UserDo userDo = userService.getUserDoById(user.id);
 	request.getSession().setAttribute("userdo", userDo);

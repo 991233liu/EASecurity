@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.MenuVo;
+import com.easecurity.core.utils.CacheUtil;
 import com.easecurity.core.utils.ServletUtils;
 
 /**
@@ -34,16 +35,16 @@ public class MenuController {
     public List<MenuVo> myMenu(HttpServletRequest request) {
 	menuService.loadAll();
 	// 获取当前登录人
-	UserDetails user = ServletUtils.getCurrentUserDetails();
+	UserDetails user = ServletUtils.getCurrentUser();
 	if (user == null) {
 	    // TODO 未登录时？
 	    return new ArrayList<>();
 	}
 	String rootMenuCode = request.getParameter("rootMenuCode") == null ? "" : request.getParameter("rootMenuCode");
-	List<MenuVo> myMenu = (List<MenuVo>) request.getSession().getAttribute("myMenu:" + rootMenuCode);
+	List<MenuVo> myMenu = (List<MenuVo>) CacheUtil.getSessionCache("myMenu:" + rootMenuCode);
 	if (myMenu == null) {
 	    myMenu = menuService.getMenuByUser(user, rootMenuCode);
-	    request.getSession().setAttribute("myMenu:" + rootMenuCode, myMenu);
+	    CacheUtil.setSessionCache("myMenu:" + rootMenuCode, myMenu);
 	}
 	// 获取有权限的菜单
 	return myMenu;

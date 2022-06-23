@@ -4,12 +4,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import com.easecurity.core.authentication.form.CustomUserDetails;
+import com.easecurity.core.authentication.LoginService;
+import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
+import com.easecurity.core.basis.s.UserToken;
+import com.easecurity.util.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,60 +18,22 @@ import javax.servlet.http.HttpSession;
 
 @Component
 public class ServletUtils {
-    /**
-     * 获得当前登录的用户Bean
-     */
-    public static UserDetails getCurrentUser() {
-//	return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	if (principal instanceof UserDetails) { // 数据库登录用户
-	    return (UserDetails) principal;
-	} else if (principal == null || principal instanceof String) { // 匿名登录
-	    UserBuilder userBuilder = CustomUserDetails.withUsername("anonymousUser");
-	    userBuilder.password("anonymousUser");
-	    userBuilder.authorities("ROLE_ANONYMOUS");
-	    return userBuilder.build();
-	} else { // 其它待开发类型
-	    // TODO 其它待开发类型
-	    return null;
-	}
-//        HttpServletRequest request = ServletUtils.getRequest()
-//        if (request == null) return null
-//        UserDetails principal = BeanUtils.getBean('springSecurityService').getPrincipal()
-//        User user = (User) request.getAttribute("user")
-//        if ( user != null ) return user
-//
-//        UserDetails principal = (UserDetails) springSecurityService.getPrincipal()
-//        if ( null == principal || principal.getUsername() == GrailsAnonymousAuthenticationToken.USERNAME ) {
-//            // 匿名用户
-//            user = new User(username:"anonymous")
-//            user.discard()
-//        } else if ( principal instanceof GrailsUser ) {
-//            // 数据库登录
-//            user = User.get( (Long) ((GrailsUser) principal).getId() )
-//        } else if ( principal instanceof LdapUserDetails ) {
-//            // ldap登录
-//            //user = User.findByUsername( principal.getUsername(), [cache:true])
-//            HttpSession session = request.getSession()
-//            user = User.findByUsername( session.getAttribute(Constants.SS_USER_NAME), [cache:true])
-//        }
-//
-//        if ( request ) request.setAttribute("user", user)
-    }
+
+    private static LoginService loginService = (LoginService) BeanUtils.getBean(LoginService.class);
+    private static UserService userService = (UserService) BeanUtils.getBean(UserService.class);
 
     /**
      * 获得当前登录用户的用户员工身份
      */
-    public static com.easecurity.core.authentication.UserDetails getCurrentUserDetails() {
-	UserDetails currentUser = getCurrentUser();
-	if (currentUser == null || "anonymousUser".equals(currentUser.getUsername())) { // 未登录时
-	    return null;
-	} else { // 登录用户
-	    com.easecurity.core.authentication.UserDetails userDetails = (com.easecurity.core.authentication.UserDetails) getSession().getAttribute("userDetails");
+    public static UserDetails getCurrentUser() {
+	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	String at = getAccessToken();
+	if (principal instanceof UserDetails) { // 基于session的数据库登录用户
+	    UserDetails userDetails = (UserDetails) CacheUtil.getSessionCache("userDetails");
 	    if (userDetails == null) {
-		UserService userService = (UserService) BeanUtils.getBean("userService");
+		org.springframework.security.core.userdetails.UserDetails currentUser = (org.springframework.security.core.userdetails.UserDetails) principal;
 		UserDo userDo = userService.getUserDoByAccount(currentUser.getUsername());
-		userDetails = new com.easecurity.core.authentication.UserDetails();
+		userDetails = new UserDetails();
 		userDetails.id = userDo.user.id;
 		userDetails.account = userDo.user.account;
 		userDetails.identities = userDo.user.identities;
@@ -78,9 +41,25 @@ public class ServletUtils {
 		    userDetails.name = userDo.userinfo.name;
 		    userDetails.icon = userDo.userinfo.icon;
 		}
-		getSession().setAttribute("userDetails", userDetails);
+		CacheUtil.setSessionCache("userDetails", userDetails);
 	    }
 	    return userDetails;
+	} else if (at != null) { // 基于AccessToken的数据库登录用户
+	    UserDetails userDetails = (UserDetails) CacheUtil.getAccessTokenCache("userDetails");
+	    if (userDetails == null) {
+		UserToken userToken = loginService.getValidUserToken(at);
+		userDetails = JsonUtils.jsonToObject(userToken.userDetails, UserDetails.class);
+		CacheUtil.setAccessTokenCache("userDetails", userDetails);
+	    }
+	    return userDetails;
+	} else if (principal == null || principal instanceof String) { // 匿名登录
+//	    UserBuilder userBuilder = CustomUserDetails.withUsername("anonymousUser");
+//	    userBuilder.password("anonymousUser");
+//	    userBuilder.authorities("ROLE_ANONYMOUS");
+	    return null;
+	} else { // 其它待开发类型
+	    // TODO 其它待开发类型
+	    return null;
 	}
     }
 

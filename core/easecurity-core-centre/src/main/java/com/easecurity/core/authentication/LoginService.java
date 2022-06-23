@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import com.easecurity.core.authentication.form.CustomUserDetails;
 import com.easecurity.core.basis.b.UserEnum;
 import com.easecurity.core.basis.s.UserToken;
+import com.easecurity.core.utils.CacheUtil;
 import com.easecurity.util.JsonUtils;
 
 /**
@@ -109,60 +110,6 @@ public class LoginService {
     public String getJwtTokenValue(final JwtClaimsSet jwt) {
 	return encoder.encode(JwtEncoderParameters.from(jwt)).getTokenValue();
     }
-//
-//    /**
-//     * 获取有效的UserJwt，如果accessToken不存在或者已过期，则返回null。
-//     * 
-//     * @param userJwt
-//     */
-//    public UserJwt getValidUserJwt(String accessToken) {
-//	String sql = "SELECT * FROM s_user_jwt WHERE jti = ?";
-//	List<UserJwt> userJwts = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserJwt.class), accessToken);
-//	if (userJwts.size() > 0) {
-//	    UserJwt userJwt = userJwts.get(0);
-//	    // 判断rt是否过期
-//	    if (userJwt.expires.isAfter(Instant.now())) {
-//		return userJwt;
-//	    }
-//	}
-//	return null;
-//    }
-//
-//    /**
-//     * 创建一个新的UserToken，如果accessToken不存在或者已过期，则返回null。
-//     * 
-//     * @param user
-//     * @param token
-//     * @return
-//     */
-//    private UserJwt newUserJwt(final UserDetails user, final Token token, String jwt) {
-//	// 判断token是否过期
-//	if (token.expires.isAfter(Instant.now())) {
-//	    UserJwt userJwt = new UserJwt();
-//	    userJwt.jti = token.access_token;
-//	    userJwt.expires = token.expires;
-//	    userJwt.account = user.account;
-//	    userJwt.jwt = jwt;
-//	    userJwt.dateCreated = new Date();
-//	    return userJwt;
-//	}
-//	return null;
-//    }
-//
-//    /**
-//     * 保存UserJwt到数据库
-//     */
-//    public void saveUserJwt(UserJwt userJwt) {
-//	if (userJwt.id != null) {
-//	    String sql = "UPDATE s_user_jwt SET account = ?, jti = ?, expires = ?, jwt = ?, date_created = ? WHERE id = ?;";
-//	    jdbcTemplate.update(sql, userJwt.account, userJwt.jti, userJwt.expires, userJwt.jwt, userJwt.dateCreated);
-//	} else {
-//	    String sql = "DELETE FROM s_user_jwt WHERE account = ?";
-//	    jdbcTemplate.update(sql, userJwt.account);
-//	    sql = "INSERT INTO s_user_jwt(account, jti, expires, jwt, date_created) VALUES (?, ?, ?, ?, ?)";
-//	    jdbcTemplate.update(sql, userJwt.account, userJwt.jti, userJwt.expires, userJwt.jwt, userJwt.dateCreated);
-//	}
-//    }
 
     /**
      * 创建一个token
@@ -213,7 +160,7 @@ public class LoginService {
     }
 
     /**
-     * 刷新token
+     * 刷新token。accessToken下的所有缓存会立即失效。
      * 
      * @param accessToken
      * @param refreshToken
@@ -230,6 +177,7 @@ public class LoginService {
 	    UserToken newUserToken = newUserToken(user, token, jwt);
 	    newUserToken.id = userToken.id;
 	    saveUserToken(newUserToken);
+	    CacheUtil.delAccessTokenCache(accessToken);
 	    return token;
 	}
 	return null;
@@ -351,5 +299,12 @@ public class LoginService {
 	    jdbcTemplate.update(sql, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
 		    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated);
 	}
+    }
+    
+    /**
+     * 获取AccessToken的有效时长
+     */
+    public int getAccessTokenValidTime() {
+	return JWTValidTime; 
     }
 }

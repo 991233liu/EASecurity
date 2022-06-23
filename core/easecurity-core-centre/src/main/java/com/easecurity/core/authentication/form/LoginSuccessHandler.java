@@ -38,7 +38,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	String loginType = request.getParameter("loginType");
 	// TODO 做个开关，选择走哪种认证模式，session(cookie)/accessToken
 	if (loginType != null && "accessToken".equals(loginType)) { // AccessToken模式
-	    Token token = loginService.creatToken(ServletUtils.getCurrentUserDetails());
+	    Token token = loginService.creatToken(ServletUtils.getCurrentUser());
 	    String str = JSON.toJSONString(token);
 	    if (redirect_url != null && !"".equals(redirect_url)) {
 		str = URLEncoder.encode(str, "GBK");

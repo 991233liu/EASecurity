@@ -9,10 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import com.easecurity.core.authentication.LogoutService;
+import com.easecurity.core.utils.CacheUtil;
 import com.easecurity.core.utils.ServletUtils;
 
 /**
- * 基于cookie的登录，统一注销
+ * 统一注销
  *
  */
 @Component
@@ -24,7 +25,9 @@ public class LogoutHandler implements org.springframework.security.web.authentic
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-	String jti = (String) request.getSession().getAttribute("JWT.jti");
-	logoutService.asynLogout(request.getCookies(), ServletUtils.getAccessToken(), jti);
+	String jti = (String) CacheUtil.getSessionCache("JWT.jti");
+	String at = ServletUtils.getAccessToken();
+	logoutService.asynLogout(request.getCookies(), at, jti);
+	CacheUtil.delAccessTokenCache(at);
     }
 }
