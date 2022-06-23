@@ -57,7 +57,7 @@ public abstract class AbsAuthFilter implements Filter {
 	String uri = req.getRequestURI();
 	if (log.isDebugEnabled())
 	    System.out.println("Inside ABCFilter: " + ((HttpServletRequest) request).getRequestURI());
-	
+
 	// 获取登录信息
 	JWT jwt = getCurrentUserJWTFromLocalStore(request);
 	if (!uri.endsWith("logout") && (jwt == null || !jwt.verify())) {
@@ -70,26 +70,24 @@ public abstract class AbsAuthFilter implements Filter {
 	    }
 	}
 
-	if (canAnonymousAccess(uri, request)) { // 可匿名访问的，直接放行
+	try {
+	    // 添加登录信息到本地线程
 	    if (jwt != null && jwt.verify())
 		LoginService.userDetails.set(jwt.userDetails);
-	    try {
+
+	    if (canAnonymousAccess(uri, request)) { // 可匿名访问的，直接放行
 		chain.doFilter(request, response);
-	    } finally {
-		LoginService.userDetails.remove();
-	    }
-	} else { // 其它情况需要判断登录状态
-	    if (jwt == null || !jwt.verify()) {
-		// 远端认证中心没有返回有效的身份时的处理
-		noLogin(request, response, chain, jwt);
-	    } else { // 已登录用户正常响应
-		LoginService.userDetails.set(jwt.userDetails);
-		try {
+	    } else { // 其它情况需要判断登录状态
+		if (jwt == null || !jwt.verify()) {
+		    // 远端认证中心没有返回有效的身份时的处理
+		    noLogin(request, response, chain, jwt);
+		} else { // 已登录用户正常响应
 		    chain.doFilter(request, response);
-		} finally {
-		    LoginService.userDetails.remove();
 		}
 	    }
+	} finally {
+	    // 清楚本地线程的登录信息
+	    LoginService.userDetails.remove();
 	}
 	log.debug("---------# AuthFilter.doFilter out");
     }

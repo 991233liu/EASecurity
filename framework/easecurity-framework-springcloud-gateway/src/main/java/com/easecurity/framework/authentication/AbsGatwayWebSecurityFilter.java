@@ -54,31 +54,40 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 
 	String uri = request.getURI().toString();
 	Mono<Void> mono = Mono.empty();
+	if (log.isDebugEnabled())
+	    System.out.println("Inside ABCFilter: " + uri);
+
+	// 获取登录信息
+	JWT jwt = getCurrentUserJWTFromLocalStore(request);
+	if (!uri.endsWith("logout") && (jwt == null || !jwt.verify())) {
+	    // 未登录时或者JWT过期时，从远端认证中心拉取最新状态
+	    jwt = getCurrentUserJWTFromSecurityCentre(request);
+	    // 存入本地缓存
+	    if (jwt != null) {
+		SaveUserJWT2LocalStore(request, response, jwt);
+	    }
+	}
+
+	// 添加登录信息到本地线程
+	if (jwt != null && jwt.verify())
+	    LoginService.userDetails.set(jwt.userDetails);
+
 	if (canAnonymousAccess(uri, request)) { // canAnonymousAccess
 	    mono = Mono.empty();
-	} else {
-	    JWT jwt = getCurrentUserJWTFromLocalStore(request);
-	    if (jwt == null || !jwt.verify()) {
-		// 未登录时或者JWT过期时，从远端认证中心拉取最新状态
-		jwt = getCurrentUserJWTFromSecurityCentre(request);
-		// 存入本地缓存
-		if (jwt != null) {
-		    SaveUserJWT2LocalStore(request, response, jwt);
-		}
-	    }
+	} else { // 登录用户访问
 	    if (jwt == null || !jwt.verify()) {
 		// 远端认证中心没有返回有效的身份时的处理
 		mono = noLogin(request, response, jwt);
 	    } else { // 已登录用户正常响应
-		LoginService.userDetails.set(jwt.userDetails);
+		// TODO 启动时加载所有URL，判断是否可以访问
 		mono = addJWT2ServiceRequest(jwt.parsedStr, jwt, exchange, chain);
 	    }
 	}
 
-	System.out.println("Inside ABCFilter: " + uri);
-	log.debug("---------# AbsWebSecurityFilter.filter out");
 	return mono.doFinally((SignalType) -> {
+	    // 清楚本地线程的登录信息
 	    LoginService.userDetails.remove();
+	    log.debug("---------# AbsWebSecurityFilter.filter out");
 	});
     }
 
@@ -156,7 +165,7 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 	}
 	return null;
     }
-    
+
     /**
      * 是否可匿名访问
      * 
@@ -165,6 +174,7 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
      * @return
      */
     public boolean canAnonymousAccess(String uri, ServerHttpRequest request) {
+	// TODO 启动时加载所有URL，判断是否可以匿名访问
 	return uri.endsWith("logout");
     }
 
