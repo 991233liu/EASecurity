@@ -54,7 +54,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		return;
 	    }
 	} else { // 默认走session(cookie)
-
+	    // 生成用户信息并缓存
+	    ServletUtils.getCurrentUser();
 	}
 	if (redirect_url != null && !"".equals(redirect_url)) { // 跳转到目标想要的地址
 	    clearAuthenticationAttributes(request);

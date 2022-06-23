@@ -28,7 +28,7 @@ public class ServletUtils {
     public static UserDetails getCurrentUser() {
 	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	String at = getAccessToken();
-	if (principal instanceof UserDetails) { // 基于session的数据库登录用户
+	if (principal instanceof org.springframework.security.core.userdetails.UserDetails) { // 基于session的数据库登录用户
 	    UserDetails userDetails = (UserDetails) CacheUtil.getSessionCache("userDetails");
 	    if (userDetails == null) {
 		org.springframework.security.core.userdetails.UserDetails currentUser = (org.springframework.security.core.userdetails.UserDetails) principal;

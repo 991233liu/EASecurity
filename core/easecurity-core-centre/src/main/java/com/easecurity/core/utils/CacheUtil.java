@@ -115,4 +115,14 @@ public class CacheUtil {
     public static Object getCache(String key) {
 	return redisUtil.get("cc:" + key);
     }
+
+    /**
+     * 从Cache中删除数据。
+     * 
+     * @param key
+     * @return
+     */
+    public static void delCache(String key) {
+	redisUtil.del(new String[] { "cc:" + key });
+    }
 }

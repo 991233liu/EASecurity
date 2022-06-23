@@ -3,6 +3,7 @@ package com.easecurity.core.authentication;
 import com.easecurity.util.JsonUtils;
 
 import com.easecurity.core.basis.s.GifCaptcha;
+import com.easecurity.core.utils.CacheUtil;
 import com.easecurity.core.utils.MessageSourceUtil;
 
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,28 +61,27 @@ class LoginController {
 
     @GetMapping("/gifCaptcha")
     @ResponseBody
-    public String gifCaptcha(HttpSession session) {
+    public String gifCaptcha() {
 	// TODO 如果是跨域登录，且没有使用EASecurity的登录页面，则session无效。此时提交登录包含key和输入的吗
-	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha(session);
+	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha();
 	return JsonUtils.objectToJson(map);
     }
 
-    private Map<String, Object> getGifCaptcha(HttpSession session) {
+    private Map<String, Object> getGifCaptcha() {
 	com.easecurity.core.captcha.GifCaptcha gifCaptcha = new com.easecurity.core.captcha.GifCaptcha(130, 48, gifCaptchaLength, gifCaptchaDelay);
 	String key = UUID.randomUUID().toString();
 	String verCode = gifCaptcha.text().toLowerCase();
+	if (log.isDebugEnabled())
+	    log.debug("----# 图片验证码为：" + verCode);
 	GifCaptcha dDifCaptcha1 = new GifCaptcha();
 	dDifCaptcha1.gkey = key;
 	dDifCaptcha1.gvalue = verCode;
 	dDifCaptcha1.validTime = System.currentTimeMillis() + validTime;
+	// TODO 数据库验证
 //        DGifCaptcha.withTransaction {
 //            dDifCaptcha1.save(flush: true);
 //        }
-	if (log.isDebugEnabled())
-	    log.debug("----# 图片验证码为：" + verCode);
-	// TODO 数据库验证
-	// TODO Redis验证
-	session.setAttribute("GifCaptcha", dDifCaptcha1);
+	CacheUtil.setCache("GifCaptcha:" + key, dDifCaptcha1, dDifCaptcha1.validTime);
 
 	Map<String, Object> map = new HashMap<>();
 	map.put("key", key);
