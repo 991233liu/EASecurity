@@ -3,7 +3,6 @@ package com.easecurity.core.access;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,10 +13,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.easecurity.core.access.annotation.EaSecuredIP;
 import com.easecurity.core.basis.UriDo;
 import com.easecurity.core.basis.UriService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 /**
  * 企业安全中心数据交换服务
@@ -44,8 +53,9 @@ public class DataController {
      * 当前登录人的菜单？？？？
      */
     @RequestMapping("/alleas")
+    @ResponseBody
     @EaSecuredIP
-    public void getAllEas(HttpServletRequest request, HttpServletResponse response) {
+    public String getAllEas(HttpServletRequest request, HttpServletResponse response) {
 	String lm = request.getParameter("lastModified");
 	if (!lastModified.equals(lm)) {
 	    // TODO 加载？？？肯定不是这个地方的，哈哈。
@@ -55,26 +65,43 @@ public class DataController {
 	    lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
 	    allEas.put("lastModified", lastModified);
 
-	    ObjectOutputStream oos = null;
+//	    ObjectOutputStream oos = null;
+//	    try {
+//		oos = new ObjectOutputStream(response.getOutputStream());
+//		oos.writeObject(allEas);
+//		oos.flush();
+//	    } catch (IOException e) {
+//		log.error("推送控制列表时，数据流读取异常:", e);
+//		e.printStackTrace();
+//	    } finally {
+//		if (null != oos) {
+//		    try {
+//			oos.close();
+//		    } catch (IOException e) {
+//			e.printStackTrace();
+//		    }
+//		}
+//	    }
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.setSerializationInclusion(Include.NON_NULL);
+	    mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+	    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+	    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//	    mapper.setDefaultTyping(DefaultTyping.NON_FINAL);
+//	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+//	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY);
+
 	    try {
-		oos = new ObjectOutputStream(response.getOutputStream());
-		oos.writeObject(allEas);
-		oos.flush();
-	    } catch (IOException e) {
-		log.error("推送控制列表时，数据流读取异常:", e);
-		e.printStackTrace();
-	    } finally {
-		if (null != oos) {
-		    try {
-			oos.close();
-		    } catch (IOException e) {
-			e.printStackTrace();
-		    }
-		}
+		return mapper.writeValueAsString(allEas);
+	    } catch (JsonProcessingException e) {
+		log.error("推送控制列表时，序列化异常:", e);
 	    }
+//	    return JSON.toJSONString(allEas, SerializerFeature.WriteClassName);
 	} else {
 	    response.setStatus(304);
 	}
+	return null;
     }
 
     /**

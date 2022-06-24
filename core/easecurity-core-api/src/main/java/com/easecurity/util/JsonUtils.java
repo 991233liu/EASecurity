@@ -615,6 +615,7 @@ public class JsonUtils {
      * @throws InstantiationException
      * @throws ClassNotFoundException
      */
+    @SuppressWarnings("unchecked")
     private static List<Object> toList(JsonBean jsonBean, Object bean, String beanKey) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 	List<Object> ret = new ArrayList<Object>();
 	char sep = jsonBean.getNextValidChar();
@@ -644,6 +645,16 @@ public class JsonUtils {
 	// 指针后移，跳过结束符
 	jsonBean.next();
 
+	if (ret.size() == 2) { // 反序列化是，如果此list带有类描述信息，则需要去掉描述层
+	    try {
+		String className = (String) ret.get(0);
+		Class<?> calzz = Class.forName(className);
+		if ("java.util.List".equals(className) || List.class.isAssignableFrom(calzz)) {
+		    return (List<Object>) ret.get(1);
+		}
+	    } catch (Exception e) {
+	    }
+	}
 	return ret;
     }
 
@@ -703,6 +714,7 @@ public class JsonUtils {
 
 	// 指针后移，跳过结束符
 	jsonBean.next();
+
 	if (ret.containsKey("@type") || ret.containsKey("@class")) { // 此map是使用‘@type’标签序列化的bean
 	    String clazz = ret.containsKey("@type") ? (String) ret.get("@type") : (String) ret.get("@class");
 	    Object bean = getBean(clazz);
