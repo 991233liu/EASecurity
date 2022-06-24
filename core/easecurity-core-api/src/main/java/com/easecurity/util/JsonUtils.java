@@ -647,12 +647,20 @@ public class JsonUtils {
 
 	if (ret.size() == 2) { // 反序列化是，如果此list带有类描述信息，则需要去掉描述层
 	    try {
-		String className = (String) ret.get(0);
-		Class<?> calzz = Class.forName(className);
-		if ("java.util.List".equals(className) || List.class.isAssignableFrom(calzz)) {
-		    return (List<Object>) ret.get(1);
+		// 这种序列化JSON的特点：["java.util.ArrayList",[……]]
+		if (ret.get(0) instanceof String) {
+		    String className = (String) ret.get(0);
+		    int index = className.indexOf(".");
+		    int lIndex = className.lastIndexOf(".");
+		    if (index > -1 && index != lIndex) {
+			Class<?> calzz = Class.forName(className);
+			if ("java.util.List".equals(className) || List.class.isAssignableFrom(calzz)) {
+			    return (List<Object>) ret.get(1);
+			}
+		    }
 		}
 	    } catch (Exception e) {
+		log.warn("这里有可能有错误，请联系管理员：{}：{}：{}", bean, beanKey, ret.get(0));
 	    }
 	}
 	return ret;
@@ -803,7 +811,9 @@ public class JsonUtils {
 	    field.setAccessible(true);
 	    try {
 		Class<?> type = field.getType();
-		if (bean.getClass() == type) {
+		if (value == null) {
+		    field.set(bean, value);
+		} else if (bean.getClass() == type) {
 		    field.set(bean, value);
 		} else if (type == long.class || type == Long.class) {
 		    field.set(bean, Long.parseLong(value.toString()));
@@ -883,7 +893,8 @@ public class JsonUtils {
 			    field.set(bean, temp.getValue());
 			}
 		    }
-		}
+		} else
+		    log.warn("这里有可能有错误，请联系管理员：{}：{}：{}", field, key, value);
 	    }
 	    field.setAccessible(false);
 	}
