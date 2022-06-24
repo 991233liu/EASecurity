@@ -3,7 +3,11 @@ package com.easecurity.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +38,11 @@ public class JsonUtils {
     private static final char dakuohao_s = '[';
     private static final char dakuohao_e = ']';
     private static final char douhao = ',';
+
+    private static DateFormat df10 = new SimpleDateFormat("yyyy-MM-dd");
+    private static DateFormat df19 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static DateFormat df23 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static DateFormat df24 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     /**
      * 解析json串为java常用数据类型
@@ -694,6 +703,22 @@ public class JsonUtils {
 
 	// 指针后移，跳过结束符
 	jsonBean.next();
+	if (ret.containsKey("@type") || ret.containsKey("@class")) { // 此map是使用‘@type’标签序列化的bean
+	    String clazz = ret.containsKey("@type") ? (String) ret.get("@type") : (String) ret.get("@class");
+	    Object bean = getBean(clazz);
+	    if (bean instanceof Map) { // 如果是map类型的，则不需要转
+		ret.remove("@type");
+		ret.remove("@class");
+	    } else { // 如果是bean类型的，则需要转bean
+		Map<String, Field> fields = getFields(bean);
+		for (Map.Entry<String, Object> entry : ret.entrySet()) {
+		    if (entry.getKey().equals("@type") || entry.getKey().equals("@class"))
+			continue;
+		    setPropertyValue(bean, fields.get(entry.getKey()), entry.getKey(), entry.getValue());
+		}
+		return bean;
+	    }
+	}
 	return ret;
     }
 
@@ -760,11 +785,12 @@ public class JsonUtils {
 	return bean;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void setPropertyValue(Object bean, Field field, String key, Object value) throws NumberFormatException, IllegalArgumentException, IllegalAccessException {
 	synchronized (field) { // 赋值时并发造成bug
 	    field.setAccessible(true);
 	    try {
-		Object type = field.getType();
+		Class<?> type = field.getType();
 		if (bean.getClass() == type) {
 		    field.set(bean, value);
 		} else if (type == long.class || type == Long.class) {
@@ -775,8 +801,53 @@ public class JsonUtils {
 		    field.set(bean, Integer.parseInt(value.toString()));
 		} else if (type == float.class || type == Float.class) {
 		    field.set(bean, Float.parseFloat(value.toString()));
+		} else if (type.isEnum()) {
+		    if (value instanceof String) {
+			Class type2 = type;
+			field.set(bean, Enum.valueOf(type2, (String) value));
+		    } else if (value instanceof Integer) {
+			Object[] enumConstants = type.getEnumConstants();
+			field.set(bean, enumConstants[(int) value]);
+		    } else {
+			log.error("这里发现一个无法处理的enum类型：{}：{}", type, value);
+		    }
 		} else if (type == String.class) {
 		    field.set(bean, value.toString());
+		} else if (type == Date.class) {
+		    if (value instanceof Integer || value instanceof Long) {
+			field.set(bean, new Date((long) value));
+		    } else if (value instanceof String) {
+			String value2 = (String) value;
+			if (value2.length() == 10)
+			    field.set(bean, df10.parse(value2));
+			else if (value2.length() == 19)
+			    field.set(bean, df19.parse(value2));
+			else if (value2.length() == 23)
+			    field.set(bean, df23.parse(value2));
+			else if (value2.length() == 24)
+			    field.set(bean, df24.parse(value2.replace("Z", "UTC")));
+			log.error("这里发现一个无法处理的Date类型：{}：{}", type, value);
+		    } else {
+			log.error("这里发现一个无法处理的Date类型：{}：{}", type, value);
+		    }
+		} else if (type == Instant.class) {
+		    if (value instanceof Integer || value instanceof Long) {
+			field.set(bean, new Date((long) value).toInstant());
+		    } else if (value instanceof String) {
+			String value2 = (String) value;
+			if (value2.length() == 10)
+			    field.set(bean, df10.parse(value2).toInstant());
+			else if (value2.length() == 19)
+			    field.set(bean, df19.parse(value2).toInstant());
+			else if (value2.length() == 23)
+			    field.set(bean, df23.parse(value2).toInstant());
+			else if (value2.length() == 24)
+			    field.set(bean, df24.parse(value2.replace("Z", "UTC")).toInstant());
+			else
+			    log.error("这里发现一个无法处理的Instant类型：{}：{}", type, value);
+		    } else {
+			log.error("这里发现一个无法处理的Instant类型：{}：{}", type, value);
+		    }
 		} else { // 其它未知情况，以后发现时再追加处理
 		    field.set(bean, value);
 		}
@@ -796,7 +867,6 @@ public class JsonUtils {
 				field.setAccessible(true);
 				log.info("重新赋值后，field.isAccessible()=" + field.isAccessible());
 			    }
-			    @SuppressWarnings("unchecked")
 			    Map.Entry<String, List<?>> temp = (Entry<String, List<?>>) temps.next();
 			    field.set(bean, temp.getValue());
 			}
@@ -1000,6 +1070,20 @@ public class JsonUtils {
 	    return t_bean;
 	} else
 	    return null;
+    }
+
+    /**
+     * 获取class所要转换的bean的实例。同时初始化实例中的所有属性
+     * 
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @SuppressWarnings("rawtypes")
+    private static Object getBean(String fullClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	Object clazz = Class.forName(fullClassName);
+	initBeanFields((Class) clazz);
+	return ((Class) clazz).newInstance();
     }
 
     private static class JsonBean {
