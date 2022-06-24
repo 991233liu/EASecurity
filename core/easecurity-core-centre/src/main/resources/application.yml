@@ -107,5 +107,5 @@ logging:
       com:
          easecurity: DEBUG
    pattern:
-      console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(--){faint} %clr([%thread]){faint} %clr(%-40.40logger{50}){faint}%clr([%F:%L]){cyan} %clr(:){faint} %m%n%wex'
-#      file: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(--){faint} %clr([%thread]){faint} %clr(%-40.40logger{50}){faint}%clr([%F:%L]){cyan} %clr(:){faint} %m%n%wex'
+      console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p)--%clr([%.12t]){faint} %c{50}%clr([%F:%L]){cyan}: %m%n%wex'
+#      file: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p)--%clr([%thread]){faint} %clr(%c){faint}%clr([%F:%L]){cyan}: %m%n%wex'

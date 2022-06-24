@@ -48,6 +48,15 @@ public class DataController {
      * 控制列表
      */
     private static volatile HashMap<String, Object> allEas = null;
+    
+    private ObjectMapper mapper = new ObjectMapper();
+    {
+	mapper.setSerializationInclusion(Include.NON_NULL);
+	mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+	mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+	mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     /**
      * 当前登录人的菜单？？？？
@@ -64,34 +73,6 @@ public class DataController {
 	    allEas.put("allUriDos", uriService.getAllUriDos());
 	    lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
 	    allEas.put("lastModified", lastModified);
-
-//	    ObjectOutputStream oos = null;
-//	    try {
-//		oos = new ObjectOutputStream(response.getOutputStream());
-//		oos.writeObject(allEas);
-//		oos.flush();
-//	    } catch (IOException e) {
-//		log.error("推送控制列表时，数据流读取异常:", e);
-//		e.printStackTrace();
-//	    } finally {
-//		if (null != oos) {
-//		    try {
-//			oos.close();
-//		    } catch (IOException e) {
-//			e.printStackTrace();
-//		    }
-//		}
-//	    }
-	    ObjectMapper mapper = new ObjectMapper();
-	    mapper.setSerializationInclusion(Include.NON_NULL);
-	    mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-	    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-	    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//	    mapper.setDefaultTyping(DefaultTyping.NON_FINAL);
-//	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-//	    mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY);
-
 	    try {
 		return mapper.writeValueAsString(allEas);
 	    } catch (JsonProcessingException e) {
