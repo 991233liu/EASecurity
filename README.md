@@ -40,6 +40,10 @@ EASecurity中的JWT中存放有大量用户信息，尤其是有完整的权限�
 <a href="doc/架构/认证模式/3基于OpaqueAccessToken的JWT-ms.png"><img src="doc/架构/认证模式/3基于OpaqueAccessToken的JWT-ms.png" width="40%"></a>  
 <br>  
 
+## 集成方案选择  
+<a href="doc/架构/集成方案选择.png"><img src="doc/架构/集成方案选择.png" width="50%"></a>  
+<br>  
+
 ## 安装教程  
 EASecurity应用程序共分3部分：  
 - **1.&nbsp;&nbsp;admin：**  

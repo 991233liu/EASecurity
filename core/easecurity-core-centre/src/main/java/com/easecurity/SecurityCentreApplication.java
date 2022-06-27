@@ -22,7 +22,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 @SpringBootApplication
 public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityCentreApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(SecurityCentreApplication.class);
 
     @Autowired
     DataSource dataSource;
@@ -35,12 +35,13 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
     public void run(String... args) throws Exception {
 	System.out.println(">>>>>>>>>>>>>>>>>服务启动执行");
 	showConnection();
+	System.out.println(">>>>>>>>>>>>>>>>>服务启动完成");
     }
 
     private void showConnection() throws SQLException {
-	logger.info(">>>>>>>>>>>>>>>>>dataSource:{}", dataSource.getClass().getName());
+	log.info(">>>>>>>>>>>>>>>>>dataSource:{}", dataSource.getClass().getName());
 	Connection connection = dataSource.getConnection();
-	logger.info(">>>>>>>>>>>>>>>>>connection:{}", connection.toString());
+	log.info(">>>>>>>>>>>>>>>>>connection:{}", connection.toString());
     }
 
     
