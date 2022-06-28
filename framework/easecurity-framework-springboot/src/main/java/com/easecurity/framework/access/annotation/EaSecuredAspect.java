@@ -79,10 +79,10 @@ public class EaSecuredAspect {
 		result = proceed(pjp, eases.value());
 	    }
 	} catch (Exception e) {
-	    log.error("classAround 执行时出现异常：", e);
+	    log.error("methodAround 执行时出现异常：", e);
 	    throw e;
 	} catch (Throwable e) {
-	    log.error("classAround 执行后续方法时出现异常：", e);
+	    log.error("methodAround 执行后续方法时出现异常：", e);
 	    throw e;
 	}
 	return result;
@@ -109,6 +109,7 @@ public class EaSecuredAspect {
 		    result = proceed(pjp, eases.value());
 		}
 	    } else {
+		// TODO bug，没有判断是否有权限，就直接执行了
 		result = pjp.proceed();
 	    }
 	} catch (Exception e) {

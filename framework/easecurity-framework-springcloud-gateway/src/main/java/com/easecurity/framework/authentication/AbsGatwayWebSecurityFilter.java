@@ -139,17 +139,7 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 		    cookies.add(new Cookie(k, mcookies.getFirst(k).getValue()));
 		}
 	    }
-	    String accessToken = request.getHeaders().getFirst("authorization");
-	    MultiValueMap<String, String> params = request.getQueryParams();
-	    if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
-		accessToken = accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
-	    } else if (request.getHeaders().getFirst("access_token") != null && !request.getHeaders().getFirst("access_token").trim().isEmpty()) {
-		accessToken = request.getHeaders().getFirst("access_token").trim();
-	    } else if (params.containsKey("access_token") && !params.getFirst("access_token").trim().isEmpty()) {
-		accessToken = params.getFirst("access_token").trim();
-	    } else {
-		accessToken = null;
-	    }
+	    String accessToken = getAccessToken(request);
 	    JWT jwt = loginService.getCurrentUserJWT(cookies.toArray(new Cookie[cookies.size()]), accessToken, rsaPublicKey);
 	    if (log.isDebugEnabled())
 		System.out.println("-----## 登录消耗时间为：" + (System.currentTimeMillis() - s));
@@ -226,5 +216,19 @@ public abstract class AbsGatwayWebSecurityFilter implements GlobalFilter, Ordere
 	} else {
 	    return loginService.getRSAPublicKey(eaSecurityConfiguration.jwt.getPublicKey());
 	}
+    }
+
+    public String getAccessToken(ServerHttpRequest request) {
+	String accessToken = request.getHeaders().getFirst("authorization");
+	MultiValueMap<String, String> params = request.getQueryParams();
+	if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
+	    return accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
+	} else if (request.getHeaders().getFirst("access_token") != null && !request.getHeaders().getFirst("access_token").trim().isEmpty()) {
+	    return request.getHeaders().getFirst("access_token").trim();
+	} else if (params.containsKey("access_token") && !params.getFirst("access_token").trim().isEmpty()) {
+	    return params.getFirst("access_token").trim();
+	}
+
+	return null;
     }
 }

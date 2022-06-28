@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -74,10 +75,18 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	    if (uriAccessService.isEaSecured(method))
 		allMethod.add(method);
 	    if (uriAccessService.isEaSecuredAnonymous(method)) {
-		PatternsRequestCondition p = info.getPatternsCondition();
 		// 一个方法可能对应多个url
-		for (String url : p.getPatterns()) {
-		    anonymousUri.add(url);
+		PatternsRequestCondition p = info.getPatternsCondition();
+		if (p != null) {
+		    for (String url : p.getPatterns()) {
+			anonymousUri.add(url);
+		    }
+		} else {
+		    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
+		    for (String url : p2.getPatternValues()) {
+			anonymousUri.add(url);
+		    }
+
 		}
 	    }
 	}
@@ -135,10 +144,18 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 	    RequestMappingInfo info = m.getKey();
 	    HandlerMethod hMethod = m.getValue();
 	    if (method.getDeclaringClass().getName().equals(hMethod.getMethod().getDeclaringClass().getName()) && method.toString().equals(hMethod.getMethod().toString())) {
-		PatternsRequestCondition p = info.getPatternsCondition();
 		// 一个方法可能对应多个url
-		for (String url : p.getPatterns()) {
-		    result.add(url);
+		PatternsRequestCondition p = info.getPatternsCondition();
+		if (p != null) {
+		    for (String url : p.getPatterns()) {
+			anonymousUri.add(url);
+		    }
+		} else {
+		    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
+		    for (String url : p2.getPatternValues()) {
+			anonymousUri.add(url);
+		    }
+
 		}
 		break;
 	    }

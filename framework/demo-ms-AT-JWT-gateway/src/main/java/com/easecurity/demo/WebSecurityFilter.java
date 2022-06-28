@@ -7,13 +7,9 @@ import javax.annotation.Resource;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.easecurity.core.authentication.JWT;
@@ -44,12 +40,12 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
      */
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServerHttpRequest request) {
-	MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-	System.out.println("--------# cookies" + cookies);
-	if (cookies != null && cookies.containsKey("SESSION_JWT")) {
-	    return (JWT) redisTemplate.opsForValue().get("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
-	}
-	return null;
+	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+	String key = getAccessToken(request);
+	if (key != null)
+	    return (JWT) redisTemplate.opsForValue().get("JWT:" + key);
+	else
+	    return null;
     }
 
     /**
@@ -60,11 +56,12 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
      */
     @Override
     public void SaveUserJWT2LocalStore(ServerHttpRequest request, ServerHttpResponse response, JWT jwt) {
-	ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", jwt.jti);
-	cookieBuilder.path("/");
-	cookieBuilder.httpOnly(true);
-	response.addCookie(cookieBuilder.build());
-	redisTemplate.opsForValue().set("JWT:" + jwt.jti, jwt, 300, TimeUnit.SECONDS);
+	// TODO 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+	// TODO 其它自己定义的处理方式
+
+	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+	String key = getAccessToken(request);
+	redisTemplate.opsForValue().set("JWT:" + key, jwt, 300, TimeUnit.SECONDS);
     }
 
     /**
