@@ -15,6 +15,11 @@ easecurity:
       validTime: 3600   # 有效期。单位秒
       privateKey: classpath:app.key
       publicKey: classpath:app.pub
+   async.task:
+      corePoolSize: 5   # 核心线程数（默认线程数）
+      maxPoolSize: 10   # 最大线程数
+      keepAliveTime: 10   # 允许线程空闲时间（单位：默认为秒）
+      queueCapacity: 10240   # 缓冲队列大小
 
 ---
 # 登录验证码

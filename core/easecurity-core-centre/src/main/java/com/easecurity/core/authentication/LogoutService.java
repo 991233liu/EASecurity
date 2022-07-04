@@ -11,7 +11,9 @@ import javax.servlet.http.Cookie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,6 +23,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogoutService {
     private static final Logger log = LoggerFactory.getLogger(LogoutService.class);
+
+    @Autowired
+    ThreadPoolTaskExecutor taskExecutor;
 
     @Value("${easecurity.client.logout.url:}")
     private List<String> logoutUrls;
@@ -47,17 +52,15 @@ public class LogoutService {
 	try {
 	    if (urls != null) {
 		// 起个线程异步注销其它应用。不管其它应用是否注销成功，主中心必须注销成功
-		new Thread("logout") {
-		    public void run() {
-			urls.forEach((it) -> {
-			    try {
-				logout(it, cookies, accessToken, jti);
-			    } catch (Exception e) {
-				log.error("注销远端系统登录时，出现异常，url:" + it, e);
-			    }
-			});
-		    }
-		}.start();
+		taskExecutor.execute(() -> {
+		    urls.forEach((it) -> {
+			try {
+			    logout(it, cookies, accessToken, jti);
+			} catch (Exception e) {
+			    log.error("注销远端系统登录时，出现异常，url:" + it, e);
+			}
+		    });
+		});
 	    }
 	} catch (Exception e) {
 	    log.error("注销远端系统登录时，出现异常", e);
