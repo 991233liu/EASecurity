@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.easecurity.core.basis.s.Server;
@@ -19,27 +21,46 @@ import com.easecurity.util.MBeanUtils;
  * 服务实例相关服务
  *
  */
-// TODO 心跳检测，待开发
 @Service
+@EnableAsync
 public class ServerService {
 
     private static final Logger log = LoggerFactory.getLogger(ServerService.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    private static volatile Server currentServer;
 
-    String sql = "SELECT * FROM b_user where account = ?";
-    String sql2 = "SELECT * FROM b_user_info where user_id = ?";
-    String sql3 = "SELECT * FROM b_org_user where user_id = ?";
-    String sql4 = "SELECT * FROM r_role_user where user_id = ?";
-    String sql5 = "SELECT * FROM b_user where id = ?";
+    private String sql = "UPDATE s_server SET last_time = NOW(6) WHERE id = ?";
+    private String sql2 = "INSERT INTO s_server_history (id, sid, port, start_time, ip, name, projet_name, other, last_time) SELECT * FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval "
+	    + timeOut * 3 + " SECOND";
+    private String sql3 = "DELETE FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval " + timeOut * 3 + " SECOND";
+    private String sql4 = "SELECT DISTINCT id FROM s_server ORDER BY id";
+    private String sql5 = "SELECT DISTINCT sid FROM s_server WHERE projet_name = ?  ORDER BY sid";
+    private String sql6 = "INSERT INTO s_server(id, sid, port, start_time, ip, name, projet_name, other, last_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
     @Value("${server.name:no_name}")
     private String serverName;
     /**
      * 应用实例存活心跳间隔
      */
-    private int timeOut = 5;
+    private static final long timeOut = 5;
+
+    /**
+     * 服务实例存活心跳
+     */
+//    @Async("taskExecutor")
+    @Scheduled(fixedRate = timeOut * 1000)
+    public void scheduleTask() {
+	try {
+	    // 服务器启动完毕前不进行心跳检测
+	    if (currentServer != null)
+		heartBeats();
+	} catch (Exception e) {
+	    log.error("服务实例心跳检测异常,Server信息如下：id={} sid={} projetName={} name={}", currentServer.id, currentServer.sid, currentServer.projetName, currentServer.name);
+	    log.error("服务实例心跳检测异常：", e);
+	}
+    }
 
     /**
      * 添加当前实例到数据库
@@ -65,6 +86,27 @@ public class ServerService {
 
 	log.debug(other.toString());
 	addServer(server);
+
+	currentServer = server;
+    }
+
+    /**
+     * 获取当前服务实例的相关信息
+     */
+    public Server getCurrentServer() {
+	return currentServer;
+    }
+
+    /**
+     * 心跳检测
+     */
+    private void heartBeats() {
+	if (currentServer.id == null)
+	    throw new RuntimeException("服务器心跳检测时发现当前实例的id为null。");
+	int rl = jdbcTemplate.update(sql, currentServer.id);
+	if (rl != 1)
+	    throw new RuntimeException("服务器心跳检测更新实例心跳时间失败。数据库update行数：" + rl);
+
     }
 
     private void addServer(Server server) {
@@ -75,14 +117,10 @@ public class ServerService {
 	}
 	try {
 	    // 将同项目心跳不存在的Server转到历史表中
-	    String sql = "INSERT INTO s_server_history (id, sid, port, start_time, ip, name, projet_name, other, last_time) SELECT * FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval "
-		    + timeOut * 3 + " SECOND";
-	    jdbcTemplate.update(sql, server.projetName);
-	    sql = "DELETE FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval " + timeOut * 3 + " SECOND";
-	    jdbcTemplate.update(sql, server.projetName);
+	    jdbcTemplate.update(sql2, server.projetName);
+	    jdbcTemplate.update(sql3, server.projetName);
 	    // 计算可用的id
-	    sql = "SELECT DISTINCT id FROM s_server ORDER BY id";
-	    List<Integer> ids = jdbcTemplate.queryForList(sql, Integer.class);
+	    List<Integer> ids = jdbcTemplate.queryForList(sql4, Integer.class);
 	    server.id = 1;
 	    if (ids.size() > 0) {
 		// 寻找跳号，使用最小跳号
@@ -97,8 +135,7 @@ public class ServerService {
 		    server.id = ids.get(ids.size() - 1) + 1;
 	    }
 	    // 计算可用sid
-	    sql = "SELECT DISTINCT sid FROM s_server WHERE projet_name = ?  ORDER BY sid";
-	    ids = jdbcTemplate.queryForList(sql, Integer.class, server.projetName);
+	    ids = jdbcTemplate.queryForList(sql5, Integer.class, server.projetName);
 	    server.sid = 0;
 	    if (ids.size() > 0) {
 		// 寻找跳号，使用最小跳号
@@ -113,8 +150,7 @@ public class ServerService {
 		    server.sid = ids.get(ids.size() - 1) + 1;
 	    }
 	    // 保存server
-	    sql = "INSERT INTO s_server(id, sid, port, start_time, ip, name, projet_name, other, last_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-	    jdbcTemplate.update(sql, server.id, server.sid, server.port, server.startTime, server.ip, server.name, server.projetName, server.other);
+	    jdbcTemplate.update(sql6, server.id, server.sid, server.port, server.startTime, server.ip, server.name, server.projetName, server.other);
 	} finally {
 	    Locker.unlock(server.projetName + ":start");
 	}
