@@ -13,11 +13,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.easecurity.core.utils.Locker;
 
 @SpringBootApplication
 public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfigurer {
@@ -26,6 +29,12 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
 
     @Autowired
     DataSource dataSource;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    @Autowired
+    BootStrap bootStrap;
 
     public static void main(String[] args) {
 	SpringApplication.run(SecurityCentreApplication.class, args);
@@ -35,6 +44,8 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
     public void run(String... args) throws Exception {
 	System.out.println(">>>>>>>>>>>>>>>>>服务启动执行");
 	showConnection();
+	Locker.getInstance(jdbcTemplate, transactionManager);
+	bootStrap.init();
 	System.out.println(">>>>>>>>>>>>>>>>>服务启动完成");
     }
 
@@ -44,7 +55,6 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
 	log.info(">>>>>>>>>>>>>>>>>connection:{}", connection.toString());
     }
 
-    
     /**
      * 修改默认JSON转换器为FastJson
      */
