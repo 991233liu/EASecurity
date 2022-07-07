@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author liulufeng
  * 
  */
-// TODO 暂时不支持注释符
+// TODO 暂时不支持注释
 public class JsonUtils {
     private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
 
@@ -915,10 +915,10 @@ public class JsonUtils {
      * @param needSep  是否需要开始符
      */
     private static String to_String(JsonBean jsonBean, boolean needSep) {
-	char c = getValueFirstChar(jsonBean);
-	if ('"' != c && '\'' != c) {
+	char cStart = getValueFirstChar(jsonBean);
+	if ('"' != cStart && '\'' != cStart) {
 	    if (needSep)
-		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + c);
+		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + cStart);
 	    else
 		jsonBean.back();
 	}
@@ -928,9 +928,11 @@ public class JsonUtils {
 	jsonBean.next();
 
 	// 开始解析
+	char c;
 	while (jsonBean.cursor < jsonBean.strlength) {
 	    c = jsonBean.getCurrentChar();
-	    if ('"' == c || '\'' == c)
+//	    if ('"' == c || '\'' == c)
+	    if (cStart == c)
 		break; // 再次出现结束符时结束
 	    if (c == '\\' && jsonBean.getNextChar() == '"') { // value中间含有特殊字符"""
 		ret.append('"');
