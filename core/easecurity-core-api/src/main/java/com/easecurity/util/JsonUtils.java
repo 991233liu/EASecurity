@@ -691,6 +691,12 @@ public class JsonUtils {
 		try {
 		    cursor_start = jsonBean.cursor;
 		    key = getKey(jsonBean);
+		    if ("".equals(key)) {
+			if ('"' != sep && '\'' != sep)
+			    jsonBean.back();
+			cursor_start = jsonBean.cursor;
+			key = getKey(jsonBean);
+		    }
 		} catch (Exception e) {
 		    // 获取key时报错了，说明是空的map，但不是null。例如："data":{}
 		    jsonBean.cursor = cursor_start;
@@ -919,8 +925,10 @@ public class JsonUtils {
 	if ('"' != cStart && '\'' != cStart) {
 	    if (needSep)
 		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + cStart);
-	    else
+	    else {
+		cStart = '"';
 		jsonBean.back();
+	    }
 	}
 	StringBuffer ret = new StringBuffer();
 
