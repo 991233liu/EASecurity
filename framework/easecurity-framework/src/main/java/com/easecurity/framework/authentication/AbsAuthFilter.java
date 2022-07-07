@@ -37,6 +37,7 @@ public abstract class AbsAuthFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
 	log.debug("---------# AuthFilter.init");
 	Filter.super.init(filterConfig);
+	// TODO 没有注解的URI也应该存入数据库，方便运维
 	List<Method> allMethod = loadAllUriWithAnnotation();
 	if (allMethod != null) {
 	    for (Method method : allMethod) {

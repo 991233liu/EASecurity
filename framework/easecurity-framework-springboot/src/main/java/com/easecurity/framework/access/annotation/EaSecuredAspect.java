@@ -70,14 +70,11 @@ public class EaSecuredAspect {
 	Object result = null;
 	try {
 	    Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-	    EaSecureds eases = method.getAnnotation(EaSecureds.class);
-	    if (eases == null) {
-		EaSecured eas = method.getAnnotation(EaSecured.class);
-		EaSecured[] teases = { eas };
-		result = proceed(pjp, teases);
-	    } else {
-		result = proceed(pjp, eases.value());
-	    }
+	    // 受注解控制的
+	    EaSecured[] teases = uriAccessService.getEaSecuredWithoutAnonymous(method);
+	    // 匿名访问的
+	    EaSecuredAnonymous easAnonymous = method.getAnnotation(EaSecuredAnonymous.class);
+	    result = proceed(pjp, teases, easAnonymous);
 	} catch (Exception e) {
 	    log.error("methodAround 执行时出现异常：", e);
 	    throw e;
@@ -89,7 +86,7 @@ public class EaSecuredAspect {
     }
 
     /**
-     * 检查是否有权限执行（多个EaSecured之间是and关系）
+     * 检查是否有权限执行
      * 
      * @throws Throwable
      */
@@ -98,18 +95,14 @@ public class EaSecuredAspect {
 	Object result = null;
 	try {
 	    Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-	    // 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
-	    if (!method.isAnnotationPresent(EaSecureds.class) && !method.isAnnotationPresent(EaSecured.class) && !method.isAnnotationPresent(EaSecuredAnonymous.class)) {
-		EaSecureds eases = method.getDeclaringClass().getAnnotation(EaSecureds.class);
-		if (eases == null) {
-		    EaSecured eas = method.getDeclaringClass().getAnnotation(EaSecured.class);
-		    EaSecured[] teases = { eas };
-		    result = proceed(pjp, teases);
-		} else {
-		    result = proceed(pjp, eases.value());
-		}
-	    } else {
-		// TODO bug，没有判断是否有权限，就直接执行了
+	    // 如果类和方法同时配置了@EaSecured或者@EaSecuredAnonymous，则使用方法的安全配置。
+	    if (!method.isAnnotationPresent(EaSecureds.class) && !method.isAnnotationPresent(EaSecured.class) && !method.isAnnotationPresent(EaSecuredAnonymous.class)) { // 使用类的配置
+		// 受注解控制的
+		EaSecured[] teases = uriAccessService.getEaSecuredWithoutAnonymous(method);
+		// 匿名访问的
+		EaSecuredAnonymous easAnonymous = method.getDeclaringClass().getAnnotation(EaSecuredAnonymous.class);
+		result = proceed(pjp, teases, easAnonymous);
+	    } else { // 使用方法的配置
 		result = pjp.proceed();
 	    }
 	} catch (Exception e) {
@@ -123,7 +116,7 @@ public class EaSecuredAspect {
     }
 
     @SuppressWarnings("finally")
-    private Object proceed(ProceedingJoinPoint pjp, EaSecured[] eases) throws Throwable {
+    private Object proceed(ProceedingJoinPoint pjp, EaSecured[] eases, EaSecuredAnonymous easAnonymous) throws Throwable {
 	UserDetails user = null;
 	String methodSignature = null;
 	boolean validation = false;
@@ -140,12 +133,12 @@ public class EaSecuredAspect {
 	    log.debug("proceed, methodSignature={} eas={} loginUser={} clientIp={}", methodSignature, eases, user, clientIp);
 
 	    try {
-		uriAccessService.saveUriPermissions(eases, uri, classFullName, methodName, methodSignature);
+		uriAccessService.saveUriPermissions(eases, easAnonymous, uri, classFullName, methodName, methodSignature);
 	    } catch (Exception e) {
 		log.error("更新URI的授权信息时出现异常：", e);
 	    }
 
-	    validation = uriAccessService.validation(eases, uri, user, clientIp);
+	    validation = uriAccessService.validation(eases, easAnonymous, uri, user, clientIp);
 	} catch (Throwable e) {
 	    log.error("检查是否有权限执行时出现异常：", e);
 	} finally {

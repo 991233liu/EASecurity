@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.easecurity.core.access.annotation.EaSecured;
+import com.easecurity.core.access.annotation.EaSecuredAnonymous;
 import com.easecurity.core.authentication.JWT;
 import com.easecurity.core.authentication.JWTExpirationException;
 import com.easecurity.framework.EaSecurityConfiguration;
@@ -121,18 +122,20 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public void saveUri(Method method) {
-	// 匿名访问的，不用保存
-	if (uriAccessService.isEaSecuredAnonymous(method))
-	    return;
 	String classFullName = method.getDeclaringClass().getName();
 	String methodName = method.getName();
 	String methodSignature = method.toString();
+	// 受注解控制的
 	EaSecured[] teases = uriAccessService.getEaSecuredWithoutAnonymous(method);
+	// 匿名访问的
+	EaSecuredAnonymous easAnonymous = method.getAnnotation(EaSecuredAnonymous.class);
 	List<String> urls = getAllUrl(method);
 	for (String uri : urls) {
-	    uriAccessService.saveUriPermissions(teases, uri, classFullName, methodName, methodSignature);
+	    uriAccessService.saveUriPermissions(teases, easAnonymous, uri, classFullName, methodName, methodSignature);
 	    log.debug("saveUri, uri={} methodSignature={} eas={}", uri, methodSignature, teases);
 	}
+	
+	// TODO 启动后应该立即同步
     }
 
     private List<String> getAllUrl(Method method) {
@@ -148,12 +151,12 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 		PatternsRequestCondition p = info.getPatternsCondition();
 		if (p != null) {
 		    for (String url : p.getPatterns()) {
-			anonymousUri.add(url);
+			result.add(url);
 		    }
 		} else {
 		    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
 		    for (String url : p2.getPatternValues()) {
-			anonymousUri.add(url);
+			result.add(url);
 		    }
 
 		}

@@ -14,7 +14,6 @@ import com.easecurity.core.access.annotation.EaSecureds;
 import com.easecurity.core.access.annotation.EasType;
 import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.UriDo;
-import com.easecurity.core.basis.au.UriOrg;
 
 /**
  * 接口（访问）访问控制服务
@@ -25,62 +24,73 @@ public class UriService {
 
     AccessRegister accessRegister = null;
 
-    private static volatile Map<String, UriDo> uriDos = new HashMap<>();
-    private static volatile Map<String, UriDo> localeUriDos = new HashMap<>();
-    private static volatile Map<String, Long> lastModifyTime = new HashMap<>();
+    private static volatile Map<String, UriDo> sourceUriDos = new HashMap<>();
 
     public UriService(AccessRegister accessRegister) {
 	this.accessRegister = accessRegister;
     }
 
     /**
+     * 获取URI的授权配置信息
+     * 
+     * @param uri
+     * @return
+     */
+    public UriDo getUriDo(String uri) {
+	Map<String, UriDo> uriDos = accessRegister.getAllUriDos();
+	// TODO 刚启动时uriDos为null，需要处理
+
+	if (uriDos != null && uriDos.containsKey(uri))
+	    return uriDos.get(uri);
+	// 开发模式下，如果在SecurityCentre中没有查到相关配置，就使用源码中的配置
+	if (accessRegister.getEaSecurityConfiguration().isDevelopmentMode())
+	    return getSourceUriDoUriDo(uri);
+	else
+	    return null;
+    }
+
+    /**
+     * 从源码获取URI的授权配置信息，此信息未与服务器同步
+     * 
+     * @param uri
+     * @return
+     */
+    public UriDo getSourceUriDoUriDo(String uri) {
+	if (sourceUriDos.containsKey(uri))
+	    return sourceUriDos.get(uri);
+	return null;
+    }
+
+    /**
      * 更新URI的授权信息。如果URI已经存在，则更新状态以外其它信息；如果不存在则新建
      * 
      * @param eas
+     * @param easAnonymous
      * @param uri
      * @param classFullName
      * @param methodName
      * @param methodSignature
      */
-    public void saveUriPermissions(EaSecured[] eases, String uri, String classFullName, String methodName, String methodSignature) {
-	UriDo lUriDo = null;
+    public void saveUriPermissions(EaSecured[] eases, EaSecuredAnonymous easAnonymous, String uri, String classFullName, String methodName, String methodSignature) {
+	UriDo sUriDo = null;
 	UriDo uriDo = null;
 	try {
-	    if (!localeUriDos.containsKey(uri)) { // 启动后第一次被访问
+	    if (!sourceUriDos.containsKey(uri)) { // 启动后第一次被访问
 		synchronized (this) {
-		    if (!localeUriDos.containsKey(uri)) {
-			lUriDo = UriDo.createLocaleUriDo(eases, uri, classFullName, methodName, methodSignature);
-			localeUriDos.put(uri, lUriDo);
-			lastModifyTime.put(uri, (long) -1);
+		    if (!sourceUriDos.containsKey(uri)) {
+			sUriDo = UriDo.createLocaleUriDo(eases, easAnonymous, uri, classFullName, methodName, methodSignature);
+			sourceUriDos.put(uri, sUriDo);
+			accessRegister.saveUriEas(sUriDo);
 		    }
 		}
-	    }
-	    lUriDo = localeUriDos.get(uri);
-
-	    uriDos = accessRegister.getAllUriDos();
-	    if (uriDos.containsKey(uri)) {
-		// 数据库中已经存在此配置，则从数据库更新到本地
-		if (System.currentTimeMillis() > lastModifyTime.get(uri)) { // 每分钟更新一次
-		    uriDo = uriDos.get(uri);
-		    synchronized (this) {
-			updateLocaleUriDoIdAndStatus(lUriDo, uriDo);
-			lastModifyTime.put(uri, System.currentTimeMillis() + 60000);
-		    }
-		}
-		// TODO 开发模式下强制更新数据库？？？新增一个配置吧
-	    } else { // 不存在时，则新建配置
-		accessRegister.saveUriEas(lUriDo);
-
-		// TODO
-		// 有个bug，对于全新的配置，数据库中没有，saveUriEas方法为异步的，那么在很长一段时间内在进行validation时会报NullPointerException
 	    }
 	} catch (Exception e) {
-	    log.error("更新URI的授权信息时出现异常：" + lUriDo + "==" + uriDo, e);
+	    log.error("更新URI的授权信息时出现异常：" + sUriDo + "==" + uriDo, e);
 	}
     }
 
     /**
-     * 获取Method上的EaSecured配置
+     * 获取EaSecured配置
      * 
      * @param method
      * @return
@@ -89,12 +99,12 @@ public class UriService {
 	EaSecured[] teases = null;
 	EaSecureds meases = method.getAnnotation(EaSecureds.class);
 	EaSecured meas = method.getAnnotation(EaSecured.class);
-	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	// 如果类和方法同时配置了@EaSecured或者@EaSecuredAnonymous，则使用方法的安全配置。
 	if (meases != null) {
 	    teases = meases.value();
 	} else if (meas != null) {
 	    teases = new EaSecured[] { meas };
-	} else {
+	} else if (!method.isAnnotationPresent(EaSecuredAnonymous.class)) {
 	    EaSecureds eases = method.getDeclaringClass().getAnnotation(EaSecureds.class);
 	    EaSecured eas = method.getDeclaringClass().getAnnotation(EaSecured.class);
 	    if (eases != null) {
@@ -113,7 +123,7 @@ public class UriService {
      * @return
      */
     public boolean isEaSecured(Method method) {
-	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	// 如果类和方法同时配置了@EaSecured或者@EaSecuredAnonymous，则使用方法的安全配置。
 	// Method上的控制器
 	if (method.isAnnotationPresent(EaSecured.class) || method.isAnnotationPresent(EaSecureds.class) || method.isAnnotationPresent(EaSecuredAnonymous.class)) {
 	    return true;
@@ -127,13 +137,13 @@ public class UriService {
     }
 
     /**
-     * 判断Method是否EaSecuredAnonymous注解方法
+     * 判断是否EaSecuredAnonymous注解方法
      * 
      * @param method
      * @return
      */
     public boolean isEaSecuredAnonymous(Method method) {
-	// 如果类和方法同时配置了@EaSecured，则使用方法的安全配置。
+	// 如果类和方法同时配置了@EaSecured或者@EaSecuredAnonymous，则使用方法的安全配置。
 	// Method上的控制器
 	if (method.isAnnotationPresent(EaSecuredAnonymous.class)) {
 	    return true;
@@ -151,44 +161,26 @@ public class UriService {
     /**
      * 校验访问权限
      */
-    public boolean validation(EaSecured[] eases, String uri, UserDetails userDt, String clientIp) {
-	boolean validation = true;
+    public boolean validation(EaSecured[] eases, EaSecuredAnonymous easAnonymous, String uri, UserDetails userDt, String clientIp) {
+	if (eases == null)
+	    eases = new EaSecured[] {};
 	// 多组为and关系，有一个false则false
 	for (int i = 0; i < eases.length; i++) {
 	    if (!validation(eases[i], i + 1, uri, userDt, clientIp)) {
-		validation = false;
-		break;
+		return false;
 	    }
 	}
-	return validation;
+	if (easAnonymous != null) {
+	    return true;
+	}
+	return true;
     }
 
     /**
      * 校验访问权限
      */
     public boolean validation(EaSecured eas, int group, String uri, UserDetails userDt, String clientIp) {
-	uriDos = accessRegister.getAllUriDos();
-
-	if ("allUser".equals(eas.value())) { // 所有登录用户可访问
-	    if (userDt == null)
-		return false;
-	    else
-		return true;
-	}
-
-	UriDo uriDo = localeUriDos.get(uri);
-	EasType type = uriDo.uri.easType;
-	if (type == EasType.DATABASE_ONLY) { // 数据库模式
-	    if (uriDos.containsKey(uri))
-		uriDo = uriDos.get(uri);
-	    else
-		throw new NullPointerException("数据库配置不存在，请检查SecurityCentre是否启动，且网络已经通畅");
-	}
-
-	if (uriDo == null) {
-	    log.error("---## 发现了一个不存在的UriDo，请联系管理员，URI为：{}", uri);
-	    return false;
-	}
+	UriDo uriDo = getUriDo(uri);
 	Map<String, Map<String, String>> allIdentities = new HashMap<>();
 	if (userDt != null)
 	    allIdentities = userDt.allIdentitiesWithMap();
@@ -199,28 +191,33 @@ public class UriService {
      * 校验访问权限（纯数据库模式）
      */
     public boolean validation(String uri, UserDetails userDt, String clientIp) {
-	uriDos = accessRegister.getAllUriDos();
+	UriDo uriDo = getUriDo(uri);
 	Map<String, Map<String, String>> allIdentities = new HashMap<>();
 	if (userDt != null)
 	    allIdentities = userDt.allIdentitiesWithMap();
-	UriDo uriDo = uriDos.get(uri);
-	if (uriDo == null) {
-	    log.error("---## 发现了一个不存在数据库的URI，请联系管理员，URI为：{}", uri);
-	    return false;
-	}
-	boolean validation = true;
 	// 多组为and关系，有一个false则false
 	for (int i = 0; i < uriDo.getMaxGroup(); i++) {
 	    if (!havePermission(uriDo, i + 1, allIdentities, uri, clientIp)) {
-		validation = false;
-		break;
+		return false;
 	    }
 	}
-	return validation;
+	return true;
     }
 
     // TODO 遍历权限，判断每种情况
     private boolean havePermission(UriDo uriDo, int group, Map<String, Map<String, String>> allIdentities, String uri, String clientIp) {
+	if (uriDo == null) {
+	    if (accessRegister.getEaSecurityConfiguration().isDevelopmentMode()) { // 开发模式下
+		log.error("权限校验失败。发现了一个不存在的Uri：{}", uri);
+	    } else { // 非开发模式下
+		throw new NullPointerException("发现了一个不存在的UriDo，请联系管理员，URI为：" + uri);
+	    }
+	}
+	// 非开发模式下：当服务刚刚启动，还没有与SecurityCentre进行配置同步或者同步失败时，不能执行
+	if (uriDo.isDirty() && uriDo.uri.easType != EasType.SOURCE_ONLY && !accessRegister.getEaSecurityConfiguration().isDevelopmentMode()) {
+	    throw new NullPointerException("授权配置没有更新，请检查SecurityCentre是否启动，且网络已经通畅");
+	}
+
 	if (uriDo.havePermissionByIp(clientIp, group)) {
 	    return true;
 	} else {
@@ -237,25 +234,5 @@ public class UriService {
 	    }
 	    return false;
 	}
-    }
-
-    /**
-     * 从数据库汇总更新本地状态和ID
-     */
-    // TODO 遍历所有属性
-    private void updateLocaleUriDoIdAndStatus(UriDo lUriDo, UriDo uriDo) {
-	lUriDo.uri.id = uriDo.uri.id;
-	lUriDo.uri.status = uriDo.uri.status;
-	if (lUriDo.uriOrg != null)
-	    lUriDo.uriOrg.forEach(item -> {
-		for (UriOrg uo : uriDo.uriOrg) {
-		    if (item.orgId == uo.orgId && item.group1 == uo.group1) {
-			item.id = uo.id;
-			item.uriId = uo.uriId;
-			item.status = uo.status;
-			break;
-		    }
-		}
-	    });
     }
 }

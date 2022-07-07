@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
  * 控制方法访问权限。
  * <p>
  * <ul>
- * <li>使用“@EaSecured("allUser")”为所有登录用户可访问。</li>
  * <li>如果类和方法同时配置了@EaSecured，则使用方法的安全配置。</li>
  * <li>同一个@EaSecured多条件时使用“or”关系；多个@EaSecured时使用“and”关系。</li>
  * </ul>
@@ -41,7 +40,7 @@ public @interface EaSecured {
      */
     String user() default "";
     /**
-     * 基于小角色的访问控制。格式：{'id' : ['1','2'], 'code' : ['user', 'admin']}。 支持的属性：id、code、name、fullName
+     * 基于小角色的访问控制。格式：{'id' : ['1','2'], 'code' : ['root#user', 'root#admin']}。 支持的属性：id、code、name、fullName
      */
     String role() default "";
     /**

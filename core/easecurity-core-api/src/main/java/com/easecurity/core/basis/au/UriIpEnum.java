@@ -83,8 +83,8 @@ public class UriIpEnum {
      * 状态<br>
      */
     public enum Status {
-        ENABLED("ENABLED", "启用"),
-        EXPIRED("EXPIRED", "过期");
+	ENABLED("ENABLED", "启用"),
+        DISABLED("DISABLED", "禁用");
 
         private String code;
         private String title;

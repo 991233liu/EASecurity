@@ -53,6 +53,9 @@ public class DataController {
     {
 	mapper.setSerializationInclusion(Include.NON_NULL);
 	mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+	mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+	mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+	mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
 	mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 	mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
