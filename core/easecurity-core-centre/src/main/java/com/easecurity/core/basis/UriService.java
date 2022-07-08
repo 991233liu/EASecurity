@@ -55,15 +55,15 @@ public class UriService {
 
     private String sql20 = "SELECT * FROM au_uri_ip where uri_id = ?";
     private String sql21 = "SELECT id FROM au_uri_ip where uri_id = ? AND from_to=?";
-    private String sql22 = "INSERT INTO au_uri_ip(group1, ips, uri_id, status, from_to) VALUES (?, ?, ?, ?, ?)";
+    private String sql22 = "INSERT INTO au_uri_ip(group1, ips, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?)";
 
     private String sql30 = "SELECT * FROM au_uri_role where uri_id = ?";
     private String sql31 = "SELECT id FROM au_uri_role where uri_id = ? AND from_to=?";
-    private String sql32 = "INSERT INTO au_uri_role(annotation, group1, role_id, uri_id, status, from_to) VALUES (?, ?, ?, ?, ?, ?)";
+    private String sql32 = "INSERT INTO au_uri_role(annotation, group1, role_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
 
     private String sql40 = "SELECT * FROM au_uri_role_group where uri_id = ?";
     private String sql41 = "SELECT id FROM au_uri_role_group where uri_id = ? AND from_to=?";
-    private String sql42 = "INSERT INTO au_uri_role_group(annotation, group1, role_group_id, uri_id, status, from_to) VALUES (?, ?, ?, ?, ?, ?)";
+    private String sql42 = "INSERT INTO au_uri_role_group(annotation, group1, role_group_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
 
     /**
      * 从core初始化URI信息。

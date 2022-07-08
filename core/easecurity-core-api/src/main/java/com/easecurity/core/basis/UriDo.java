@@ -5,6 +5,7 @@ package com.easecurity.core.basis;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,8 @@ public class UriDo implements Serializable {
     private String _auOrgNameStr;
     private String _auOrgFullCodeStr;
     private String _auOrgFullNameStr;
+    private Map<String, List<String>> _uriRoleGroup = null;
+    private Map<String, List<String>> _uriRole = null;
 
     /**
      * 从组织判断是否拥有此接口的权限。
@@ -94,93 +97,95 @@ public class UriDo implements Serializable {
 	    return false;
 
 	// 有配置项时，校验是否有满足配置项的要求
-	// TODO 不对，改了一半，以后再说
-	if (isDirty()) { // 与SecurityCentre进行配置同步后，配置信息全部转换为了关联关系，直接使用id即可
-	    for (String k : org.keySet()) {
-		String[] vs = org.get(k).split(",");
-		for (String v : vs) {
-		    switch (k) {
-		    case "id":
-			if (_auOrgIdStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "code":
-			if (_auOrgCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "name":
-			if (_auOrgNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "fullCode":
-			if (_auOrgFullCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "fullName":
-			if (_auOrgFullNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    default:
-			break;
+	for (String k : org.keySet()) {
+	    String[] vs = org.get(k).split(",");
+	    for (String v : vs) {
+		switch (k) {
+		case "id":
+		    if (_auOrgIdStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
 		    }
-		}
-	    }
-	} else { // 服务刚刚启动，还没有同步时，使用代码中的配置验证
-	    for (String k : org.keySet()) {
-		String[] vs = org.get(k).split(",");
-		for (String v : vs) {
-		    switch (k) {
-		    case "id":
-			if (_auOrgIdStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "code":
-			if (_auOrgCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "name":
-			if (_auOrgNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "fullCode":
-			if (_auOrgFullCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    case "fullName":
-			if (_auOrgFullNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			    return true;
-			}
-			break;
-		    default:
-			break;
+		    break;
+		case "code":
+		    if (_auOrgCodeStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
 		    }
+		    break;
+		case "name":
+		    if (_auOrgNameStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "fullCode":
+		    if (_auOrgFullCodeStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		case "fullName":
+		    if (_auOrgFullNameStr.indexOf("," + group + "." + v + ",") > -1) {
+			return true;
+		    }
+		    break;
+		default:
+		    break;
 		}
 	    }
 	}
 	return false;
     }
-//    public boolean havePermissionByOrgId(String orgId, int group) {
-//	if (uriOrg != null && !uriOrg.isEmpty()) {
-//	    if (_auOrgStr == null) {
-//		_auOrgStr = ",";
-//		for (UriOrg uo : uriOrg) {
-//		    if (uo.status == UriOrgEnum.Status.ENABLED)
-//			_auOrgStr += uo.getGroup1() + "." + uo.orgId + ",";
-//		}
-//	    }
-//	    return _auOrgStr.indexOf("," + group + "." + orgId + ",") > -1;
-//	} else
-//	    return false;
-//    }
+
+    /**
+     * 从小角色判断是否拥有此接口的权限。
+     *
+     * @return true 有权限；false 无权限。
+     */
+    public boolean havePermissionByRole(Map<String, String> role, int group) {
+	// 初始化配置，如果无此配置项，则直接返回无权限
+	if (_uriRole != null && !_uriRole.isEmpty()) {
+	    if (_uriRole == null) {
+		_uriRole = new HashMap<>();
+		for (UriRole rl : uriRole) {
+		    if (rl.status == UriRoleEnum.Status.ENABLED) {
+			String id = null;
+			if (rl.roleId != null)
+			    id = String.valueOf(rl.roleId);
+			permissions(_uriRole, id, rl.annotation, rl.getGroup1());
+		    }
+		}
+	    }
+	} else
+	    return false;
+
+	// 有配置项时，校验是否有满足配置项的要求
+	return havePermission(role, _uriRole, group);
+    }
+
+    /**
+     * 从大角色判断是否拥有此接口的权限。
+     *
+     * @return true 有权限；false 无权限。
+     */
+    // TODO bug group没用上
+    public boolean havePermissionByRoleGroup(Map<String, String> roleGroup, int group) {
+	// 初始化配置，如果无此配置项，则直接返回无权限
+	if (uriRoleGroup != null && !uriRoleGroup.isEmpty()) {
+	    if (_uriRoleGroup == null) {
+		_uriRoleGroup = new HashMap<>();
+		for (UriRoleGroup rg : uriRoleGroup) {
+		    if (rg.status == UriRoleGroupEnum.Status.ENABLED) {
+			String id = null;
+			if (rg.roleGroupId != null)
+			    id = String.valueOf(rg.roleGroupId);
+			permissions(_uriRoleGroup, id, rg.annotation, rg.getGroup1());
+		    }
+		}
+	    }
+	} else
+	    return false;
+
+	// 有配置项时，校验是否有满足配置项的要求
+	return havePermission(roleGroup, _uriRoleGroup, group);
+    }
 
     /**
      * 从IP判断是否拥有此接口的权限。
@@ -240,17 +245,33 @@ public class UriDo implements Serializable {
 	// 普通注解
 	for (int i = 0; i < eases.length; i++) {
 	    EaSecured eas = eases[i];
-	    uriDo.uriOrg = createLocaleUriOrg(uriDo, eas.org(), i + 1);
-	    uriDo.uriIp = createLocaleUriIp(uriDo, eas.IP(), i + 1);
-	    uriDo.uriRole = createLocaleUriRole(uriDo, eas.role(), i + 1);
-	    uriDo.uriRoleGroup = createLocaleUriRoleGroup(uriDo, eas.roleGroup(), i + 1);
+	    if (!eas.org().isEmpty()) {
+		if (uriDo.uriOrg == null)
+		    uriDo.uriOrg = new ArrayList<>();
+		uriDo.uriOrg.addAll(createLocaleUriOrg(uriDo, eas.org(), i + 1));
+	    }
+	    if (eas.IP() != null && eas.IP().length > 0) {
+		if (uriDo.uriIp != null)
+		    throw new RuntimeException("多组控制条件中，IP的控制条件应该放到某一组中");
+		uriDo.uriIp = createLocaleUriIp(uriDo, eas.IP(), i + 1);
+	    }
+	    if (!eas.role().isEmpty()) {
+		if (uriDo.uriRole == null)
+		    uriDo.uriRole = new ArrayList<>();
+		uriDo.uriRole.addAll(createLocaleUriRole(uriDo, eas.role(), i + 1));
+	    }
+	    if (!eas.roleGroup().isEmpty()) {
+		if (uriDo.uriRoleGroup == null)
+		    uriDo.uriRoleGroup = new ArrayList<>();
+		uriDo.uriRoleGroup.addAll(createLocaleUriRoleGroup(uriDo, eas.roleGroup(), i + 1));
+	    }
 	}
 	// 匿名注解
 	if (easAnonymous != null) {
 	    int aGroup = eases.length + 1;
 	    if (uriDo.uriRoleGroup == null)
 		uriDo.uriRoleGroup = new ArrayList<>();
-	    uriDo.uriRoleGroup.addAll(createLocaleUriRoleGroup(uriDo, "'code':['anonymous']}", aGroup));
+	    uriDo.uriRoleGroup.addAll(createLocaleUriRoleGroup(uriDo, "{'code':['anonymous']}", aGroup));
 	}
 	return uriDo;
     }
@@ -417,8 +438,6 @@ public class UriDo implements Serializable {
 	return uriRoleGroup;
     }
 
-    // TODO 逻辑变化了，需要重构
-
     private static EasType getEasType(EaSecured[] eases) {
 	boolean havaSR = false;
 	boolean havaDb = false;
@@ -438,5 +457,41 @@ public class UriDo implements Serializable {
 	} else {
 	    return EasType.DEFAULT;
 	}
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void permissions(Map<String, List<String>> pMap, String id, String annotation, int group) {
+	if (id != null) {
+	    if (!pMap.containsKey("id"))
+		pMap.put("id", new ArrayList<String>());
+	    pMap.get("id").add(group + "." + id);
+	}
+	if (annotation != null && !annotation.trim().isEmpty()) {
+	    Map<String, Object> tan = (Map<String, Object>) JsonUtils.jsonToObject(annotation);
+	    for (String k : tan.keySet()) {
+		if (!pMap.containsKey(k))
+		    pMap.put(k, new ArrayList<String>());
+		Object v = tan.get(k);
+		if (v instanceof String)
+		    pMap.get(k).add(group + "." + v);
+		if (v instanceof List)
+		    ((List) v).forEach((it) -> {
+			pMap.get(k).add(group + "." + v);
+		    });
+	    }
+	}
+    }
+
+    private boolean havePermission(Map<String, String> user, Map<String, List<String>> pMap, int group) {
+	for (String k : user.keySet()) {
+	    if (pMap.containsKey(k)) {
+		String[] vs = user.get(k).split(",");
+		for (String v : vs) {
+		    if (pMap.get(k).indexOf(group + "." + v) > -1)
+			return true;
+		}
+	    }
+	}
+	return false;
     }
 }

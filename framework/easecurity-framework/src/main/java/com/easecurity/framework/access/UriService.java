@@ -223,12 +223,26 @@ public class UriService {
 	} else {
 	    for (String k : allIdentities.keySet()) {
 		switch (k) {
-		case "user":
+		case "role":
+		    if (uriDo.havePermissionByRole(allIdentities.get(k), group)) {
+			return true;
+		    }
+		    break;
+		case "roleGroup":
+		    if (uriDo.havePermissionByRoleGroup(allIdentities.get(k), group)) {
+			return true;
+		    }
 		    break;
 		case "org":
 		    if (uriDo.havePermissionByOrg(allIdentities.get(k), group)) {
 			return true;
 		    }
+		    break;
+		case "posts":
+		    // TODO 待开发
+		    break;
+		case "user":
+		    // TODO 待开发
 		    break;
 		}
 	    }
