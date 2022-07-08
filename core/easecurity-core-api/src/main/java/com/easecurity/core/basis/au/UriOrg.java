@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class UriOrg implements Serializable {
 
     private static final long serialVersionUID = 2796966878732593998L;
-    
+
     public Integer id;
     /**
      * URI资源ID
@@ -23,24 +23,11 @@ public class UriOrg implements Serializable {
      */
     public Integer orgId;
     /**
-     * 组织code
+     * 注解配置信息。如果此配置是来源于FromTo.SOURCECODE，则此值不为空
      */
-    public String code;
+    public String annotation;
     /**
-     * 组织name
-     */
-    public String name;
-    /**
-     * 组织fullCode
-     */
-    public String fullCode;
-    /**
-     * 组织fullName
-     */
-    public String fullName;
-    /**
-     * 分组。同一组内多个条件，满足任一条件则此组为true；多组条件，任一组是false，则最终结果为false。
-     * 值的范围1~99
+     * 分组。同一组内多个条件，满足任一条件则此组为true；多组条件，任一组是false，则最终结果为false。 值的范围1~99
      */
     public Integer group1;
     /**
@@ -53,82 +40,58 @@ public class UriOrg implements Serializable {
     public Status status;
 
     public Integer getId() {
-        return id;
+	return id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+	this.id = id;
     }
 
     public Integer getUriId() {
-        return uriId;
+	return uriId;
     }
 
     public void setUriId(Integer uriId) {
-        this.uriId = uriId;
+	this.uriId = uriId;
     }
 
     public Integer getOrgId() {
-        return orgId;
+	return orgId;
     }
 
     public void setOrgId(Integer orgId) {
-        this.orgId = orgId;
+	this.orgId = orgId;
     }
 
-    public String getCode() {
-        return code;
+    public String getAnnotation() {
+	return annotation;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFullCode() {
-        return fullCode;
-    }
-
-    public void setFullCode(String fullCode) {
-        this.fullCode = fullCode;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setAnnotation(String annotation) {
+	this.annotation = annotation;
     }
 
     public Integer getGroup1() {
-        return group1;
+	return group1;
     }
 
     public void setGroup1(Integer group1) {
-        this.group1 = group1;
+	this.group1 = group1;
     }
 
     public FromTo getFromTo() {
-        return fromTo;
+	return fromTo;
     }
 
     public void setFromTo(FromTo fromTo) {
-        this.fromTo = fromTo;
+	this.fromTo = fromTo;
     }
 
     public Status getStatus() {
-        return status;
+	return status;
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+	this.status = status;
     }
 }

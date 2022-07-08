@@ -50,7 +50,7 @@ public class UriService {
 
     private String sql10 = "SELECT * FROM au_uri_org where uri_id = ?";
     private String sql11 = "SELECT id FROM au_uri_org where uri_id = ? AND from_to=?";
-    private String sql12 = "INSERT INTO au_uri_org (group1, code, uri_id, full_code, org_id, name, full_name, from_to, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private String sql12 = "INSERT INTO au_uri_org(annotation, group1, org_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
 //    String sql4 = "UPDATE au_uri_org set from_to=? where id=?";
 
     private String sql20 = "SELECT * FROM au_uri_ip where uri_id = ?";
@@ -170,7 +170,7 @@ public class UriService {
 	    }
 	} else { // 新建
 	    uriOrgs.forEach(item -> {
-		jdbcTemplate.update(sql12, item.group1, item.code, uriId, item.fullCode, item.orgId, item.name, item.fullName, item.fromTo.ordinal(), item.status.ordinal());
+		jdbcTemplate.update(sql12, item.annotation, item.group1, item.orgId, uriId, item.fromTo.ordinal(), item.status.ordinal());
 	    });
 	}
     }

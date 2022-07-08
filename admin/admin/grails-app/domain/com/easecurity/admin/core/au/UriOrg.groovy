@@ -16,13 +16,10 @@ class UriOrg extends com.easecurity.core.basis.au.UriOrg {
     static constraints = {
         uriId nullable: false, blank: false
         orgId nullable: true
-        name length: 100, nullable: true
-        code nullable: true
-        fullName length: 4000, nullable: true
-        fullCode length: 4000, nullable: true
+		annotation length: 4000, nullable: true
         group1 nullable: true, range: 1..99
         fromTo nullable: true
-        status length: 2, nullable: true
+        status nullable: true
     }
 
     static mapping = {

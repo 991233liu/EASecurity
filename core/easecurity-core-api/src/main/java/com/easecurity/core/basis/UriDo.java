@@ -56,11 +56,7 @@ public class UriDo implements Serializable {
      */
     private int maxGroup = -1;
 
-    private String _auOrgIdStr;
-    private String _auOrgCodeStr;
-    private String _auOrgNameStr;
-    private String _auOrgFullCodeStr;
-    private String _auOrgFullNameStr;
+    private Map<String, List<String>> _uriRoleOrg = null;
     private Map<String, List<String>> _uriRoleGroup = null;
     private Map<String, List<String>> _uriRole = null;
 
@@ -72,24 +68,11 @@ public class UriDo implements Serializable {
     public boolean havePermissionByOrg(Map<String, String> org, int group) {
 	// 初始化配置，如果无此配置项，则直接返回无权限
 	if (uriOrg != null && !uriOrg.isEmpty()) {
-	    if (_auOrgIdStr == null) {
-		_auOrgIdStr = ",";
-		_auOrgCodeStr = ",";
-		_auOrgNameStr = ",";
-		_auOrgFullCodeStr = ",";
-		_auOrgFullNameStr = ",";
+	    if (_uriRoleOrg == null) {
+		_uriRoleOrg = new HashMap<>();
 		for (UriOrg uo : uriOrg) {
 		    if (uo.status == UriOrgEnum.Status.ENABLED) {
-			if (uo.orgId != null)
-			    _auOrgIdStr += uo.getGroup1() + "." + uo.orgId + ",";
-			if (uo.code != null && !uo.code.trim().isEmpty())
-			    _auOrgCodeStr += uo.getGroup1() + "." + uo.code + ",";
-			if (uo.name != null && !uo.name.trim().isEmpty())
-			    _auOrgNameStr += uo.getGroup1() + "." + uo.name + ",";
-			if (uo.fullCode != null && !uo.fullCode.trim().isEmpty())
-			    _auOrgFullCodeStr += uo.getGroup1() + "." + uo.fullCode + ",";
-			if (uo.fullName != null && !uo.fullName.trim().isEmpty())
-			    _auOrgFullNameStr += uo.getGroup1() + "." + uo.fullName + ",";
+			permissions(_uriRoleOrg, uo.orgId, uo.annotation, uo.getGroup1());
 		    }
 		}
 	    }
@@ -97,41 +80,7 @@ public class UriDo implements Serializable {
 	    return false;
 
 	// 有配置项时，校验是否有满足配置项的要求
-	for (String k : org.keySet()) {
-	    String[] vs = org.get(k).split(",");
-	    for (String v : vs) {
-		switch (k) {
-		case "id":
-		    if (_auOrgIdStr.indexOf("," + group + "." + v + ",") > -1) {
-			return true;
-		    }
-		    break;
-		case "code":
-		    if (_auOrgCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			return true;
-		    }
-		    break;
-		case "name":
-		    if (_auOrgNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			return true;
-		    }
-		    break;
-		case "fullCode":
-		    if (_auOrgFullCodeStr.indexOf("," + group + "." + v + ",") > -1) {
-			return true;
-		    }
-		    break;
-		case "fullName":
-		    if (_auOrgFullNameStr.indexOf("," + group + "." + v + ",") > -1) {
-			return true;
-		    }
-		    break;
-		default:
-		    break;
-		}
-	    }
-	}
-	return false;
+	return havePermission(org, _uriRoleOrg, group);
     }
 
     /**
@@ -146,10 +95,7 @@ public class UriDo implements Serializable {
 		_uriRole = new HashMap<>();
 		for (UriRole rl : uriRole) {
 		    if (rl.status == UriRoleEnum.Status.ENABLED) {
-			String id = null;
-			if (rl.roleId != null)
-			    id = String.valueOf(rl.roleId);
-			permissions(_uriRole, id, rl.annotation, rl.getGroup1());
+			permissions(_uriRole, rl.roleId, rl.annotation, rl.getGroup1());
 		    }
 		}
 	    }
@@ -165,7 +111,6 @@ public class UriDo implements Serializable {
      *
      * @return true 有权限；false 无权限。
      */
-    // TODO bug group没用上
     public boolean havePermissionByRoleGroup(Map<String, String> roleGroup, int group) {
 	// 初始化配置，如果无此配置项，则直接返回无权限
 	if (uriRoleGroup != null && !uriRoleGroup.isEmpty()) {
@@ -173,10 +118,7 @@ public class UriDo implements Serializable {
 		_uriRoleGroup = new HashMap<>();
 		for (UriRoleGroup rg : uriRoleGroup) {
 		    if (rg.status == UriRoleGroupEnum.Status.ENABLED) {
-			String id = null;
-			if (rg.roleGroupId != null)
-			    id = String.valueOf(rg.roleGroupId);
-			permissions(_uriRoleGroup, id, rg.annotation, rg.getGroup1());
+			permissions(_uriRoleGroup, rg.roleGroupId, rg.annotation, rg.getGroup1());
 		    }
 		}
 	    }
@@ -327,85 +269,12 @@ public class UriDo implements Serializable {
     /**
      * 新建本地组织配置
      */
-    // TODO 遍历属性
-    @SuppressWarnings("unchecked")
     private static List<UriOrg> createLocaleUriOrg(UriDo uriDo, String org, int group) {
 	if (!org.isEmpty()) {
 	    List<UriOrg> uriOrg = new ArrayList<>();
-	    Map<String, Object> allOrgs = (Map<String, Object>) JsonUtils.jsonToObject(org);
-	    for (String k : allOrgs.keySet()) {
-		Object v = allOrgs.get(k);
-		switch (k) {
-		case "id":
-		    if (v instanceof String) {
-			UriOrg uo = newLocaleUriOrg(uriDo, group);
-			uo.orgId = Integer.parseInt((String) v);
-			uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = newLocaleUriOrg(uriDo, group);
-			    uo.orgId = Integer.parseInt((String) item);
-			    uriOrg.add(uo);
-			}
-		    }
-		    break;
-		case "code":
-		    if (v instanceof String) {
-			UriOrg uo = newLocaleUriOrg(uriDo, group);
-			uo.code = (String) v;
-			uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = newLocaleUriOrg(uriDo, group);
-			    uo.code = (String) item;
-			    uriOrg.add(uo);
-			}
-		    }
-		    break;
-		case "name":
-		    if (v instanceof String) {
-			UriOrg uo = newLocaleUriOrg(uriDo, group);
-			uo.name = (String) v;
-			uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = newLocaleUriOrg(uriDo, group);
-			    uo.name = (String) item;
-			    uriOrg.add(uo);
-			}
-		    }
-		    break;
-		case "fullCode":
-		    if (v instanceof String) {
-			UriOrg uo = newLocaleUriOrg(uriDo, group);
-			uo.fullCode = (String) v;
-			uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = newLocaleUriOrg(uriDo, group);
-			    uo.fullCode = (String) item;
-			    uriOrg.add(uo);
-			}
-		    }
-		    break;
-		case "fullName":
-		    if (v instanceof String) {
-			UriOrg uo = newLocaleUriOrg(uriDo, group);
-			uo.fullName = (String) v;
-			uriOrg.add(uo);
-		    } else {
-			for (String item : (List<String>) v) {
-			    UriOrg uo = newLocaleUriOrg(uriDo, group);
-			    uo.fullName = (String) item;
-			    uriOrg.add(uo);
-			}
-		    }
-		    break;
-
-		default:
-		    break;
-		}
-	    }
+	    UriOrg uo = newLocaleUriOrg(uriDo, group);
+	    uo.annotation = org;
+	    uriOrg.add(uo);
 	    return uriOrg;
 	}
 	return null;
@@ -460,7 +329,7 @@ public class UriDo implements Serializable {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void permissions(Map<String, List<String>> pMap, String id, String annotation, int group) {
+    private void permissions(Map<String, List<String>> pMap, Integer id, String annotation, int group) {
 	if (id != null) {
 	    if (!pMap.containsKey("id"))
 		pMap.put("id", new ArrayList<String>());
@@ -476,7 +345,7 @@ public class UriDo implements Serializable {
 		    pMap.get(k).add(group + "." + v);
 		if (v instanceof List)
 		    ((List) v).forEach((it) -> {
-			pMap.get(k).add(group + "." + v);
+			pMap.get(k).add(group + "." + it);
 		    });
 	    }
 	}
