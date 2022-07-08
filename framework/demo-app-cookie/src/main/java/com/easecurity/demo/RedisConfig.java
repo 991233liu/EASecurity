@@ -128,7 +128,6 @@ public class RedisConfig extends CachingConfigurerSupport {
 	    break;
 
 	default:
-	    // TODO 自定义的
 	    break;
 	}
 	return serializer;

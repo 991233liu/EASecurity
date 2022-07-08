@@ -40,7 +40,6 @@ public class MenuService {
     private static volatile Map<String, MenuDo> allMenuDoMap = null;
     private static volatile List<MenuDo> allMenuDoList = null;
     private static volatile List<MenuDo> rootMenuDoList = null; // 根list，支持多棵树
-    // TODO 内存强制失效?
     private static volatile long validTime = -1;
 
     String sql = "SELECT * FROM re_menu order by level, sort_number";

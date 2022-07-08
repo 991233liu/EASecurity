@@ -48,6 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private LoginFailureHandler loginFailureHandler;
     
+    @Value("${server.servlet.session.cookie.name:JSESSIONID}")
+    private String cookieName;
     @Value("${easecurity.jwt.publicKey}")
     private RSAPublicKey key;
     @Value("${easecurity.jwt.privateKey}")
@@ -127,6 +129,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	    field = object.getClass().getDeclaredField("maximumSessions");
 	    field.setAccessible(true);
 	    custom.setMaximumSessions((int) field.get(object));
+	    custom.setCookieName(cookieName);
 	    return custom;
 	} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 	    e.printStackTrace();

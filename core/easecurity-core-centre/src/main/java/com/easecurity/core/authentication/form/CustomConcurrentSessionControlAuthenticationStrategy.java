@@ -28,6 +28,7 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
 
     private SessionRepository<?> sessionRepository;
     private LogoutService logoutService;
+    private String cookieName;
 
     public CustomConcurrentSessionControlAuthenticationStrategy(SessionRegistry sessionRegistry) {
 	super(sessionRegistry);
@@ -55,8 +56,7 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
 		Session session1 = sessionRepository.findById(session.getSessionId());
 		if (session1 != null) {
 		    String jti = session1.getAttribute("JWT.jti");
-		    // TODO name应该读取配置文件
-		    Cookie cookie = new Cookie("EASECURITY_S", new String(Base64.getEncoder().encode(session1.getId().getBytes())));
+		    Cookie cookie = new Cookie(cookieName, new String(Base64.getEncoder().encode(session1.getId().getBytes())));
 		    logoutService.asynLogout(new Cookie[] { cookie }, null, jti);
 		}
 	    }
@@ -67,5 +67,9 @@ public class CustomConcurrentSessionControlAuthenticationStrategy extends Concur
     public void setMessageSource(MessageSourceAccessor messageSource) {
 	Assert.notNull(messageSource, "messageSource cannot be null");
 	this.messages = messageSource;
+    }
+
+    public void setCookieName(String cookieName) {
+        this.cookieName = cookieName;
     }
 }

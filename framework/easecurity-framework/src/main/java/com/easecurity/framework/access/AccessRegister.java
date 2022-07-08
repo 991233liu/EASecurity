@@ -69,8 +69,9 @@ public class AccessRegister {
      */
     private synchronized void getAllEas() {
 	if (eaSecurityConfiguration != null) { // 类没有初始化完成时，不能拉！
-	    // TODO 返回false后，做点什么呢？
-	    checkAndUpdate();
+	    boolean result = checkAndUpdate();
+	    if(!result)
+		log.error("从SecurityCentre检查并更新控制列表失败。");
 	    // 不能为null，防止后续的方法报错
 	    allEas = allEas == null ? new HashMap<>() : allEas;
 	}

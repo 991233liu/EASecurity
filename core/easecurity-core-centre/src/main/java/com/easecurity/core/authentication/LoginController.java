@@ -62,7 +62,6 @@ class LoginController {
     @GetMapping("/gifCaptcha")
     @ResponseBody
     public String gifCaptcha() {
-	// TODO 如果是跨域登录，且没有使用EASecurity的登录页面，则session无效。此时提交登录包含key和输入的吗
 	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha();
 	return JsonUtils.objectToJson(map);
     }

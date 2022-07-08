@@ -29,7 +29,6 @@ import com.easecurity.util.JsonUtils;
  * 登录相关服务
  *
  */
-// TODO sql摘录
 @Service
 public class LoginService {
 
@@ -44,9 +43,14 @@ public class LoginService {
     @Value("${easecurity.refreshToken.validTime:604800}")
     private Integer refreshTokenValidTime;
 
+    private String sql = "SELECT * FROM s_user_token WHERE access_token = ?";
+    private String sql2 = "SELECT * FROM s_user_token WHERE access_token = ? AND refresh_token = ?";
+    private String sql3 = "SELECT id FROM s_user_token WHERE account = ?";
     private String sql5 = "UPDATE b_user set pd_Error_Times=? where id=?";
     private String sql6 = "UPDATE b_user set pd_Error_Times=?, pd_Status=? where id=?";
     private String sql7 = "UPDATE b_user set pd_Error_Times=?, last_Login_Ttime=? where id=?";
+    private String sql8 = "UPDATE s_user_token SET account = ?, access_token = ?, access_token_expires = ?, refresh_token = ?, refresh_token_expires = ?, user_details = ?, jwt = ?, date_created = ? WHERE id = ?";
+    private String sql9 = "INSERT INTO s_user_token(account, access_token, access_token_expires, refresh_token, refresh_token_expires, user_details, jwt, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     /*
      * 密码校验失败
@@ -190,7 +194,6 @@ public class LoginService {
      * @return
      */
     public UserToken getValidUserToken(String accessToken) {
-	String sql = "SELECT * FROM s_user_token WHERE access_token = ?";
 	List<UserToken> userTokens = jdbcTemplate.query(sql, new RowMapper<UserToken>() {
 	    @Override
 	    public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -225,9 +228,8 @@ public class LoginService {
      * @return
      */
     public UserToken getValidUserTokenByAccessTokenAndRefreshToken(String accessToken, String refreshToken) {
-	String sql = "SELECT * FROM s_user_token WHERE access_token = ? AND refresh_token = ?";
-//	List<UserToken> userTokens = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserToken.class), accessToken, refreshToken);
-	List<UserToken> userTokens = jdbcTemplate.query(sql, new RowMapper<UserToken>() {
+//	List<UserToken> userTokens = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(UserToken.class), accessToken, refreshToken);
+	List<UserToken> userTokens = jdbcTemplate.query(sql2, new RowMapper<UserToken>() {
 	    @Override
 	    public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
 		UserToken userToken = new UserToken();
@@ -284,19 +286,16 @@ public class LoginService {
      */
     public void saveUserToken(UserToken userToken) {
 	if (userToken.id == null) {
-	    String sql = "SELECT id FROM s_user_token WHERE account = ?";
-	    List<UserToken> userTokens = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserToken.class), userToken.account);
+	    List<UserToken> userTokens = jdbcTemplate.query(sql3, new BeanPropertyRowMapper<>(UserToken.class), userToken.account);
 	    if (userTokens.size() > 0) {
 		userToken.id = userTokens.get(0).id;
 	    }
 	}
 	if (userToken.id != null) {
-	    String sql = "UPDATE s_user_token SET account = ?, access_token = ?, access_token_expires = ?, refresh_token = ?, refresh_token_expires = ?, user_details = ?, jwt = ?, date_created = ? WHERE id = ?";
-	    jdbcTemplate.update(sql, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
+	    jdbcTemplate.update(sql8, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
 		    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated, userToken.id);
 	} else {
-	    String sql = "INSERT INTO s_user_token(account, access_token, access_token_expires, refresh_token, refresh_token_expires, user_details, jwt, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	    jdbcTemplate.update(sql, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
+	    jdbcTemplate.update(sql9, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
 		    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated);
 	}
     }

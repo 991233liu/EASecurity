@@ -105,7 +105,6 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 	if (user == null)
 	    throw new UsernameNotFoundException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 
-	// TODO 大角色？？？
 	// or if you are using role groups:
 	// def roles = user.authorities.collect { it.authorities }.flatten().unique()
 
