@@ -62,4 +62,15 @@ public class DemoController {
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);
 	return userDetails;
     }
+    
+    /**
+     * 其它条件
+     */
+    @RequestMapping("/queryData5")
+    @EaSecured(user = "{account:'TestUser123'}", posts = "{name:'部门经理'}")
+    public UserDetails queryData5(HttpServletRequest request) {
+	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+	System.out.println("-----## 当前登录人userDetails：" + userDetails);
+	return userDetails;
+    }
 }

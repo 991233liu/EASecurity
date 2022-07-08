@@ -204,7 +204,6 @@ public class UriService {
 	return true;
     }
 
-    // TODO 遍历权限，判断每种情况
     private boolean havePermission(UriDo uriDo, int group, Map<String, Map<String, String>> allIdentities, String uri, String clientIp) {
 	if (uriDo == null) {
 	    if (accessRegister.getEaSecurityConfiguration().isDevelopmentMode()) { // 开发模式下
@@ -239,10 +238,14 @@ public class UriService {
 		    }
 		    break;
 		case "posts":
-		    // TODO 待开发
+		    if (uriDo.havePermissionByPosts(allIdentities.get(k), group)) {
+			return true;
+		    }
 		    break;
 		case "user":
-		    // TODO 待开发
+		    if (uriDo.havePermissionByUser(allIdentities.get(k), group)) {
+			return true;
+		    }
 		    break;
 		}
 	    }

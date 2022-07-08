@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * UriOrg类下所有枚举类
+ * UriRole类下所有枚举类
  */
 public class UriRoleEnum {
     /**

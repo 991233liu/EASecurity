@@ -14,14 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.easecurity.core.access.annotation.EasType;
-import com.easecurity.core.basis.au.UriIp;
-import com.easecurity.core.basis.au.UriIpEnum;
-import com.easecurity.core.basis.au.UriOrg;
-import com.easecurity.core.basis.au.UriOrgEnum;
-import com.easecurity.core.basis.au.UriRole;
-import com.easecurity.core.basis.au.UriRoleEnum;
-import com.easecurity.core.basis.au.UriRoleGroup;
-import com.easecurity.core.basis.au.UriRoleGroupEnum;
+import com.easecurity.core.basis.au.*;
 import com.easecurity.core.basis.re.Uri;
 import com.easecurity.core.redis.RedisUtil;
 
@@ -64,7 +57,15 @@ public class UriService {
     private String sql40 = "SELECT * FROM au_uri_role_group where uri_id = ?";
     private String sql41 = "SELECT id FROM au_uri_role_group where uri_id = ? AND from_to=?";
     private String sql42 = "INSERT INTO au_uri_role_group(annotation, group1, role_group_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
-
+    
+    private String sql50 = "SELECT * FROM au_uri_user where uri_id = ?";
+    private String sql51 = "SELECT id FROM au_uri_user where uri_id = ? AND from_to=?";
+    private String sql52 = "INSERT INTO au_uri_user(annotation, group1, user_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
+    
+    private String sql60 = "SELECT * FROM au_uri_posts where uri_id = ?";
+    private String sql61 = "SELECT id FROM au_uri_posts where uri_id = ? AND from_to=?";
+    private String sql62 = "INSERT INTO au_uri_posts(annotation, group1, posts_id, uri_id, from_to, status) VALUES (?, ?, ?, ?, ?, ?)";
+    
     /**
      * 从core初始化URI信息。
      */
@@ -77,13 +78,14 @@ public class UriService {
 	    Map<String, UriDo> audoAllMap = new HashMap<String, UriDo>();
 	    List<Uri> all = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Uri.class));
 	    for (Uri uri : all) {
-		// TODO 属性没加载全
 		UriDo udo = new UriDo();
 		udo.uri = uri;
-		udo.uriOrg = jdbcTemplate.query(sql10, new BeanPropertyRowMapper<>(UriOrg.class), uri.id);
 		List<UriIp> uriIp = jdbcTemplate.query(sql20, new BeanPropertyRowMapper<>(UriIp.class), uri.id);
 		if (!uriIp.isEmpty())
 		    udo.uriIp = uriIp.get(0);
+		udo.uriUser = jdbcTemplate.query(sql50, new BeanPropertyRowMapper<>(UriUser.class), uri.id);
+		udo.uriOrg = jdbcTemplate.query(sql10, new BeanPropertyRowMapper<>(UriOrg.class), uri.id);
+		udo.uriPosts = jdbcTemplate.query(sql60, new BeanPropertyRowMapper<>(UriPosts.class), uri.id);
 		udo.uriRole = jdbcTemplate.query(sql30, new BeanPropertyRowMapper<>(UriRole.class), uri.id);
 		udo.uriRoleGroup = jdbcTemplate.query(sql40, new BeanPropertyRowMapper<>(UriRoleGroup.class), uri.id);
 		audoAllMap.put(uri.uri, udo);
@@ -113,29 +115,35 @@ public class UriService {
     /**
      * 保存UriDo配置。
      */
-    // TODO 优化代码结构
     // TODO 开发模式下强制更新所有信息及策略？？？force状态可以从客户端header中传过来
     public void saveUriDo(UriDo lUriDo) {
 	// 保存URI信息
 	int uriId = saveUri(lUriDo.uri);
 
 	// 保存授权信息
-	// TODO bug，按模式更新的判断应该写在这里，而不是下级
 	if (lUriDo.uri.easType == EasType.SOURCE_ONLY) { // 源码模式下，数据库中授权信息更新+新增。
-	    saveUriOrg(lUriDo.uriOrg, uriId, true);
 	    saveUriIp(lUriDo.uriIp, uriId, true);
+	    saveUriUser(lUriDo.uriUser, uriId, true);
+	    saveUriOrg(lUriDo.uriOrg, uriId, true);
+	    saveUriPosts(lUriDo.uriPosts, uriId, true);
 	    saveUriRole(lUriDo.uriRole, uriId, true);
 	    saveUriRoleGroup(lUriDo.uriRoleGroup, uriId, true);
 	} else if (lUriDo.uri.easType == EasType.DATABASE_ONLY) { // 数据库模式下，数据库中授权信息不更新，只新增。
-	    saveUriOrg(lUriDo.uriOrg, uriId, false);
 	    saveUriIp(lUriDo.uriIp, uriId, false);
+	    saveUriUser(lUriDo.uriUser, uriId, false);
+	    saveUriOrg(lUriDo.uriOrg, uriId, false);
+	    saveUriPosts(lUriDo.uriPosts, uriId, false);
 	    saveUriRole(lUriDo.uriRole, uriId, false);
 	    saveUriRoleGroup(lUriDo.uriRoleGroup, uriId, false);
 	} else { // 默认配置下，来自源码中的配置更新+新增；其它来源的配置不更新。
-	    if (lUriDo.uriOrg != null)
-		saveUriOrg(lUriDo.uriOrg.stream().filter(s -> s.fromTo == UriOrgEnum.FromTo.SOURCECODE).collect(Collectors.toList()), uriId, true);
 	    if (lUriDo.uriIp != null && lUriDo.uriIp.fromTo == UriIpEnum.FromTo.SOURCECODE)
 		saveUriIp(lUriDo.uriIp, uriId, true);
+	    if (lUriDo.uriUser != null)
+		saveUriUser(lUriDo.uriUser.stream().filter(s -> s.fromTo == UriUserEnum.FromTo.SOURCECODE).collect(Collectors.toList()), uriId, true);
+	    if (lUriDo.uriOrg != null)
+		saveUriOrg(lUriDo.uriOrg.stream().filter(s -> s.fromTo == UriOrgEnum.FromTo.SOURCECODE).collect(Collectors.toList()), uriId, true);
+	    if (lUriDo.uriPosts != null)
+		saveUriPosts(lUriDo.uriPosts.stream().filter(s -> s.fromTo == UriPostsEnum.FromTo.SOURCECODE).collect(Collectors.toList()), uriId, true);
 	    if (lUriDo.uriRole != null)
 		saveUriRole(lUriDo.uriRole.stream().filter(s -> s.fromTo == UriRoleEnum.FromTo.SOURCECODE).collect(Collectors.toList()), uriId, true);
 	    if (lUriDo.uriRoleGroup != null)
@@ -157,6 +165,24 @@ public class UriService {
 	return ids.get(0);
     }
 
+    private void saveUriUser(List<UriUser> uriUsers, Integer uriId, boolean isUpate) {
+	if (uriUsers == null || uriUsers.isEmpty())
+	    return;
+	List<String> ids = jdbcTemplate.queryForList(sql51, String.class, uriId, uriUsers.get(0).fromTo);
+	if (ids.size() > 0) { // 更新。更新时不更新状态
+	    if (isUpate) {
+		// TODO 待开发
+		// TODO bug delete all???
+//		jdbcTemplate.update(sql4, item.fromTo.ordinal(), ids2.get(0));
+		log.error("更新功能还未开发，主要是因为缺少id，不知道如何处理才好！");
+	    }
+	} else { // 新建
+	    uriUsers.forEach(item -> {
+		jdbcTemplate.update(sql52, item.annotation, item.group1, item.userId, uriId, item.fromTo.ordinal(), item.status.ordinal());
+	    });
+	}
+    }
+    
     private void saveUriOrg(List<UriOrg> uriOrgs, Integer uriId, boolean isUpate) {
 	if (uriOrgs == null || uriOrgs.isEmpty())
 	    return;
@@ -171,6 +197,24 @@ public class UriService {
 	} else { // 新建
 	    uriOrgs.forEach(item -> {
 		jdbcTemplate.update(sql12, item.annotation, item.group1, item.orgId, uriId, item.fromTo.ordinal(), item.status.ordinal());
+	    });
+	}
+    }
+    
+    private void saveUriPosts(List<UriPosts> uriPosts, Integer uriId, boolean isUpate) {
+	if (uriPosts == null || uriPosts.isEmpty())
+	    return;
+	List<String> ids = jdbcTemplate.queryForList(sql61, String.class, uriId, uriPosts.get(0).fromTo);
+	if (ids.size() > 0) { // 更新。更新时不更新状态
+	    if (isUpate) {
+		// TODO 待开发
+		// TODO bug delete all???
+//		jdbcTemplate.update(sql4, item.fromTo.ordinal(), ids2.get(0));
+		log.error("更新功能还未开发，主要是因为缺少id，不知道如何处理才好！");
+	    }
+	} else { // 新建
+	    uriPosts.forEach(item -> {
+		jdbcTemplate.update(sql62, item.annotation, item.group1, item.postsId, uriId, item.fromTo.ordinal(), item.status.ordinal());
 	    });
 	}
     }

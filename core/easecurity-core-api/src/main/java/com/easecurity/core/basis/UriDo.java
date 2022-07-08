@@ -12,15 +12,8 @@ import java.util.Map;
 import com.easecurity.core.access.annotation.EaSecured;
 import com.easecurity.core.access.annotation.EaSecuredAnonymous;
 import com.easecurity.core.access.annotation.EasType;
-import com.easecurity.core.basis.au.UriIp;
-import com.easecurity.core.basis.au.UriOrg;
+import com.easecurity.core.basis.au.*;
 import com.easecurity.core.basis.re.UriEnum.*;
-import com.easecurity.core.basis.au.UriIpEnum;
-import com.easecurity.core.basis.au.UriOrgEnum;
-import com.easecurity.core.basis.au.UriRoleEnum;
-import com.easecurity.core.basis.au.UriRoleGroup;
-import com.easecurity.core.basis.au.UriRoleGroupEnum;
-import com.easecurity.core.basis.au.UriRole;
 import com.easecurity.core.basis.re.Uri;
 import com.easecurity.util.JsonUtils;
 
@@ -40,9 +33,17 @@ public class UriDo implements Serializable {
      */
     public UriIp uriIp;
     /**
+     * 有接口（服务）权限的账号
+     */
+    public List<UriUser> uriUser;
+    /**
      * 有接口（服务）权限的组织
      */
     public List<UriOrg> uriOrg;
+    /**
+     * 有接口（服务）权限的职务
+     */
+    public List<UriPosts> uriPosts;
     /**
      * 有接口（服务）权限的小角色
      */
@@ -56,9 +57,34 @@ public class UriDo implements Serializable {
      */
     private int maxGroup = -1;
 
+    private Map<String, List<String>> _uriRoleUser = null;
     private Map<String, List<String>> _uriRoleOrg = null;
+    private Map<String, List<String>> _uriRolePosts = null;
     private Map<String, List<String>> _uriRoleGroup = null;
     private Map<String, List<String>> _uriRole = null;
+
+    /**
+     * 从账号判断是否拥有此接口的权限。
+     *
+     * @return true 有权限；false 无权限。
+     */
+    public boolean havePermissionByUser(Map<String, String> user, int group) {
+	// 初始化配置，如果无此配置项，则直接返回无权限
+	if (uriUser != null && !uriUser.isEmpty()) {
+	    if (_uriRoleUser == null) {
+		_uriRoleUser = new HashMap<>();
+		for (UriUser uu : uriUser) {
+		    if (uu.status == UriUserEnum.Status.ENABLED) {
+			permissions(_uriRoleUser, uu.userId, uu.annotation, uu.getGroup1());
+		    }
+		}
+	    }
+	} else
+	    return false;
+
+	// 有配置项时，校验是否有满足配置项的要求
+	return havePermission(user, _uriRoleUser, group);
+    }
 
     /**
      * 从组织判断是否拥有此接口的权限。
@@ -81,6 +107,29 @@ public class UriDo implements Serializable {
 
 	// 有配置项时，校验是否有满足配置项的要求
 	return havePermission(org, _uriRoleOrg, group);
+    }
+
+    /**
+     * 从职务判断是否拥有此接口的权限。
+     *
+     * @return true 有权限；false 无权限。
+     */
+    public boolean havePermissionByPosts(Map<String, String> posts, int group) {
+	// 初始化配置，如果无此配置项，则直接返回无权限
+	if (uriPosts != null && !uriPosts.isEmpty()) {
+	    if (_uriRolePosts == null) {
+		_uriRolePosts = new HashMap<>();
+		for (UriPosts up : uriPosts) {
+		    if (up.status == UriPostsEnum.Status.ENABLED) {
+			permissions(_uriRolePosts, up.postsId, up.annotation, up.getGroup1());
+		    }
+		}
+	    }
+	} else
+	    return false;
+
+	// 有配置项时，校验是否有满足配置项的要求
+	return havePermission(posts, _uriRolePosts, group);
     }
 
     /**
@@ -144,13 +193,36 @@ public class UriDo implements Serializable {
     /**
      * 获取接口（服务）的权限规则组的数量
      */
-    // TODO 遍历所有属性
     public int getMaxGroup() {
 	if (maxGroup == -1) { // 初始化
 	    if (uriIp != null)
 		maxGroup = uriIp.getGroup1();
+	    if (uriUser != null) {
+		uriUser.forEach((it) -> {
+		    if (it.group1 != null && it.group1 > maxGroup)
+			maxGroup = it.group1;
+		});
+	    }
 	    if (uriOrg != null) {
 		uriOrg.forEach((it) -> {
+		    if (it.group1 != null && it.group1 > maxGroup)
+			maxGroup = it.group1;
+		});
+	    }
+	    if (uriPosts != null) {
+		uriPosts.forEach((it) -> {
+		    if (it.group1 != null && it.group1 > maxGroup)
+			maxGroup = it.group1;
+		});
+	    }
+	    if (uriRole != null) {
+		uriRole.forEach((it) -> {
+		    if (it.group1 != null && it.group1 > maxGroup)
+			maxGroup = it.group1;
+		});
+	    }
+	    if (uriRoleGroup != null) {
+		uriRoleGroup.forEach((it) -> {
 		    if (it.group1 != null && it.group1 > maxGroup)
 			maxGroup = it.group1;
 		});
@@ -169,7 +241,6 @@ public class UriDo implements Serializable {
     /**
      * 新建本地配置
      */
-    // TODO 遍历属性
     public static UriDo createLocaleUriDo(EaSecured[] eases, EaSecuredAnonymous easAnonymous, String uri, String classFullName, String methodName, String methodSignature) {
 	if (eases == null)
 	    eases = new EaSecured[] {};
@@ -187,15 +258,25 @@ public class UriDo implements Serializable {
 	// 普通注解
 	for (int i = 0; i < eases.length; i++) {
 	    EaSecured eas = eases[i];
+	    if (eas.IP() != null && eas.IP().length > 0) {
+		if (uriDo.uriIp != null)
+		    throw new RuntimeException("多组控制条件中，IP的控制条件应该放到某一组中");
+		uriDo.uriIp = createLocaleUriIp(uriDo, eas.IP(), i + 1);
+	    }
+	    if (!eas.user().isEmpty()) {
+		if (uriDo.uriUser == null)
+		    uriDo.uriUser = new ArrayList<>();
+		uriDo.uriUser.addAll(createLocaleUriUser(uriDo, eas.user(), i + 1));
+	    }
 	    if (!eas.org().isEmpty()) {
 		if (uriDo.uriOrg == null)
 		    uriDo.uriOrg = new ArrayList<>();
 		uriDo.uriOrg.addAll(createLocaleUriOrg(uriDo, eas.org(), i + 1));
 	    }
-	    if (eas.IP() != null && eas.IP().length > 0) {
-		if (uriDo.uriIp != null)
-		    throw new RuntimeException("多组控制条件中，IP的控制条件应该放到某一组中");
-		uriDo.uriIp = createLocaleUriIp(uriDo, eas.IP(), i + 1);
+	    if (!eas.posts().isEmpty()) {
+		if (uriDo.uriPosts == null)
+		    uriDo.uriPosts = new ArrayList<>();
+		uriDo.uriPosts.addAll(createLocaleUriPosts(uriDo, eas.posts(), i + 1));
 	    }
 	    if (!eas.role().isEmpty()) {
 		if (uriDo.uriRole == null)
@@ -267,6 +348,20 @@ public class UriDo implements Serializable {
     }
 
     /**
+     * 新建本地账号配置
+     */
+    private static List<UriUser> createLocaleUriUser(UriDo uriDo, String user, int group) {
+	if (!user.isEmpty()) {
+	    List<UriUser> uriUser = new ArrayList<>();
+	    UriUser uu = newLocaleUriUser(uriDo, group);
+	    uu.annotation = user;
+	    uriUser.add(uu);
+	    return uriUser;
+	}
+	return null;
+    }
+    
+    /**
      * 新建本地组织配置
      */
     private static List<UriOrg> createLocaleUriOrg(UriDo uriDo, String org, int group) {
@@ -280,6 +375,29 @@ public class UriDo implements Serializable {
 	return null;
     }
 
+    /**
+     * 新建本地职务配置
+     */
+    private static List<UriPosts> createLocaleUriPosts(UriDo uriDo, String posts, int group) {
+	if (!posts.isEmpty()) {
+	    List<UriPosts> uriPosts = new ArrayList<>();
+	    UriPosts up = newLocaleUriPosts(uriDo, group);
+	    up.annotation = posts;
+	    uriPosts.add(up);
+	    return uriPosts;
+	}
+	return null;
+    }
+
+    private static UriUser newLocaleUriUser(UriDo uriDo, int group) {
+	UriUser uu = new UriUser();
+	uu.uriId = uriDo.uri.id;
+	uu.group1 = group;
+	uu.status = UriUserEnum.Status.ENABLED;
+	uu.fromTo = UriUserEnum.FromTo.SOURCECODE;
+	return uu;
+    }
+    
     private static UriOrg newLocaleUriOrg(UriDo uriDo, int group) {
 	UriOrg uo = new UriOrg();
 	uo.uriId = uriDo.uri.id;
@@ -287,6 +405,15 @@ public class UriDo implements Serializable {
 	uo.status = UriOrgEnum.Status.ENABLED;
 	uo.fromTo = UriOrgEnum.FromTo.SOURCECODE;
 	return uo;
+    }
+    
+    private static UriPosts newLocaleUriPosts(UriDo uriDo, int group) {
+	UriPosts up = new UriPosts();
+	up.uriId = uriDo.uri.id;
+	up.group1 = group;
+	up.status = UriPostsEnum.Status.ENABLED;
+	up.fromTo = UriPostsEnum.FromTo.SOURCECODE;
+	return up;
     }
 
     private static UriRole newLocaleUriRole(UriDo uriDo, int group) {

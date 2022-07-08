@@ -20,10 +20,10 @@ public class DemoController {
     private LoginService loginService;
 
     /**
-     * 两个条件（IP和org）为“or”的关系
+     * 三个条件（IP、org和roleGroup）为“or”的关系
      */
     @RequestMapping("/queryData1")
-    @EaSecured(IP = { "128.0.0.1" }, org = "{id:['1','4']}")
+    @EaSecured(IP = { "128.0.0.1" }, org = "{id:['1','4']}", role = "{'code':'root#user'}")
     public UserDetails queryData1(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);
@@ -31,17 +31,20 @@ public class DemoController {
     }
 
     /**
-     * 两个条件（IP和org）为“and”的关系
+     * 三个条件（条件1、条件2）为“and”的关系，条件2内部两个为“or”关系
      */
     @RequestMapping("/queryData2")
-    @EaSecured(IP = { "128.0.0.3" })
-    @EaSecured(org = "{id:['1','4']}")
+    @EaSecured(IP = { "128.0.0.1", "128.0.0.3" })
+    @EaSecured(org = "{id:['1','4']}", roleGroup = "{'code':'user'}")
     public UserDetails queryData2(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);
 	return userDetails;
     }
 
+    /**
+     * 使用类上的控制
+     */
     @RequestMapping("/queryData3")
     public UserDetails queryData3(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
@@ -49,9 +52,23 @@ public class DemoController {
 	return userDetails;
     }
 
+    /**
+     * 匿名访问
+     */
     @RequestMapping("/queryData4")
     @EaSecuredAnonymous
     public UserDetails queryData4(HttpServletRequest request) {
+	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+	System.out.println("-----## 当前登录人userDetails：" + userDetails);
+	return userDetails;
+    }
+    
+    /**
+     * 其它条件
+     */
+    @RequestMapping("/queryData5")
+    @EaSecured(user = "{account:'TestUser123'}", posts = "{name:'部门经理'}")
+    public UserDetails queryData5(HttpServletRequest request) {
 	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
 	System.out.println("-----## 当前登录人userDetails：" + userDetails);
 	return userDetails;
