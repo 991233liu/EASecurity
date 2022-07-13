@@ -21,7 +21,7 @@ spring:
       username: easuser
       password: easuser
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
+      url: jdbc:mysql://128.0.0.1:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
     
 # 缓存配置
    cache:

@@ -56,21 +56,21 @@ public class LoginService {
      * 密码校验失败
      */
     public void loginFail(SecurityCentreUserDetails user) {
-	int pdErrorTimes = 0;
-	if (user.pdErrorTimes != null)
-	    pdErrorTimes = user.pdErrorTimes;
-	pdErrorTimes++;
-	if (pdErrorTimes >= 5)
-	    jdbcTemplate.update(sql6, pdErrorTimes, UserEnum.PdStatus.MAXTIMES.ordinal(), user.id);
-	else
-	    jdbcTemplate.update(sql5, pdErrorTimes, user.id);
+        int pdErrorTimes = 0;
+        if (user.pdErrorTimes != null)
+            pdErrorTimes = user.pdErrorTimes;
+        pdErrorTimes++;
+        if (pdErrorTimes >= 5)
+            jdbcTemplate.update(sql6, pdErrorTimes, UserEnum.PdStatus.MAXTIMES.ordinal(), user.id);
+        else
+            jdbcTemplate.update(sql5, pdErrorTimes, user.id);
     }
 
     /*
      * 成功登录
      */
     public void loginSuccess(SecurityCentreUserDetails user) {
-	jdbcTemplate.update(sql7, 0, new Date(), user.id);
+        jdbcTemplate.update(sql7, 0, new Date(), user.id);
     }
 
     /**
@@ -81,9 +81,9 @@ public class LoginService {
      * @return
      */
     public JwtClaimsSet createJwt(final UserDetails user) {
-	Instant now = Instant.now();
-	String jti = UUID.randomUUID().toString().replaceAll("-", "");
-	return createJwt(user, jti, now);
+        Instant now = Instant.now();
+        String jti = UUID.randomUUID().toString().replaceAll("-", "");
+        return createJwt(user, jti, now);
     }
 
     /**
@@ -94,15 +94,10 @@ public class LoginService {
      * @return
      */
     private JwtClaimsSet createJwt(final UserDetails user, String jti, Instant now) {
-	String scope = JSON.toJSONString(user);
-	JwtClaimsSet claims = JwtClaimsSet.builder()
-		.id(jti)
-		.issuer("SecurityCentre")
-		.issuedAt(now)
-		.expiresAt(now.plusSeconds(JWTValidTime))
-		.subject(user.account)
-		.claim("userDetails", scope).build();
-	return claims;
+        String scope = JSON.toJSONString(user);
+        JwtClaimsSet claims = JwtClaimsSet.builder().id(jti).issuer("SecurityCentre").issuedAt(now).expiresAt(now.plusSeconds(JWTValidTime)).subject(user.account)
+                .claim("userDetails", scope).build();
+        return claims;
     }
 
     /**
@@ -112,7 +107,7 @@ public class LoginService {
      * @return
      */
     public String getJwtTokenValue(final JwtClaimsSet jwt) {
-	return encoder.encode(JwtEncoderParameters.from(jwt)).getTokenValue();
+        return encoder.encode(JwtEncoderParameters.from(jwt)).getTokenValue();
     }
 
     /**
@@ -122,7 +117,7 @@ public class LoginService {
      * @return
      */
     public Token creatToken(final UserDetails user) {
-	return creatToken(user, null, null);
+        return creatToken(user, null, null);
     }
 
     /**
@@ -134,13 +129,13 @@ public class LoginService {
      * @return
      */
     public Token creatToken(final UserDetails user, String from, String to) {
-	Token token = newToken(user, from, to);
-	JwtClaimsSet claims = createJwt(user, token.access_token, token.expires);
-	String jwt = getJwtTokenValue(claims);
-	// usertoken存库
-	UserToken newUserToken = newUserToken(user, token, jwt);
-	saveUserToken(newUserToken);
-	return token;
+        Token token = newToken(user, from, to);
+        JwtClaimsSet claims = createJwt(user, token.access_token, token.expires);
+        String jwt = getJwtTokenValue(claims);
+        // usertoken存库
+        UserToken newUserToken = newUserToken(user, token, jwt);
+        saveUserToken(newUserToken);
+        return token;
     }
 
     /**
@@ -152,15 +147,15 @@ public class LoginService {
      * @return
      */
     private Token newToken(final UserDetails user, String from, String to) {
-	Instant now = Instant.now();
-	Token token = new Token();
-	// TODO 增加系统标识,可以是全局（没有标识），也可以是某个系统独有
-	token.access_token = UUID.randomUUID().toString().replaceAll("-", "");
-	token.expires = now.plusSeconds(JWTValidTime);
-	token.expires_in = JWTValidTime;
-	// TODO 增加系统标识,可以是全局（没有标识），也可以是某个系统独有
-	token.refresh_token = UUID.randomUUID().toString().replaceAll("-", "");
-	return token;
+        Instant now = Instant.now();
+        Token token = new Token();
+        // TODO 增加系统标识,可以是全局（没有标识），也可以是某个系统独有
+        token.access_token = UUID.randomUUID().toString().replaceAll("-", "");
+        token.expires = now.plusSeconds(JWTValidTime);
+        token.expires_in = JWTValidTime;
+        // TODO 增加系统标识,可以是全局（没有标识），也可以是某个系统独有
+        token.refresh_token = UUID.randomUUID().toString().replaceAll("-", "");
+        return token;
     }
 
     /**
@@ -171,20 +166,20 @@ public class LoginService {
      * @return
      */
     public Token refreshToken(String accessToken, String refreshToken) {
-	UserToken userToken = getValidUserTokenByAccessTokenAndRefreshToken(accessToken, refreshToken);
-	if (userToken != null) {
-	    UserDetails user = JsonUtils.jsonToObject(userToken.userDetails, UserDetails.class);
-	    Token token = newToken(user, null, null);
-	    JwtClaimsSet claims = createJwt(user, token.access_token, token.expires);
-	    String jwt = getJwtTokenValue(claims);
-	    // usertoken存库
-	    UserToken newUserToken = newUserToken(user, token, jwt);
-	    newUserToken.id = userToken.id;
-	    saveUserToken(newUserToken);
-	    CacheUtil.delAccessTokenCache(accessToken);
-	    return token;
-	}
-	return null;
+        UserToken userToken = getValidUserTokenByAccessTokenAndRefreshToken(accessToken, refreshToken);
+        if (userToken != null) {
+            UserDetails user = JsonUtils.jsonToObject(userToken.userDetails, UserDetails.class);
+            Token token = newToken(user, null, null);
+            JwtClaimsSet claims = createJwt(user, token.access_token, token.expires);
+            String jwt = getJwtTokenValue(claims);
+            // usertoken存库
+            UserToken newUserToken = newUserToken(user, token, jwt);
+            newUserToken.id = userToken.id;
+            saveUserToken(newUserToken);
+            CacheUtil.delAccessTokenCache(accessToken);
+            return token;
+        }
+        return null;
     }
 
     /**
@@ -194,30 +189,30 @@ public class LoginService {
      * @return
      */
     public UserToken getValidUserToken(String accessToken) {
-	List<UserToken> userTokens = jdbcTemplate.query(sql, new RowMapper<UserToken>() {
-	    @Override
-	    public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
-		UserToken userToken = new UserToken();
-		userToken.id = rs.getInt("id");
-		userToken.account = rs.getString("account");
-		userToken.accessToken = rs.getString("access_token");
-		userToken.accessTokenExpires = rs.getTimestamp("access_token_expires").toInstant();
-		userToken.refreshToken = rs.getString("refresh_token");
-		userToken.refreshTokenExpires = rs.getTimestamp("refresh_token_expires").toInstant();
-		userToken.userDetails = rs.getString("user_details");
-		userToken.jwt = rs.getString("jwt");
-		userToken.dateCreated = rs.getTimestamp("date_created");
-		return userToken;
-	    }
-	}, accessToken);
-	if (userTokens.size() > 0) {
-	    UserToken userToken = userTokens.get(0);
-	    // 判断rt是否过期
-	    if (userToken.accessTokenExpires.isAfter(Instant.now())) {
-		return userToken;
-	    }
-	}
-	return null;
+        List<UserToken> userTokens = jdbcTemplate.query(sql, new RowMapper<UserToken>() {
+            @Override
+            public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
+                UserToken userToken = new UserToken();
+                userToken.id = rs.getInt("id");
+                userToken.account = rs.getString("account");
+                userToken.accessToken = rs.getString("access_token");
+                userToken.accessTokenExpires = rs.getTimestamp("access_token_expires").toInstant();
+                userToken.refreshToken = rs.getString("refresh_token");
+                userToken.refreshTokenExpires = rs.getTimestamp("refresh_token_expires").toInstant();
+                userToken.userDetails = rs.getString("user_details");
+                userToken.jwt = rs.getString("jwt");
+                userToken.dateCreated = rs.getTimestamp("date_created");
+                return userToken;
+            }
+        }, accessToken);
+        if (userTokens.size() > 0) {
+            UserToken userToken = userTokens.get(0);
+            // 判断rt是否过期
+            if (userToken.accessTokenExpires.isAfter(Instant.now())) {
+                return userToken;
+            }
+        }
+        return null;
     }
 
     /**
@@ -229,30 +224,30 @@ public class LoginService {
      */
     public UserToken getValidUserTokenByAccessTokenAndRefreshToken(String accessToken, String refreshToken) {
 //	List<UserToken> userTokens = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(UserToken.class), accessToken, refreshToken);
-	List<UserToken> userTokens = jdbcTemplate.query(sql2, new RowMapper<UserToken>() {
-	    @Override
-	    public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
-		UserToken userToken = new UserToken();
-		userToken.id = rs.getInt("id");
-		userToken.account = rs.getString("account");
-		userToken.accessToken = rs.getString("access_token");
-		userToken.accessTokenExpires = rs.getTimestamp("access_token_expires").toInstant();
-		userToken.refreshToken = rs.getString("refresh_token");
-		userToken.refreshTokenExpires = rs.getTimestamp("refresh_token_expires").toInstant();
-		userToken.userDetails = rs.getString("user_details");
-		userToken.jwt = rs.getString("jwt");
-		userToken.dateCreated = rs.getTimestamp("date_created");
-		return userToken;
-	    }
-	}, accessToken, refreshToken);
-	if (userTokens.size() > 0) {
-	    UserToken userToken = userTokens.get(0);
-	    // 判断rt是否过期
-	    if (userToken.refreshTokenExpires.isAfter(Instant.now())) {
-		return userToken;
-	    }
-	}
-	return null;
+        List<UserToken> userTokens = jdbcTemplate.query(sql2, new RowMapper<UserToken>() {
+            @Override
+            public UserToken mapRow(ResultSet rs, int rowNum) throws SQLException {
+                UserToken userToken = new UserToken();
+                userToken.id = rs.getInt("id");
+                userToken.account = rs.getString("account");
+                userToken.accessToken = rs.getString("access_token");
+                userToken.accessTokenExpires = rs.getTimestamp("access_token_expires").toInstant();
+                userToken.refreshToken = rs.getString("refresh_token");
+                userToken.refreshTokenExpires = rs.getTimestamp("refresh_token_expires").toInstant();
+                userToken.userDetails = rs.getString("user_details");
+                userToken.jwt = rs.getString("jwt");
+                userToken.dateCreated = rs.getTimestamp("date_created");
+                return userToken;
+            }
+        }, accessToken, refreshToken);
+        if (userTokens.size() > 0) {
+            UserToken userToken = userTokens.get(0);
+            // 判断rt是否过期
+            if (userToken.refreshTokenExpires.isAfter(Instant.now())) {
+                return userToken;
+            }
+        }
+        return null;
     }
 
     /**
@@ -263,20 +258,20 @@ public class LoginService {
      * @return
      */
     private UserToken newUserToken(final UserDetails user, final Token token, final String jwt) {
-	// 判断token是否过期
-	if (token.expires.isAfter(Instant.now())) {
-	    UserToken userToken = new UserToken();
-	    userToken.accessToken = token.access_token;
-	    userToken.accessTokenExpires = token.expires;
-	    userToken.account = user.account;
-	    userToken.refreshToken = token.refresh_token;
-	    userToken.refreshTokenExpires = token.expires.plusSeconds(refreshTokenValidTime - JWTValidTime);
-	    userToken.userDetails = JsonUtils.objectToJson(user);
-	    userToken.jwt = jwt;
-	    userToken.dateCreated = new Date();
-	    return userToken;
-	}
-	return null;
+        // 判断token是否过期
+        if (token.expires.isAfter(Instant.now())) {
+            UserToken userToken = new UserToken();
+            userToken.accessToken = token.access_token;
+            userToken.accessTokenExpires = token.expires;
+            userToken.account = user.account;
+            userToken.refreshToken = token.refresh_token;
+            userToken.refreshTokenExpires = token.expires.plusSeconds(refreshTokenValidTime - JWTValidTime);
+            userToken.userDetails = JsonUtils.objectToJson(user);
+            userToken.jwt = jwt;
+            userToken.dateCreated = new Date();
+            return userToken;
+        }
+        return null;
     }
 
     /**
@@ -285,25 +280,25 @@ public class LoginService {
      * @param userJwt
      */
     public void saveUserToken(UserToken userToken) {
-	if (userToken.id == null) {
-	    List<UserToken> userTokens = jdbcTemplate.query(sql3, new BeanPropertyRowMapper<>(UserToken.class), userToken.account);
-	    if (userTokens.size() > 0) {
-		userToken.id = userTokens.get(0).id;
-	    }
-	}
-	if (userToken.id != null) {
-	    jdbcTemplate.update(sql8, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
-		    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated, userToken.id);
-	} else {
-	    jdbcTemplate.update(sql9, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
-		    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated);
-	}
+        if (userToken.id == null) {
+            List<UserToken> userTokens = jdbcTemplate.query(sql3, new BeanPropertyRowMapper<>(UserToken.class), userToken.account);
+            if (userTokens.size() > 0) {
+                userToken.id = userTokens.get(0).id;
+            }
+        }
+        if (userToken.id != null) {
+            jdbcTemplate.update(sql8, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
+                    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated, userToken.id);
+        } else {
+            jdbcTemplate.update(sql9, userToken.account, userToken.accessToken, Date.from(userToken.accessTokenExpires), userToken.refreshToken,
+                    Date.from(userToken.refreshTokenExpires), userToken.userDetails, userToken.jwt, userToken.dateCreated);
+        }
     }
-    
+
     /**
      * 获取AccessToken的有效时长
      */
     public int getAccessTokenValidTime() {
-	return JWTValidTime; 
+        return JWTValidTime;
     }
 }

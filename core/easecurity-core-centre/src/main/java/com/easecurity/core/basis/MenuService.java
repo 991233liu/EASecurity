@@ -51,41 +51,41 @@ public class MenuService {
      */
     @SuppressWarnings("unchecked")
     public synchronized List<MenuDo> loadAll() {
-	// 有效期内直接返回内存缓存的数据
-	if (System.currentTimeMillis() < validTime)
-	    return allMenuDoList;
+        // 有效期内直接返回内存缓存的数据
+        if (System.currentTimeMillis() < validTime)
+            return allMenuDoList;
 
-	// 如果Redis中有缓存，则使用Redis中；如果没有，则加载数据库并缓存到Redis
-	if (redisUtil.hasKey("menu:rootList")) {
-	    allMenuDoMap = (Map<String, MenuDo>) redisUtil.get("menu:all");
-	    allMenuDoList = allMenuDoMap.values().stream().collect(Collectors.toList());
-	    rootMenuDoList = (List<MenuDo>) redisUtil.get("menu:rootList");
-	} else {
-	    Map<String, MenuDo> amdoAllMap = new HashMap<String, MenuDo>();
-	    List<MenuDo> mdoAll = new ArrayList<>();
-	    List<MenuDo> rootMdo = new ArrayList<>();
-	    List<Menu> all = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Menu.class));
-	    for (Menu menu : all) {
-		// TODO 属性没加载全
-		MenuDo mdo = new MenuDo();
-		mdo.menu = menu;
-		mdo.menuOrg = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
-		mdo.childMenuIds = jdbcTemplate.queryForList(sql3, String.class, menu.id);
-		mdoAll.add(mdo);
-		amdoAllMap.put("menu:" + menu.id, mdo);
-		if (menu.level == Level.ROOT || menu.parentId == null)
-		    rootMdo.add(mdo);
-		redisUtil.set("menu:" + menu.id, mdo, MENU_TIMEOUT);
-	    }
-	    redisUtil.set("menu:rootList", rootMdo, MENU_TIMEOUT);
-	    redisUtil.set("menu:all", amdoAllMap, MENU_TIMEOUT);
-	    allMenuDoMap = amdoAllMap;
-	    allMenuDoList = mdoAll;
-	    rootMenuDoList = rootMdo;
-	}
-	validTime = System.currentTimeMillis() + (5 * 60 * 1000); // 内存中5分钟内有效
-	log.info("-------## 加载的MenuDo有：{}", allMenuDoList);
-	return allMenuDoList;
+        // 如果Redis中有缓存，则使用Redis中；如果没有，则加载数据库并缓存到Redis
+        if (redisUtil.hasKey("menu:rootList")) {
+            allMenuDoMap = (Map<String, MenuDo>) redisUtil.get("menu:all");
+            allMenuDoList = allMenuDoMap.values().stream().collect(Collectors.toList());
+            rootMenuDoList = (List<MenuDo>) redisUtil.get("menu:rootList");
+        } else {
+            Map<String, MenuDo> amdoAllMap = new HashMap<String, MenuDo>();
+            List<MenuDo> mdoAll = new ArrayList<>();
+            List<MenuDo> rootMdo = new ArrayList<>();
+            List<Menu> all = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Menu.class));
+            for (Menu menu : all) {
+                // TODO 属性没加载全
+                MenuDo mdo = new MenuDo();
+                mdo.menu = menu;
+                mdo.menuOrg = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(MenuOrg.class), menu.id);
+                mdo.childMenuIds = jdbcTemplate.queryForList(sql3, String.class, menu.id);
+                mdoAll.add(mdo);
+                amdoAllMap.put("menu:" + menu.id, mdo);
+                if (menu.level == Level.ROOT || menu.parentId == null)
+                    rootMdo.add(mdo);
+                redisUtil.set("menu:" + menu.id, mdo, MENU_TIMEOUT);
+            }
+            redisUtil.set("menu:rootList", rootMdo, MENU_TIMEOUT);
+            redisUtil.set("menu:all", amdoAllMap, MENU_TIMEOUT);
+            allMenuDoMap = amdoAllMap;
+            allMenuDoList = mdoAll;
+            rootMenuDoList = rootMdo;
+        }
+        validTime = System.currentTimeMillis() + (5 * 60 * 1000); // 内存中5分钟内有效
+        log.info("-------## 加载的MenuDo有：{}", allMenuDoList);
+        return allMenuDoList;
     }
 
     /**
@@ -96,7 +96,7 @@ public class MenuService {
      * @return
      */
     public List<MenuVo> getMenuByUser(UserDo user, String rootMenuCode) {
-	return getMenuByUserIdentities(user.allIdentities(), rootMenuCode);
+        return getMenuByUserIdentities(user.allIdentities(), rootMenuCode);
     }
 
     /**
@@ -107,7 +107,7 @@ public class MenuService {
      * @return
      */
     public List<MenuVo> getMenuByUser(UserDetails user, String rootMenuCode) {
-	return getMenuByUserIdentities(user.identities, rootMenuCode);
+        return getMenuByUserIdentities(user.identities, rootMenuCode);
     }
 
     /**
@@ -119,118 +119,120 @@ public class MenuService {
      */
     @SuppressWarnings("unchecked")
     public List<MenuVo> getMenuByUserIdentities(String identities, String rootMenuCode) {
-	List<MenuVo> allMenuDo = new ArrayList<MenuVo>();
-	Map<String, Map<String, String>> allIdentities = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
-	if (rootMenuCode == null || "".equals(rootMenuCode)) {
-	    // 遍历所有根菜单，并递归每个有权限的子菜单
-	    rootMenuDoList.forEach(item -> {
-		_getMenuDoByIdentities(allIdentities, item, allMenuDo);
-	    });
-	} else {
-	    MenuDo root = null;
-	    for (MenuDo menuDo : rootMenuDoList) {
-		if (rootMenuCode.equals(menuDo.menu.code)) {
-		    root = menuDo;
-		    break;
-		}
-	    }
-	    if (root == null)
-		return null;
-	    _getMenuDoByIdentities(allIdentities, root, allMenuDo);
-	}
-	return allMenuDo;
+        List<MenuVo> allMenuDo = new ArrayList<MenuVo>();
+        Map<String, Map<String, String>> allIdentities = (Map<String, Map<String, String>>) JsonUtils
+                .jsonToObject(identities);
+        if (rootMenuCode == null || "".equals(rootMenuCode)) {
+            // 遍历所有根菜单，并递归每个有权限的子菜单
+            rootMenuDoList.forEach(item -> {
+                _getMenuDoByIdentities(allIdentities, item, allMenuDo);
+            });
+        } else {
+            MenuDo root = null;
+            for (MenuDo menuDo : rootMenuDoList) {
+                if (rootMenuCode.equals(menuDo.menu.code)) {
+                    root = menuDo;
+                    break;
+                }
+            }
+            if (root == null)
+                return null;
+            _getMenuDoByIdentities(allIdentities, root, allMenuDo);
+        }
+        return allMenuDo;
     }
 
     // TODO 有个bug，禁用隐藏和无权限隐藏的关系？？？？
-    private void _getMenuDoByIdentities(Map<String, Map<String, String>> allIdentities, MenuDo menuDo, List<MenuVo> all) {
-	// 判断菜单状态
-	MenuVo menuVo = null;
-	switch (menuDo.menu.displayStatus) {
-	case DISPLAY: // 始终显示
-	    menuVo = new MenuVo(menuDo);
-	    all.add(menuVo);
-	    menuVo.hasPermission = _havePermission(allIdentities, menuDo);
-	    if (menuDo.menu.status == Status.ENABLED) {
-		List<MenuDo> allChild = getChildMenuDo(menuDo);
-		List<MenuVo> child = new ArrayList<>();
-		// 递归，遍历所有子节点
-		allChild.forEach(item -> {
-		    _getMenuDoByIdentities(allIdentities, item, child);
-		});
-		if (!child.isEmpty()) {
-		    menuVo.childMenu = child;
-		    menuVo.childMenuIds = new ArrayList<>();
-		    for (MenuVo menuVo2 : child) {
-			menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
-		    }
-		}
-	    }
-	    break;
-	case HIDDEN: // 始终隐藏
-	    return;
-	case DISABLEDHIDDEN: // 禁用隐藏
-	    if (menuDo.menu.status == Status.DISABLED) {
-		return;
-	    }
-	case NOPERMISSIONSHIDDEN: // 无权限隐藏
-	default:
-	    // 启用状态下，且有权限的菜单，可以显示
-	    if (menuDo.menu.status == Status.ENABLED && _havePermission(allIdentities, menuDo)) {
-		menuVo = new MenuVo(menuDo);
-		all.add(menuVo);
-		List<MenuDo> allChild = getChildMenuDo(menuDo);
-		List<MenuVo> child = new ArrayList<>();
-		// 递归，遍历所有子节点
-		allChild.forEach(item -> {
-		    _getMenuDoByIdentities(allIdentities, item, child);
-		});
-		if (!child.isEmpty()) {
-		    menuVo.childMenu = child;
-		    menuVo.childMenuIds = new ArrayList<>();
-		    for (MenuVo menuVo2 : child) {
-			menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
-		    }
-		}
-	    }
-	    break;
-	}
+    private void _getMenuDoByIdentities(Map<String, Map<String, String>> allIdentities, MenuDo menuDo,
+            List<MenuVo> all) {
+        // 判断菜单状态
+        MenuVo menuVo = null;
+        switch (menuDo.menu.displayStatus) {
+            case DISPLAY: // 始终显示
+                menuVo = new MenuVo(menuDo);
+                all.add(menuVo);
+                menuVo.hasPermission = _havePermission(allIdentities, menuDo);
+                if (menuDo.menu.status == Status.ENABLED) {
+                    List<MenuDo> allChild = getChildMenuDo(menuDo);
+                    List<MenuVo> child = new ArrayList<>();
+                    // 递归，遍历所有子节点
+                    allChild.forEach(item -> {
+                        _getMenuDoByIdentities(allIdentities, item, child);
+                    });
+                    if (!child.isEmpty()) {
+                        menuVo.childMenu = child;
+                        menuVo.childMenuIds = new ArrayList<>();
+                        for (MenuVo menuVo2 : child) {
+                            menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
+                        }
+                    }
+                }
+                break;
+            case HIDDEN: // 始终隐藏
+                return;
+            case DISABLEDHIDDEN: // 禁用隐藏
+                if (menuDo.menu.status == Status.DISABLED) {
+                    return;
+                }
+            case NOPERMISSIONSHIDDEN: // 无权限隐藏
+            default:
+                // 启用状态下，且有权限的菜单，可以显示
+                if (menuDo.menu.status == Status.ENABLED && _havePermission(allIdentities, menuDo)) {
+                    menuVo = new MenuVo(menuDo);
+                    all.add(menuVo);
+                    List<MenuDo> allChild = getChildMenuDo(menuDo);
+                    List<MenuVo> child = new ArrayList<>();
+                    // 递归，遍历所有子节点
+                    allChild.forEach(item -> {
+                        _getMenuDoByIdentities(allIdentities, item, child);
+                    });
+                    if (!child.isEmpty()) {
+                        menuVo.childMenu = child;
+                        menuVo.childMenuIds = new ArrayList<>();
+                        for (MenuVo menuVo2 : child) {
+                            menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
+                        }
+                    }
+                }
+                break;
+        }
     }
 
     private boolean _havePermission(Map<String, Map<String, String>> allIdentities, MenuDo menuDo) {
-	if (menuDo.menu.accessType == AccessType.ANONYMOUS) {
-	    return true;
-	} else if (menuDo.menu.accessType == AccessType.LOGIN && allIdentities != null) {
-	    return true;
-	} else {
-	    for (String k : allIdentities.keySet()) {
-		if (_havePermission(k, allIdentities.get(k).get("id"), menuDo)) {
-		    return true;
-		}
-	    }
-	}
-	return false;
+        if (menuDo.menu.accessType == AccessType.ANONYMOUS) {
+            return true;
+        } else if (menuDo.menu.accessType == AccessType.LOGIN && allIdentities != null) {
+            return true;
+        } else {
+            for (String k : allIdentities.keySet()) {
+                if (_havePermission(k, allIdentities.get(k).get("id"), menuDo)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean _havePermission(String identitiesType, String Identities, MenuDo menuDo) {
-	// TODO 遍历权限，判定是否有菜单权限
-	switch (identitiesType) {
-	case "role":
-	    break;
-	case "roleGroup":
-	    break;
-	case "org":
-	    for (String id : Identities.split(",")) {
-		if (menuDo.havePermissionByOrgId(id)) {
-		    return true;
-		}
-	    }
-	    break;
-	case "posts":
-	    break;
-	case "user":
-	    break;
-	}
-	return false;
+        // TODO 遍历权限，判定是否有菜单权限
+        switch (identitiesType) {
+            case "role":
+                break;
+            case "roleGroup":
+                break;
+            case "org":
+                for (String id : Identities.split(",")) {
+                    if (menuDo.havePermissionByOrgId(id)) {
+                        return true;
+                    }
+                }
+                break;
+            case "posts":
+                break;
+            case "user":
+                break;
+        }
+        return false;
     }
 
     /**
@@ -240,10 +242,10 @@ public class MenuService {
      * @return 子菜单列表
      */
     public List<MenuDo> getChildMenuDo(MenuDo menuDo) {
-	List<MenuDo> chiildMenuDo = new ArrayList<>();
-	menuDo.childMenuIds.forEach(id -> {
-	    chiildMenuDo.add(allMenuDoMap.get("menu:" + id));
-	});
-	return chiildMenuDo;
+        List<MenuDo> chiildMenuDo = new ArrayList<>();
+        menuDo.childMenuIds.forEach(id -> {
+            chiildMenuDo.add(allMenuDoMap.get("menu:" + id));
+        });
+        return chiildMenuDo;
     }
 }

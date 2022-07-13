@@ -35,68 +35,68 @@ public abstract class AbsAuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-	log.debug("---------# AuthFilter.init");
-	Filter.super.init(filterConfig);
-	// TODO 没有注解的URI也应该存入数据库，方便运维
-	List<Method> allMethod = loadAllUriWithAnnotation();
-	if (allMethod != null) {
-	    for (Method method : allMethod) {
-		try {
-		    saveUri(method);
-		} catch (Exception e) {
-		    log.error("保存EaSecured注解管理的URI到安全认证中心时异常：" + method.getDeclaringClass().getName() + method.getName() + method.toString(), e);
-		}
-	    }
-	}
+        log.debug("---------# AuthFilter.init");
+        Filter.super.init(filterConfig);
+        // TODO 没有注解的URI也应该存入数据库，方便运维
+        List<Method> allMethod = loadAllUriWithAnnotation();
+        if (allMethod != null) {
+            for (Method method : allMethod) {
+                try {
+                    saveUri(method);
+                } catch (Exception e) {
+                    log.error("保存EaSecured注解管理的URI到安全认证中心时异常：" + method.getDeclaringClass().getName() + method.getName() + method.toString(), e);
+                }
+            }
+        }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-	log.debug("---------# AuthFilter.doFilter in");
+        log.debug("---------# AuthFilter.doFilter in");
 
-	HttpServletRequest req = (HttpServletRequest) request;
-	String uri = req.getRequestURI();
-	if (log.isDebugEnabled())
-	    System.out.println("Inside ABCFilter: " + ((HttpServletRequest) request).getRequestURI());
+        HttpServletRequest req = (HttpServletRequest) request;
+        String uri = req.getRequestURI();
+        if (log.isDebugEnabled())
+            System.out.println("Inside ABCFilter: " + ((HttpServletRequest) request).getRequestURI());
 
-	// 获取登录信息
-	JWT jwt = getCurrentUserJWTFromLocalStore(request);
-	if (!uri.endsWith("logout") && (jwt == null || !jwt.verify())) {
-	    // 未登录时或者JWT过期时，从远端认证中心拉取最新状态
-	    jwt = getCurrentUserJWTFromSecurityCentre(request);
-	    // 存入本地缓存
-	    if (jwt != null) {
-		jwt.removeParsedStr();
-		SaveUserJWT2LocalStore(request, response, jwt);
-	    }
-	}
+        // 获取登录信息
+        JWT jwt = getCurrentUserJWTFromLocalStore(request);
+        if (!uri.endsWith("logout") && (jwt == null || !jwt.verify())) {
+            // 未登录时或者JWT过期时，从远端认证中心拉取最新状态
+            jwt = getCurrentUserJWTFromSecurityCentre(request);
+            // 存入本地缓存
+            if (jwt != null) {
+                jwt.removeParsedStr();
+                SaveUserJWT2LocalStore(request, response, jwt);
+            }
+        }
 
-	try {
-	    // 添加登录信息到本地线程
-	    if (jwt != null && jwt.verify())
-		LoginService.userDetails.set(jwt.userDetails);
+        try {
+            // 添加登录信息到本地线程
+            if (jwt != null && jwt.verify())
+                LoginService.userDetails.set(jwt.userDetails);
 
-	    if (canAnonymousAccess(uri, request)) { // 可匿名访问的，直接放行
-		chain.doFilter(request, response);
-	    } else { // 其它情况需要判断登录状态
-		if ((jwt == null || !jwt.verify()) && !getConfig().isDevelopmentMode()) {
-		    // 远端认证中心没有返回有效的身份时的处理
-		    noLogin(request, response, chain, jwt);
-		} else { // 已登录用户正常响应
-		    chain.doFilter(request, response);
-		}
-	    }
-	} finally {
-	    // 清楚本地线程的登录信息
-	    LoginService.userDetails.remove();
-	}
-	log.debug("---------# AuthFilter.doFilter out");
+            if (canAnonymousAccess(uri, request)) { // 可匿名访问的，直接放行
+                chain.doFilter(request, response);
+            } else { // 其它情况需要判断登录状态
+                if ((jwt == null || !jwt.verify()) && !getConfig().isDevelopmentMode()) {
+                    // 远端认证中心没有返回有效的身份时的处理
+                    noLogin(request, response, chain, jwt);
+                } else { // 已登录用户正常响应
+                    chain.doFilter(request, response);
+                }
+            }
+        } finally {
+            // 清楚本地线程的登录信息
+            LoginService.userDetails.remove();
+        }
+        log.debug("---------# AuthFilter.doFilter out");
     }
 
     @Override
     public void destroy() {
-	log.debug("---------# AuthFilter.destroy");
-	Filter.super.destroy();
+        log.debug("---------# AuthFilter.destroy");
+        Filter.super.destroy();
     }
 
     public abstract EaSecurityConfiguration getConfig();
