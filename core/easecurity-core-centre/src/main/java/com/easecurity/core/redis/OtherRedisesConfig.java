@@ -89,6 +89,7 @@ public class OtherRedisesConfig implements EnvironmentAware {
 	return redisSerializer;
     }
 
+    @SuppressWarnings("deprecation")
     @Bean
     public Map<String, RedisTemplate<Object, Object>> otherRedises(RedisConnectionFactory redisConnectionFactory, Map<String, RedisSerializer<Object>> serializer,
 	    ObjectProvider<RedisConnectionFactory> redisConnectionFactory2) {
