@@ -152,6 +152,8 @@ task prepareDocker(type: Copy, dependsOn: assemble) {
     group = 'Docker'
 
     from 'src/main/docker'
+    from 'build/resources/main/application.yml'
+    from 'build/resources/main/application-easecurity.yml'
     from project.jar
 
     into dockerBuildDir
@@ -170,6 +172,10 @@ task createDockerfile(type: Dockerfile, dependsOn: prepareDocker) {
 
     copyFile jar.archiveName, 'application.jar'
     copyFile 'app-entrypoint.sh', 'app-entrypoint.sh'
+    copyFile 'application.yml', 'conf/application.yml'
+    copyFile 'application-easecurity.yml', 'conf/application-easecurity.yml'
+    runCommand 'mkdir -p /app/log'
+    runCommand 'chmod 755 /app/log'
     runCommand 'chmod +x app-entrypoint.sh'
 
     entryPoint '/app/app-entrypoint.sh'
