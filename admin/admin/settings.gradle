@@ -9,5 +9,5 @@
 
 rootProject.name = 'easecurity-admin'
 
-include ':easecurity-core-api'
-project(':easecurity-core-api').projectDir = file('../../core\\easecurity-core-api')
+//include ':easecurity-core-api'
+//project(':easecurity-core-api').projectDir = file('../../core\\easecurity-core-api')
