@@ -1,7 +1,14 @@
 
-http://192.168.11.251:8080/admin/assets/pages/all-admin-index.html
-http://192.168.11.251:8080/admin/console
+http://192.168.11.251:8080/admin/assets/pages/all-admin-index.html  
+http://192.168.11.251:8080/admin/console  
 
+docker:  
+```bash
+docker run -it --name admin -p 8084:8080 \
+-v /home/docker/EASecurity/admin/conf:/app/conf \
+-v /home/docker/EASecurity/admin/log:/app/log \
+-d 128.0.0.2:5000/com.easecurity/easecurity-admin:0.1
+```
 
 
 # grails4-animals

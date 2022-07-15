@@ -37,10 +37,19 @@ spring:
                 - '**/*.gson'
                 - 'logback.groovy'
                 - '*.properties'
-management:
-    endpoints:
-        enabled-by-default: false
-
+environments:
+    development:
+        management:
+            endpoints:
+                enabled-by-default: true
+                web:
+                    base-path: '/actuator'
+                    exposure:
+                        include: '*'
+    production:
+        management:
+            endpoints:
+                enabled-by-default: false
 ---
 grails:
     mime:
@@ -93,11 +102,6 @@ grails:
                 scriptlet: html
                 taglib: none
                 staticparts: none
-management:
-    endpoints:
-        jmx:
-            unique-names: true
-
 ---
 hibernate:
 # if false, uses the Grails DirtyCheckable; if true, uses Hibernate checking.
@@ -163,3 +167,17 @@ environments:
 #    plugin:
 #        fields:
 #            disableLookupCache: true
+
+---
+logging:
+    #   file:
+    #      path: logs
+    #      max-size: 100MB
+    #      max-history: 20
+    level:
+        root: INFO
+        com:
+            easecurity: DEBUG
+    pattern:
+        console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p)--%clr([%.12t]){faint} %c{50}%clr([%F:%L]){cyan}: %m%n%wex'
+#      file: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p)--%clr([%thread]){faint} %clr(%c){faint}%clr([%F:%L]){cyan}: %m%n%wex'

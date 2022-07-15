@@ -6,3 +6,9 @@
 bin
 build
 target
+Thumbs.db
+.DS_Store
+out
+*.iml
+*.ipr
+*.iws
