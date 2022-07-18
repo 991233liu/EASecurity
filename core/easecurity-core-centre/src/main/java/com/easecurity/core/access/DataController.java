@@ -48,17 +48,17 @@ public class DataController {
      * 控制列表
      */
     private static volatile HashMap<String, Object> allEas = null;
-    
+
     private ObjectMapper mapper = new ObjectMapper();
     {
-	mapper.setSerializationInclusion(Include.NON_NULL);
-	mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-	mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
-	mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
-	mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
-	mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-	mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**
@@ -68,24 +68,24 @@ public class DataController {
     @ResponseBody
     @EaSecuredIP
     public String getAllEas(HttpServletRequest request, HttpServletResponse response) {
-	String lm = request.getParameter("lastModified");
-	if (!lastModified.equals(lm)) {
-	    // TODO 加载？？？肯定不是这个地方的，哈哈。
-	    allEas = new HashMap<>();
-	    // TODO 每次从缓存中获取后，hashCode都会发生变化！！！
-	    allEas.put("allUriDos", uriService.getAllUriDos());
-	    lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
-	    allEas.put("lastModified", lastModified);
-	    try {
-		return mapper.writeValueAsString(allEas);
-	    } catch (JsonProcessingException e) {
-		log.error("推送控制列表时，序列化异常:", e);
-	    }
+        String lm = request.getParameter("lastModified");
+        if (!lastModified.equals(lm)) {
+            // TODO 加载？？？肯定不是这个地方的，哈哈。
+            allEas = new HashMap<>();
+            // TODO 每次从缓存中获取后，hashCode都会发生变化！！！
+            allEas.put("allUriDos", uriService.getAllUriDos());
+            lastModified = String.valueOf(uriService.getAllUriDos().hashCode());
+            allEas.put("lastModified", lastModified);
+            try {
+                return mapper.writeValueAsString(allEas);
+            } catch (JsonProcessingException e) {
+                log.error("推送控制列表时，序列化异常:", e);
+            }
 //	    return JSON.toJSONString(allEas, SerializerFeature.WriteClassName);
-	} else {
-	    response.setStatus(304);
-	}
-	return null;
+        } else {
+            response.setStatus(304);
+        }
+        return null;
     }
 
     /**
@@ -94,25 +94,25 @@ public class DataController {
     @RequestMapping("/saveurido")
     @EaSecuredIP
     public void saveUriDo(HttpServletRequest request, HttpServletResponse response) {
-	ObjectInputStream ois = null;
-	try {
-	    ois = new ObjectInputStream(request.getInputStream());
-	    UriDo lUriDo = (UriDo) ois.readObject();
-	    uriService.saveUriDo(lUriDo);
-	    response.setStatus(200);
-	} catch (IOException e) {
-	    log.error("从客户端保存UriDo配置时，数据流读取异常:", e);
-	    response.setStatus(500);
-	} catch (ClassNotFoundException e) {
-	    log.error("从客户端保存UriDo配置时，反序列化异常:", e);
-	    response.setStatus(500);
-	} finally {
-	    if (ois != null)
-		try {
-		    ois.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-	}
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(request.getInputStream());
+            UriDo lUriDo = (UriDo) ois.readObject();
+            uriService.saveUriDo(lUriDo);
+            response.setStatus(200);
+        } catch (IOException e) {
+            log.error("从客户端保存UriDo配置时，数据流读取异常:", e);
+            response.setStatus(500);
+        } catch (ClassNotFoundException e) {
+            log.error("从客户端保存UriDo配置时，反序列化异常:", e);
+            response.setStatus(500);
+        } finally {
+            if (ois != null)
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 }

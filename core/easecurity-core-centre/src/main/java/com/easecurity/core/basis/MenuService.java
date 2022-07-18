@@ -120,8 +120,7 @@ public class MenuService {
     @SuppressWarnings("unchecked")
     public List<MenuVo> getMenuByUserIdentities(String identities, String rootMenuCode) {
         List<MenuVo> allMenuDo = new ArrayList<MenuVo>();
-        Map<String, Map<String, String>> allIdentities = (Map<String, Map<String, String>>) JsonUtils
-                .jsonToObject(identities);
+        Map<String, Map<String, String>> allIdentities = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
         if (rootMenuCode == null || "".equals(rootMenuCode)) {
             // 遍历所有根菜单，并递归每个有权限的子菜单
             rootMenuDoList.forEach(item -> {
@@ -143,58 +142,57 @@ public class MenuService {
     }
 
     // TODO 有个bug，禁用隐藏和无权限隐藏的关系？？？？
-    private void _getMenuDoByIdentities(Map<String, Map<String, String>> allIdentities, MenuDo menuDo,
-            List<MenuVo> all) {
+    private void _getMenuDoByIdentities(Map<String, Map<String, String>> allIdentities, MenuDo menuDo, List<MenuVo> all) {
         // 判断菜单状态
         MenuVo menuVo = null;
         switch (menuDo.menu.displayStatus) {
-            case DISPLAY: // 始终显示
+        case DISPLAY: // 始终显示
+            menuVo = new MenuVo(menuDo);
+            all.add(menuVo);
+            menuVo.hasPermission = _havePermission(allIdentities, menuDo);
+            if (menuDo.menu.status == Status.ENABLED) {
+                List<MenuDo> allChild = getChildMenuDo(menuDo);
+                List<MenuVo> child = new ArrayList<>();
+                // 递归，遍历所有子节点
+                allChild.forEach(item -> {
+                    _getMenuDoByIdentities(allIdentities, item, child);
+                });
+                if (!child.isEmpty()) {
+                    menuVo.childMenu = child;
+                    menuVo.childMenuIds = new ArrayList<>();
+                    for (MenuVo menuVo2 : child) {
+                        menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
+                    }
+                }
+            }
+            break;
+        case HIDDEN: // 始终隐藏
+            return;
+        case DISABLEDHIDDEN: // 禁用隐藏
+            if (menuDo.menu.status == Status.DISABLED) {
+                return;
+            }
+        case NOPERMISSIONSHIDDEN: // 无权限隐藏
+        default:
+            // 启用状态下，且有权限的菜单，可以显示
+            if (menuDo.menu.status == Status.ENABLED && _havePermission(allIdentities, menuDo)) {
                 menuVo = new MenuVo(menuDo);
                 all.add(menuVo);
-                menuVo.hasPermission = _havePermission(allIdentities, menuDo);
-                if (menuDo.menu.status == Status.ENABLED) {
-                    List<MenuDo> allChild = getChildMenuDo(menuDo);
-                    List<MenuVo> child = new ArrayList<>();
-                    // 递归，遍历所有子节点
-                    allChild.forEach(item -> {
-                        _getMenuDoByIdentities(allIdentities, item, child);
-                    });
-                    if (!child.isEmpty()) {
-                        menuVo.childMenu = child;
-                        menuVo.childMenuIds = new ArrayList<>();
-                        for (MenuVo menuVo2 : child) {
-                            menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
-                        }
+                List<MenuDo> allChild = getChildMenuDo(menuDo);
+                List<MenuVo> child = new ArrayList<>();
+                // 递归，遍历所有子节点
+                allChild.forEach(item -> {
+                    _getMenuDoByIdentities(allIdentities, item, child);
+                });
+                if (!child.isEmpty()) {
+                    menuVo.childMenu = child;
+                    menuVo.childMenuIds = new ArrayList<>();
+                    for (MenuVo menuVo2 : child) {
+                        menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
                     }
                 }
-                break;
-            case HIDDEN: // 始终隐藏
-                return;
-            case DISABLEDHIDDEN: // 禁用隐藏
-                if (menuDo.menu.status == Status.DISABLED) {
-                    return;
-                }
-            case NOPERMISSIONSHIDDEN: // 无权限隐藏
-            default:
-                // 启用状态下，且有权限的菜单，可以显示
-                if (menuDo.menu.status == Status.ENABLED && _havePermission(allIdentities, menuDo)) {
-                    menuVo = new MenuVo(menuDo);
-                    all.add(menuVo);
-                    List<MenuDo> allChild = getChildMenuDo(menuDo);
-                    List<MenuVo> child = new ArrayList<>();
-                    // 递归，遍历所有子节点
-                    allChild.forEach(item -> {
-                        _getMenuDoByIdentities(allIdentities, item, child);
-                    });
-                    if (!child.isEmpty()) {
-                        menuVo.childMenu = child;
-                        menuVo.childMenuIds = new ArrayList<>();
-                        for (MenuVo menuVo2 : child) {
-                            menuVo.childMenuIds.add(String.valueOf(menuVo2.id));
-                        }
-                    }
-                }
-                break;
+            }
+            break;
         }
     }
 
@@ -216,21 +214,21 @@ public class MenuService {
     private boolean _havePermission(String identitiesType, String Identities, MenuDo menuDo) {
         // TODO 遍历权限，判定是否有菜单权限
         switch (identitiesType) {
-            case "role":
-                break;
-            case "roleGroup":
-                break;
-            case "org":
-                for (String id : Identities.split(",")) {
-                    if (menuDo.havePermissionByOrgId(id)) {
-                        return true;
-                    }
+        case "role":
+            break;
+        case "roleGroup":
+            break;
+        case "org":
+            for (String id : Identities.split(",")) {
+                if (menuDo.havePermissionByOrgId(id)) {
+                    return true;
                 }
-                break;
-            case "posts":
-                break;
-            case "user":
-                break;
+            }
+            break;
+        case "posts":
+            break;
+        case "user":
+            break;
         }
         return false;
     }

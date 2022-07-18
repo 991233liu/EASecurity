@@ -56,7 +56,7 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
 
     @Override
     public EaSecurityConfiguration getConfig() {
-	return eaSecurityConfiguration;
+        return eaSecurityConfiguration;
     }
 
     /**
@@ -66,32 +66,32 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public List<Method> loadAllUriWithAnnotation() {
-	List<Method> allMethod = new ArrayList<>();
-	RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
-	// 获取url与类和方法的对应信息
-	Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
-	for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
-	    RequestMappingInfo info = m.getKey();
-	    Method method = m.getValue().getMethod();
-	    if (uriAccessService.isEaSecured(method))
-		allMethod.add(method);
-	    if (uriAccessService.isEaSecuredAnonymous(method)) {
-		// 一个方法可能对应多个url
-		PatternsRequestCondition p = info.getPatternsCondition();
-		if (p != null) {
-		    for (String url : p.getPatterns()) {
-			anonymousUri.add(url);
-		    }
-		} else {
-		    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
-		    for (String url : p2.getPatternValues()) {
-			anonymousUri.add(url);
-		    }
+        List<Method> allMethod = new ArrayList<>();
+        RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+        // 获取url与类和方法的对应信息
+        Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
+            RequestMappingInfo info = m.getKey();
+            Method method = m.getValue().getMethod();
+            if (uriAccessService.isEaSecured(method))
+                allMethod.add(method);
+            if (uriAccessService.isEaSecuredAnonymous(method)) {
+                // 一个方法可能对应多个url
+                PatternsRequestCondition p = info.getPatternsCondition();
+                if (p != null) {
+                    for (String url : p.getPatterns()) {
+                        anonymousUri.add(url);
+                    }
+                } else {
+                    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
+                    for (String url : p2.getPatternValues()) {
+                        anonymousUri.add(url);
+                    }
 
-		}
-	    }
-	}
-	return allMethod;
+                }
+            }
+        }
+        return allMethod;
 //	Map<String, Object> controllers = applicationContext.getBeansWithAnnotation(Controller.class);// 获取到 demo1Controller -> {Demo1Controller@5595}
 //	for (Map.Entry<String, Object> entry : controllers.entrySet()) {// 遍历每个controller层
 //	    System.out.println(entry.getKey());// demo1Controller
@@ -122,49 +122,49 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public void saveUri(Method method) {
-	String classFullName = method.getDeclaringClass().getName();
-	String methodName = method.getName();
-	String methodSignature = method.toString();
-	// 受注解控制的
-	EaSecured[] teases = uriAccessService.getEaSecuredWithoutAnonymous(method);
-	// 匿名访问的
-	EaSecuredAnonymous easAnonymous = method.getAnnotation(EaSecuredAnonymous.class);
-	List<String> urls = getAllUrl(method);
-	for (String uri : urls) {
-	    uriAccessService.saveUriPermissions(teases, easAnonymous, uri, classFullName, methodName, methodSignature);
-	    log.debug("saveUri, uri={} methodSignature={} eas={}", uri, methodSignature, teases);
-	}
-	
-	// TODO 启动后应该立即同步
+        String classFullName = method.getDeclaringClass().getName();
+        String methodName = method.getName();
+        String methodSignature = method.toString();
+        // 受注解控制的
+        EaSecured[] teases = uriAccessService.getEaSecuredWithoutAnonymous(method);
+        // 匿名访问的
+        EaSecuredAnonymous easAnonymous = method.getAnnotation(EaSecuredAnonymous.class);
+        List<String> urls = getAllUrl(method);
+        for (String uri : urls) {
+            uriAccessService.saveUriPermissions(teases, easAnonymous, uri, classFullName, methodName, methodSignature);
+            log.debug("saveUri, uri={} methodSignature={} eas={}", uri, methodSignature, teases);
+        }
+
+        // TODO 启动后应该立即同步
     }
 
     private List<String> getAllUrl(Method method) {
-	List<String> result = new ArrayList<>();
-	RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
-	// 获取所有url与类和方法的对应信息
-	Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
-	for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
-	    RequestMappingInfo info = m.getKey();
-	    HandlerMethod hMethod = m.getValue();
-	    if (method.getDeclaringClass().getName().equals(hMethod.getMethod().getDeclaringClass().getName()) && method.toString().equals(hMethod.getMethod().toString())) {
-		// 一个方法可能对应多个url
-		PatternsRequestCondition p = info.getPatternsCondition();
-		if (p != null) {
-		    for (String url : p.getPatterns()) {
-			result.add(url);
-		    }
-		} else {
-		    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
-		    for (String url : p2.getPatternValues()) {
-			result.add(url);
-		    }
+        List<String> result = new ArrayList<>();
+        RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+        // 获取所有url与类和方法的对应信息
+        Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> m : map.entrySet()) {
+            RequestMappingInfo info = m.getKey();
+            HandlerMethod hMethod = m.getValue();
+            if (method.getDeclaringClass().getName().equals(hMethod.getMethod().getDeclaringClass().getName()) && method.toString().equals(hMethod.getMethod().toString())) {
+                // 一个方法可能对应多个url
+                PatternsRequestCondition p = info.getPatternsCondition();
+                if (p != null) {
+                    for (String url : p.getPatterns()) {
+                        result.add(url);
+                    }
+                } else {
+                    PathPatternsRequestCondition p2 = info.getPathPatternsCondition();
+                    for (String url : p2.getPatternValues()) {
+                        result.add(url);
+                    }
 
-		}
-		break;
-	    }
-	}
+                }
+                break;
+            }
+        }
 
-	return result;
+        return result;
     }
 
     /**
@@ -175,24 +175,24 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public JWT getCurrentUserJWTFromSecurityCentre(ServletRequest request) {
-	try {
-	    if (rsaPublicKey == null)
-		rsaPublicKey = getRSAPublicKey();
-	    long s = System.currentTimeMillis();
-	    JWT jwt = loginService.getCurrentUserJWT((HttpServletRequest) request, rsaPublicKey);
-	    if (log.isDebugEnabled())
-		System.out.println("-----## 登录消耗时间为：" + (System.currentTimeMillis() - s));
-	    if (log.isDebugEnabled() && jwt != null && jwt.userDetails != null)
-		System.out.println("-----## 当前登录人为：" + jwt.userDetails.account);
-	    return jwt;
-	} catch (IOException e) {
-	    log.error("在处理JWT请求时，IO异常", e);
-	} catch (JWTExpirationException e) {
-	    log.error("在处理JWT请求时，SecurityCentre返回的JWT无效", e);
-	} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-	    log.error("在处理JWT请求时，RAS证书加载异常", e);
-	}
-	return null;
+        try {
+            if (rsaPublicKey == null)
+                rsaPublicKey = getRSAPublicKey();
+            long s = System.currentTimeMillis();
+            JWT jwt = loginService.getCurrentUserJWT((HttpServletRequest) request, rsaPublicKey);
+            if (log.isDebugEnabled())
+                System.out.println("-----## 登录消耗时间为：" + (System.currentTimeMillis() - s));
+            if (log.isDebugEnabled() && jwt != null && jwt.userDetails != null)
+                System.out.println("-----## 当前登录人为：" + jwt.userDetails.account);
+            return jwt;
+        } catch (IOException e) {
+            log.error("在处理JWT请求时，IO异常", e);
+        } catch (JWTExpirationException e) {
+            log.error("在处理JWT请求时，SecurityCentre返回的JWT无效", e);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            log.error("在处理JWT请求时，RAS证书加载异常", e);
+        }
+        return null;
     }
 
     /**
@@ -204,9 +204,9 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public boolean canAnonymousAccess(String uri, ServletRequest request) {
-	if (anonymousUri.contains(uri))
-	    return true;
-	return uri.endsWith("logout");
+        if (anonymousUri.contains(uri))
+            return true;
+        return uri.endsWith("logout");
     }
 
     /**
@@ -219,39 +219,39 @@ public abstract class AbsWebSecurityFilter extends AbsAuthFilter {
      */
     @Override
     public void noLogin(ServletRequest request, ServletResponse response, FilterChain chain, JWT jwt) {
-	HttpServletResponse resp = (HttpServletResponse) response;
-	HttpServletRequest req = (HttpServletRequest) request;
-	try {
-	    if (eaSecurityConfiguration.noLoginUrl != null && !"".equals(eaSecurityConfiguration.noLoginUrl)) {
-		String uri = req.getRequestURI();
-		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
-		if (uri.indexOf("/SecurityCentre/") < 0)
-		    resp.sendRedirect(eaSecurityConfiguration.noLoginUrl);
-		else
-		    resp.setStatus(403);
-	    } else if (eaSecurityConfiguration.noLoginMessage != null && !"".equals(eaSecurityConfiguration.noLoginMessage)) {
-		resp.getWriter().write(eaSecurityConfiguration.noLoginMessage);
-		resp.setStatus(403);
-	    } else {
-		String uri = req.getRequestURI();
-		// 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
-		if (uri.indexOf("/SecurityCentre/") < 0)
-		    resp.sendRedirect("/SecurityCentre/auth/login?redirect_url=" + URLEncoder.encode(uri, "GBK"));
-		else
-		    resp.setStatus(403);
-	    }
-	} catch (Exception e) {
-	    log.error("在处理noLogin请求时，异常", e);
-	}
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        try {
+            if (eaSecurityConfiguration.noLoginUrl != null && !"".equals(eaSecurityConfiguration.noLoginUrl)) {
+                String uri = req.getRequestURI();
+                // 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+                if (uri.indexOf("/SecurityCentre/") < 0)
+                    resp.sendRedirect(eaSecurityConfiguration.noLoginUrl);
+                else
+                    resp.setStatus(403);
+            } else if (eaSecurityConfiguration.noLoginMessage != null && !"".equals(eaSecurityConfiguration.noLoginMessage)) {
+                resp.getWriter().write(eaSecurityConfiguration.noLoginMessage);
+                resp.setStatus(403);
+            } else {
+                String uri = req.getRequestURI();
+                // 如果是SecurityCentre跳转过来的请求，就不要再跳转回去了，避免死循环。
+                if (uri.indexOf("/SecurityCentre/") < 0)
+                    resp.sendRedirect("/SecurityCentre/auth/login?redirect_url=" + URLEncoder.encode(uri, "GBK"));
+                else
+                    resp.setStatus(403);
+            }
+        } catch (Exception e) {
+            log.error("在处理noLogin请求时，异常", e);
+        }
     }
 
     public RSAPublicKey getRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-	File file = org.springframework.util.ResourceUtils.getFile(eaSecurityConfiguration.jwt.getPublicKey());
-	if (file.isFile()) {
-	    return loginService.getRSAPublicKey(file);
-	} else {
-	    return loginService.getRSAPublicKey(eaSecurityConfiguration.jwt.getPublicKey());
-	}
+        File file = org.springframework.util.ResourceUtils.getFile(eaSecurityConfiguration.jwt.getPublicKey());
+        if (file.isFile()) {
+            return loginService.getRSAPublicKey(file);
+        } else {
+            return loginService.getRSAPublicKey(eaSecurityConfiguration.jwt.getPublicKey());
+        }
 
     }
 }

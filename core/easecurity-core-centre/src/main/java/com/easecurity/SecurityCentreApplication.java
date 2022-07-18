@@ -49,7 +49,7 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
     private PlatformTransactionManager transactionManager;
     @Autowired
     private BootStrap bootStrap;
-    
+
     @Value("${easecurity.jwt.publicKey}")
     private RSAPublicKey key;
     @Value("${easecurity.jwt.privateKey}")
@@ -96,7 +96,7 @@ public class SecurityCentreApplication implements CommandLineRunner, WebMvcConfi
 
         converters.add(fastConverter);
     }
-    
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(this.key).build();

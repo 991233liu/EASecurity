@@ -25,9 +25,9 @@ public class LogoutHandler implements org.springframework.security.web.authentic
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-	String jti = (String) CacheUtil.getSessionCache("JWT.jti");
-	String at = ServletUtils.getAccessToken();
-	logoutService.asynLogout(request.getCookies(), at, jti);
-	CacheUtil.delAccessTokenCache(at);
+        String jti = (String) CacheUtil.getSessionCache("JWT.jti");
+        String at = ServletUtils.getAccessToken();
+        logoutService.asynLogout(request.getCookies(), at, jti);
+        CacheUtil.delAccessTokenCache(at);
     }
 }

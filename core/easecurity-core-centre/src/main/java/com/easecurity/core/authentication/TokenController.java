@@ -28,12 +28,12 @@ class TokenController {
      */
     @RequestMapping("/refreshToken")
     public Token refreshToken(String refresh_token) throws IOException {
-	log.debug("TokenController.refreshToken.token={}", refresh_token);
-	String at = ServletUtils.getAccessToken();
-	Token newToken = loginService.refreshToken(at, refresh_token);
-	if (at != null)
-	    logoutService.asynLogout(null, at, at);
-	return newToken;
+        log.debug("TokenController.refreshToken.token={}", refresh_token);
+        String at = ServletUtils.getAccessToken();
+        Token newToken = loginService.refreshToken(at, refresh_token);
+        if (at != null)
+            logoutService.asynLogout(null, at, at);
+        return newToken;
 //	return JsonUtils.objectToJson(newToken);
     }
 }

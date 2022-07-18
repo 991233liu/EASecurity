@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;;
  *
  */
 public class CustomRedisProperties extends RedisProperties {
-    
+
     private Map<String, String> serializer;
 
     public Map<String, String> getSerializer() {

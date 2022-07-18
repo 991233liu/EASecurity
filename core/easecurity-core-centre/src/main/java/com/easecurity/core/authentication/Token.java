@@ -19,7 +19,7 @@ public class Token implements Serializable {
     /**
      * Token Type
      */
-    public String token_type="Bearer";
+    public String token_type = "Bearer";
     /**
      * expires
      */
@@ -32,5 +32,5 @@ public class Token implements Serializable {
      * Refresh Token
      */
     public String refresh_token;
-    
+
 }

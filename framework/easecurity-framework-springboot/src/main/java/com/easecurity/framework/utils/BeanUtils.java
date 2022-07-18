@@ -18,7 +18,7 @@ public class BeanUtils implements ApplicationContextAware {
      * @return bean
      */
     public static Object getBean(String name) {
-	return applicationContext.getBean(name);
+        return applicationContext.getBean(name);
     }
 
     /**
@@ -29,11 +29,11 @@ public class BeanUtils implements ApplicationContextAware {
      * @return bean
      */
     public static Object getBean(Class<?> name) {
-	return applicationContext.getBean(name);
+        return applicationContext.getBean(name);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-	BeanUtils.applicationContext = applicationContext;
+        BeanUtils.applicationContext = applicationContext;
     }
 }

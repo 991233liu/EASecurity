@@ -25,9 +25,9 @@ public class DemoController {
     @RequestMapping("/queryData1")
     @EaSecured(IP = { "128.0.0.1" }, org = "{id:['1','4']}", role = "{'code':'root#user'}")
     public UserDetails queryData1(HttpServletRequest request) {
-	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
-	System.out.println("-----## 当前登录人userDetails：" + userDetails);
-	return userDetails;
+        UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+        System.out.println("-----## 当前登录人userDetails：" + userDetails);
+        return userDetails;
     }
 
     /**
@@ -37,9 +37,9 @@ public class DemoController {
     @EaSecured(IP = { "128.0.0.1", "128.0.0.3" })
     @EaSecured(org = "{id:['1','4']}", roleGroup = "{'code':'user'}")
     public UserDetails queryData2(HttpServletRequest request) {
-	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
-	System.out.println("-----## 当前登录人userDetails：" + userDetails);
-	return userDetails;
+        UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+        System.out.println("-----## 当前登录人userDetails：" + userDetails);
+        return userDetails;
     }
 
     /**
@@ -47,9 +47,9 @@ public class DemoController {
      */
     @RequestMapping("/queryData3")
     public UserDetails queryData3(HttpServletRequest request) {
-	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
-	System.out.println("-----## 当前登录人userDetails：" + userDetails);
-	return userDetails;
+        UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+        System.out.println("-----## 当前登录人userDetails：" + userDetails);
+        return userDetails;
     }
 
     /**
@@ -58,19 +58,19 @@ public class DemoController {
     @RequestMapping("/queryData4")
     @EaSecuredAnonymous
     public UserDetails queryData4(HttpServletRequest request) {
-	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
-	System.out.println("-----## 当前登录人userDetails：" + userDetails);
-	return userDetails;
+        UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+        System.out.println("-----## 当前登录人userDetails：" + userDetails);
+        return userDetails;
     }
-    
+
     /**
      * 其它条件
      */
     @RequestMapping("/queryData5")
     @EaSecured(user = "{account:'TestUser123'}", posts = "{name:'部门经理'}")
     public UserDetails queryData5(HttpServletRequest request) {
-	UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
-	System.out.println("-----## 当前登录人userDetails：" + userDetails);
-	return userDetails;
+        UserDetails userDetails = loginService.getLocalUserDetails(request.getSession());
+        System.out.println("-----## 当前登录人userDetails：" + userDetails);
+        return userDetails;
     }
 }

@@ -38,28 +38,28 @@ public class EaSecuredIPAspect {
      */
     @Around("controllerMethod()")
     public Object controllerMethodAround(ProceedingJoinPoint pjp) {
-	Object result = null;
-	try {
-	    MethodSignature signature = (MethodSignature) pjp.getSignature();
-	    Method method = signature.getMethod();
+        Object result = null;
+        try {
+            MethodSignature signature = (MethodSignature) pjp.getSignature();
+            Method method = signature.getMethod();
 //	    String classFullName = method.getDeclaringClass().getName();
 //	    String methodName = method.getName();
-	    String methodSignature = method.toString();
-	    EaSecuredIP eas = method.getAnnotation(EaSecuredIP.class);
+            String methodSignature = method.toString();
+            EaSecuredIP eas = method.getAnnotation(EaSecuredIP.class);
 //	    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 //	    String uri = request.getRequestURI();
-	    String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
-	    log.debug("controllerMethodAround, methodSignature={} eas={} clientIp={}", methodSignature, eas, clientIp);
-	    if (ips.contains(clientIp)) {
-		result = pjp.proceed();
-	    } else {
-		log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，clientIp为{}", methodSignature, clientIp);
-	    }
-	} catch (Exception e) {
-	    log.error("controllerMethodAround 执行时出现异常：", e);
-	} catch (Throwable e) {
-	    log.error("controllerMethodAround 执行后续方法时出现异常：", e);
-	}
-	return result;
+            String clientIp = ServletUtils.getClientIpAddr(ServletUtils.getRequest());
+            log.debug("controllerMethodAround, methodSignature={} eas={} clientIp={}", methodSignature, eas, clientIp);
+            if (ips.contains(clientIp)) {
+                result = pjp.proceed();
+            } else {
+                log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，clientIp为{}", methodSignature, clientIp);
+            }
+        } catch (Exception e) {
+            log.error("controllerMethodAround 执行时出现异常：", e);
+        } catch (Throwable e) {
+            log.error("controllerMethodAround 执行后续方法时出现异常：", e);
+        }
+        return result;
     }
 }

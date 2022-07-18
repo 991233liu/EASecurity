@@ -22,12 +22,12 @@ public class LogoutController {
 
     @RequestMapping("/logout")
     public void logout(ServerWebExchange exchange) throws IOException {
-	// TODO 其它处理方式，请参考WebSecurityFilter.SaveUserJWT2LocalStore方法对应处理
-	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	ServerHttpRequest request = exchange.getRequest();
-	String key = webSecurityFilter.getAccessToken(request);
-	System.out.println(key);
-	redisTemplate.delete("JWT:" + key);
+        // TODO 其它处理方式，请参考WebSecurityFilter.SaveUserJWT2LocalStore方法对应处理
+        // 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        ServerHttpRequest request = exchange.getRequest();
+        String key = webSecurityFilter.getAccessToken(request);
+        System.out.println(key);
+        redisTemplate.delete("JWT:" + key);
     }
 
 }

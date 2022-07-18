@@ -27,9 +27,9 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-	String faile_url = request.getParameter("faile_url");
-	String contentType = request.getHeader("Content-Type");
-	String accept = request.getHeader("Accept");
+        String faile_url = request.getParameter("faile_url");
+        String contentType = request.getHeader("Content-Type");
+        String accept = request.getHeader("Accept");
 //	String loginType = request.getParameter("loginType");
 //	// TODO 做个开关，选择走哪种认证模式，session(cookie)/accessToken
 //	if (loginType != null && "accessToken".equals(loginType)) {
@@ -37,20 +37,20 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 //	} else { // 默认走session(cookie)
 //
 //	}
-	if (faile_url != null && !"".equals(faile_url)) { // 跳转到目标想要的地址
-	    faile_url = response.encodeRedirectURL(faile_url);
-	    response.sendRedirect(faile_url);
-	} else if ((accept != null && accept.toLowerCase().indexOf("application/json") > -1)
-		|| (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) { // Ajax请求，直接返回错误消息
-	    response.setCharacterEncoding("utf-8");
-	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-	    response.getWriter().write("{\"status\":401,\"code\":401,\"message\":\"");
-	    response.getWriter().write(exception.getMessage());
-	    response.getWriter().write("\"}");
-	} else if (exception instanceof BadGifCaptchaException) {
-	    getRedirectStrategy().sendRedirect(request, response, "/auth/login?errorGifCaptcha");
-	} else {
-	    getRedirectStrategy().sendRedirect(request, response, "/auth/login?error");
-	}
+        if (faile_url != null && !"".equals(faile_url)) { // 跳转到目标想要的地址
+            faile_url = response.encodeRedirectURL(faile_url);
+            response.sendRedirect(faile_url);
+        } else if ((accept != null && accept.toLowerCase().indexOf("application/json") > -1)
+                || (contentType != null && contentType.toLowerCase().indexOf("application/json") > -1)) { // Ajax请求，直接返回错误消息
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("{\"status\":401,\"code\":401,\"message\":\"");
+            response.getWriter().write(exception.getMessage());
+            response.getWriter().write("\"}");
+        } else if (exception instanceof BadGifCaptchaException) {
+            getRedirectStrategy().sendRedirect(request, response, "/auth/login?errorGifCaptcha");
+        } else {
+            getRedirectStrategy().sendRedirect(request, response, "/auth/login?error");
+        }
     }
 }

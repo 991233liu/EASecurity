@@ -33,20 +33,20 @@ public class MenuController {
     @RequestMapping("/myMenu")
     @SuppressWarnings("unchecked")
     public List<MenuVo> myMenu(HttpServletRequest request) {
-	menuService.loadAll();
-	// 获取当前登录人
-	UserDetails user = ServletUtils.getCurrentUser();
-	if (user == null) {
-	    // TODO 未登录时？
-	    return new ArrayList<>();
-	}
-	String rootMenuCode = request.getParameter("rootMenuCode") == null ? "" : request.getParameter("rootMenuCode");
-	List<MenuVo> myMenu = (List<MenuVo>) CacheUtil.getSessionCache("myMenu:" + rootMenuCode);
-	if (myMenu == null) {
-	    myMenu = menuService.getMenuByUser(user, rootMenuCode);
-	    CacheUtil.setSessionCache("myMenu:" + rootMenuCode, myMenu);
-	}
-	// 获取有权限的菜单
-	return myMenu;
+        menuService.loadAll();
+        // 获取当前登录人
+        UserDetails user = ServletUtils.getCurrentUser();
+        if (user == null) {
+            // TODO 未登录时？
+            return new ArrayList<>();
+        }
+        String rootMenuCode = request.getParameter("rootMenuCode") == null ? "" : request.getParameter("rootMenuCode");
+        List<MenuVo> myMenu = (List<MenuVo>) CacheUtil.getSessionCache("myMenu:" + rootMenuCode);
+        if (myMenu == null) {
+            myMenu = menuService.getMenuByUser(user, rootMenuCode);
+            CacheUtil.setSessionCache("myMenu:" + rootMenuCode, myMenu);
+        }
+        // 获取有权限的菜单
+        return myMenu;
     }
 }

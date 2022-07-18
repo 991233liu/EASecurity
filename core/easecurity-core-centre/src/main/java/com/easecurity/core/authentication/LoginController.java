@@ -42,49 +42,49 @@ class LoginController {
 
     @GetMapping("/login")
     public ModelAndView login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "errorGifCaptcha", required = false) String errorGifCaptcha,
-	    @RequestParam(value = "logout", required = false) String logout, HttpServletRequest request) {
-	ModelAndView mav = new ModelAndView();
-	String redirect_url = request.getParameter("redirect_url");
-	String faile_url = request.getParameter("faile_url");
-	mav.setViewName("/auth/login.html");
-	if (error != null) {
-	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-	} else if (errorGifCaptcha != null) {
-	    mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
-	} else if (logout != null) {
-	    mav.addObject("message", messageSourceUtil.getMessage("LoginController.logout", "Succeed logout"));
-	} else if ((redirect_url != null && !"".equals(redirect_url)) || ((faile_url != null && !"".equals(faile_url)))) {
-	    mav.setViewName("/auth/login_ajax.html");
-	}
-	return mav;
+            @RequestParam(value = "logout", required = false) String logout, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+        String redirect_url = request.getParameter("redirect_url");
+        String faile_url = request.getParameter("faile_url");
+        mav.setViewName("/auth/login.html");
+        if (error != null) {
+            mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        } else if (errorGifCaptcha != null) {
+            mav.addObject("message", messageSourceUtil.getMessage("AbstractUserDetailsAuthenticationProvider.badGifCaptcha", "Bad gifCaptcha"));
+        } else if (logout != null) {
+            mav.addObject("message", messageSourceUtil.getMessage("LoginController.logout", "Succeed logout"));
+        } else if ((redirect_url != null && !"".equals(redirect_url)) || ((faile_url != null && !"".equals(faile_url)))) {
+            mav.setViewName("/auth/login_ajax.html");
+        }
+        return mav;
     }
 
     @GetMapping("/gifCaptcha")
     @ResponseBody
     public String gifCaptcha() {
-	Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha();
-	return JsonUtils.objectToJson(map);
+        Map<String, Object> map = disable ? new HashMap<>() : getGifCaptcha();
+        return JsonUtils.objectToJson(map);
     }
 
     private Map<String, Object> getGifCaptcha() {
-	com.easecurity.core.captcha.GifCaptcha gifCaptcha = new com.easecurity.core.captcha.GifCaptcha(130, 48, gifCaptchaLength, gifCaptchaDelay);
-	String key = UUID.randomUUID().toString();
-	String verCode = gifCaptcha.text().toLowerCase();
-	if (log.isDebugEnabled())
-	    log.debug("----# 图片验证码为：" + verCode);
-	GifCaptcha dDifCaptcha1 = new GifCaptcha();
-	dDifCaptcha1.gkey = key;
-	dDifCaptcha1.gvalue = verCode;
-	dDifCaptcha1.validTime = System.currentTimeMillis() + validTime;
-	// TODO 数据库验证
+        com.easecurity.core.captcha.GifCaptcha gifCaptcha = new com.easecurity.core.captcha.GifCaptcha(130, 48, gifCaptchaLength, gifCaptchaDelay);
+        String key = UUID.randomUUID().toString();
+        String verCode = gifCaptcha.text().toLowerCase();
+        if (log.isDebugEnabled())
+            log.debug("----# 图片验证码为：" + verCode);
+        GifCaptcha dDifCaptcha1 = new GifCaptcha();
+        dDifCaptcha1.gkey = key;
+        dDifCaptcha1.gvalue = verCode;
+        dDifCaptcha1.validTime = System.currentTimeMillis() + validTime;
+        // TODO 数据库验证
 //        DGifCaptcha.withTransaction {
 //            dDifCaptcha1.save(flush: true);
 //        }
-	CacheUtil.setCache("GifCaptcha:" + key, dDifCaptcha1, dDifCaptcha1.validTime);
+        CacheUtil.setCache("GifCaptcha:" + key, dDifCaptcha1, dDifCaptcha1.validTime);
 
-	Map<String, Object> map = new HashMap<>();
-	map.put("key", key);
-	map.put("image", gifCaptcha.toBase64());
-	return map;
+        Map<String, Object> map = new HashMap<>();
+        map.put("key", key);
+        map.put("image", gifCaptcha.toBase64());
+        return map;
     }
 }

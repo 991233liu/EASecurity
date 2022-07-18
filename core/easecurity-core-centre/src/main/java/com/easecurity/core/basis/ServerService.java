@@ -34,8 +34,7 @@ public class ServerService {
     private String sql = "UPDATE s_server SET last_time = NOW(6) WHERE id = ?";
     private String sql2 = "INSERT INTO s_server_history (id, sid, port, start_time, ip, name, projet_name, other, last_time) SELECT * FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval "
             + timeOut * 3 + " SECOND";
-    private String sql3 = "DELETE FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval " + timeOut * 3
-            + " SECOND";
+    private String sql3 = "DELETE FROM s_server WHERE projet_name = ? AND last_time < NOW(6)-interval " + timeOut * 3 + " SECOND";
     private String sql4 = "SELECT DISTINCT id FROM s_server ORDER BY id";
     private String sql5 = "SELECT DISTINCT sid FROM s_server WHERE projet_name = ?  ORDER BY sid";
     private String sql6 = "INSERT INTO s_server(id, sid, port, start_time, ip, name, projet_name, other, last_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -58,8 +57,7 @@ public class ServerService {
             if (currentServer != null)
                 heartBeats();
         } catch (Exception e) {
-            log.error("服务实例心跳检测异常,Server信息如下：id={} sid={} projetName={} name={}", currentServer.id, currentServer.sid,
-                    currentServer.projetName, currentServer.name);
+            log.error("服务实例心跳检测异常,Server信息如下：id={} sid={} projetName={} name={}", currentServer.id, currentServer.sid, currentServer.projetName, currentServer.name);
             log.error("服务实例心跳检测异常：", e);
         }
     }
@@ -152,8 +150,7 @@ public class ServerService {
                     server.sid = ids.get(ids.size() - 1) + 1;
             }
             // 保存server
-            jdbcTemplate.update(sql6, server.id, server.sid, server.port, server.startTime, server.ip, server.name,
-                    server.projetName, server.other);
+            jdbcTemplate.update(sql6, server.id, server.sid, server.port, server.startTime, server.ip, server.name, server.projetName, server.other);
         } finally {
             Locker.unlock(server.projetName + ":start");
         }

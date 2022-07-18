@@ -42,17 +42,17 @@ public class WebSecurityFilter extends AbsMSWebSecurityFilter {
      */
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServletRequest request) {
-	// 不使用缓存，直接解密并验签
-	HttpServletRequest req = (HttpServletRequest) request;
-	String jwtStr = req.getHeader("authorization");
-	if (jwtStr != null && jwtStr.indexOf("Bearer") > -1) {
-	    jwtStr = jwtStr.substring(jwtStr.indexOf("Bearer") + 6);
-	    try {
-		return loginService.getUserJWT(jwtStr, getRSAPublicKey());
-	    } catch (NoSuchAlgorithmException | InvalidKeySpecException | JWTExpirationException | IOException e) {
-		log.error("获取登录人授权信息时异常",e);
-	    }
-	}
-	return null;
+        // 不使用缓存，直接解密并验签
+        HttpServletRequest req = (HttpServletRequest) request;
+        String jwtStr = req.getHeader("authorization");
+        if (jwtStr != null && jwtStr.indexOf("Bearer") > -1) {
+            jwtStr = jwtStr.substring(jwtStr.indexOf("Bearer") + 6);
+            try {
+                return loginService.getUserJWT(jwtStr, getRSAPublicKey());
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException | JWTExpirationException | IOException e) {
+                log.error("获取登录人授权信息时异常", e);
+            }
+        }
+        return null;
     }
 }

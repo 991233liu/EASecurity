@@ -32,22 +32,22 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
 
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServletRequest request) {
-	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	String key = loginService.getAccessToken((HttpServletRequest) request);
-	if (key != null)
-	    return (JWT) redisTemplate.opsForValue().get("JWT:" + key);
-	else
-	    return null;
+        // 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        String key = loginService.getAccessToken((HttpServletRequest) request);
+        if (key != null)
+            return (JWT) redisTemplate.opsForValue().get("JWT:" + key);
+        else
+            return null;
     }
 
     @Override
     public void SaveUserJWT2LocalStore(ServletRequest request, ServletResponse response, JWT jwt) {
-	// TODO 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	// TODO 其它自己定义的处理方式
+        // TODO 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        // TODO 其它自己定义的处理方式
 
-	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	String key = loginService.getAccessToken((HttpServletRequest) request);
-	redisTemplate.opsForValue().set("JWT:" + key, jwt, 300, TimeUnit.SECONDS);
+        // 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        String key = loginService.getAccessToken((HttpServletRequest) request);
+        redisTemplate.opsForValue().set("JWT:" + key, jwt, 300, TimeUnit.SECONDS);
     }
 
 }

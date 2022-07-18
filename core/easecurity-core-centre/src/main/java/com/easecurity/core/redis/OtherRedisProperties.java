@@ -19,5 +19,4 @@ public class OtherRedisProperties {
         this.datasources = datasources;
     }
 
-
 }

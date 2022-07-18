@@ -44,18 +44,18 @@ public class ThreadPoolTaskConfig {
 
     @Bean("taskExecutor")
     public ThreadPoolTaskExecutor taskExecutor() {
-	ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-	executor.setCorePoolSize(corePoolSize);
-	executor.setMaxPoolSize(maxPoolSize);
-	executor.setQueueCapacity(queueCapacity);
-	executor.setKeepAliveSeconds(keepAliveTime);
-	executor.setThreadNamePrefix(threadNamePrefix);
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setKeepAliveSeconds(keepAliveTime);
+        executor.setThreadNamePrefix(threadNamePrefix);
 
-	// 线程池对拒绝任务的处理策略
-	// CallerRunsPolicy：由调用线程（提交任务的线程）处理该任务
-	executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-	// 初始化
-	executor.initialize();
-	return executor;
+        // 线程池对拒绝任务的处理策略
+        // CallerRunsPolicy：由调用线程（提交任务的线程）处理该任务
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // 初始化
+        executor.initialize();
+        return executor;
     }
 }

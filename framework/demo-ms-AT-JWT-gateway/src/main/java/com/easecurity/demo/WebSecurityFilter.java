@@ -29,7 +29,7 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
 
     @Override
     public int getOrder() {
-	return 0;
+        return 0;
     }
 
     /**
@@ -40,12 +40,12 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
      */
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServerHttpRequest request) {
-	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	String key = getAccessToken(request);
-	if (key != null)
-	    return (JWT) redisTemplate.opsForValue().get("JWT:" + key);
-	else
-	    return null;
+        // 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        String key = getAccessToken(request);
+        if (key != null)
+            return (JWT) redisTemplate.opsForValue().get("JWT:" + key);
+        else
+            return null;
     }
 
     /**
@@ -56,12 +56,12 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
      */
     @Override
     public void SaveUserJWT2LocalStore(ServerHttpRequest request, ServerHttpResponse response, JWT jwt) {
-	// TODO 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	// TODO 其它自己定义的处理方式
+        // TODO 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        // TODO 其它自己定义的处理方式
 
-	// 启用AccessToken的，可以将AccessToken作为主键存入Redis中
-	String key = getAccessToken(request);
-	redisTemplate.opsForValue().set("JWT:" + key, jwt, 300, TimeUnit.SECONDS);
+        // 启用AccessToken的，可以将AccessToken作为主键存入Redis中
+        String key = getAccessToken(request);
+        redisTemplate.opsForValue().set("JWT:" + key, jwt, 300, TimeUnit.SECONDS);
     }
 
     /**
@@ -74,10 +74,10 @@ public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
      */
     @Override
     public Mono<Void> addJWT2ServiceRequest(String jwtStr, JWT jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
-	// TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
-	// JWT密文最小1K+
-	ServerHttpRequest host = exchange.getRequest().mutate().header("authorization", "Bearer " + jwtStr).header("jwt.jti", jwt.jti).build();
-	ServerWebExchange build = exchange.mutate().request(host).build();
-	return chain.filter(build);
+        // TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
+        // JWT密文最小1K+
+        ServerHttpRequest host = exchange.getRequest().mutate().header("authorization", "Bearer " + jwtStr).header("jwt.jti", jwt.jti).build();
+        ServerWebExchange build = exchange.mutate().request(host).build();
+        return chain.filter(build);
     }
 }
