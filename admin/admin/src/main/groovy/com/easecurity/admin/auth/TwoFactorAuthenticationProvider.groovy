@@ -35,10 +35,10 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
         System.out.println("-------# 输入的验证码value为：" + twoFactorAuthenticationDetails.gifCaptchaValue)
         GifCaptcha gifCaptcha1 = (GifCaptcha) ServletUtils.getSession()?.getAttribute("GifCaptcha")
         ServletUtils.getSession().removeAttribute("GifCaptcha")
-        System.out.println("-------# 本地的验证码value为：" + gifCaptcha1?.value)
+        System.out.println("-------# 本地的验证码value为：" + gifCaptcha1?.gvalue)
         // TODO 数据库验证
         // TODO Redis验证
-        if (!loginCaptchaDisable && (gifCaptcha1 == null || !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.value.equals(twoFactorAuthenticationDetails.gifCaptchaValue.toLowerCase())))) {
+        if (!loginCaptchaDisable && (gifCaptcha1 == null || !(gifCaptcha1.validTime > System.currentTimeMillis() && gifCaptcha1.gvalue.equals(twoFactorAuthenticationDetails.gifCaptchaValue.toLowerCase())))) {
             logger.debug("Authentication failed: gifCaptcha note valid");
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
@@ -50,7 +50,7 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
         System.out.println("-------# 1=" + userDetails.properties)
         System.out.println("-------# 1=" + authentication.name + authentication.properties)
         if (authentication.getCredentials() == null) {
-            loginFail(customUserDetails)
+            loginFail(customUserDetails.username)
             logger.debug("Authentication failed: no credentials provided1")
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
@@ -58,7 +58,7 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
         String presentedPassword = authentication.getCredentials().toString()
         System.out.println("-------# 1=" + presentedPassword)
         if (presentedPassword.length() < 60) {
-            loginFail(customUserDetails);
+            loginFail(customUserDetails.username);
             logger.debug("Authentication failed: no credentials provided2")
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
@@ -69,7 +69,7 @@ class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
 //	System.out.println("-------# 1=" + bcryptPasswordEncoder.matches(presentedPassword, customUserDetails.getPassword()))
 
         if (!new BCryptPasswordEncoder().matches(presentedPassword, customUserDetails.getPassword())) {
-            loginFail(customUserDetails)
+            loginFail(customUserDetails.username)
             logger.debug("Authentication failed: password does not match stored value3")
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"))
         }
