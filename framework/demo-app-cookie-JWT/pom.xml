@@ -4,23 +4,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.easecurity</groupId>
+    <parent>
+        <groupId>com.easecurity</groupId>
+        <artifactId>framework</artifactId>
+        <version>0.0.2</version>
+    </parent>
+    
 	<artifactId>demo-app-cookie-JWT</artifactId>
-	<version>0.0.1</version>
 	<packaging>jar</packaging>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.2</version>
-		<relativePath />
-	</parent>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.easecurity</groupId>
 			<artifactId>easecurity-framework-springboot</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
