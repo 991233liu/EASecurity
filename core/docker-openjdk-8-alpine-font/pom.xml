@@ -3,17 +3,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>docker-openjdk-8-alpine-font</artifactId>
-    <version>1.0</version>
-    <packaging>jar</packaging>
-
-    <name>docker-openjdk-8-alpine-font</name>
-
 	<parent>
         <groupId>com.easecurity</groupId>
         <artifactId>easecurity-core-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>
+
+    <artifactId>docker-openjdk-8-alpine-font</artifactId>
+    <name>docker-openjdk-8-alpine-font</name>
+    <packaging>jar</packaging>
 
 <!-- 	<properties> -->
 <!-- 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
