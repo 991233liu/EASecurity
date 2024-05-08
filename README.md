@@ -27,10 +27,22 @@
 - **认证模式：基于cookie的JWT**  
 <a href="doc/架构/认证模式/2基于cookie的JWT.png"><img src="doc/架构/认证模式/2基于cookie的JWT.png" width="40%"></a>  
 <br>  
+<a href="doc/架构/认证模式/2基于cookie的JWT-ms.png"><img src="doc/架构/认证模式/2基于cookie的JWT-ms.png" width="40%"></a>  
+<br>  
 
-- **认证模式：基于AccessToken的JWT**  
-AccessToken和JWT（Json web token）是2种token认证模式。AccessToken是一串随机字符串，从中不能获取到任何信息，你需要将它发送到服务器进行解析。JWT 中包含了主体、受众、权限、颁发时间、过期时间、用户信息字段等内容且具备签名，不可篡改，因此无需发送到服务器，可以本地验证。  
-<a href="doc/架构/认证模式/3基于AccessToken的JWT.png"><img src="doc/架构/认证模式/3基于AccessToken的JWT.png" width="40%"></a>  
+- **认证模式：基于OpaqueAccessToken的JWT**  
+AccessToken（访问令牌）是用于访问受保护资源的凭据。访问令牌是一个字符串，表示颁发给客户。该字符串对客户端是不透明的（即使它具有结构）。OpaqueAccessToken和JWT（Json Web Token）是2种token承载模式。OpaqueAccessToken是一串随机字符串，从中不能获取到任何信息，你需要将它发送到Authorization服务器进行解析。JWT 中包含了主体、受众、权限、颁发时间、过期时间、用户信息字段等内容，且具备签名，不可篡改。因此无需发送到服务器，可以本地验证。  
+EASecurity中的JWT中存放有大量用户信息，尤其是有完整的权限信息。部分信息不宜暴露到外网。OpaqueAccessToken中没有任何信息，不会泄密。所以，外网终端获取OpaqueAccessToken，然后回传给内网服务器，内网服务器通过AccessToken兑换含有信息jwt进行使用。从而保证了服务器的“无状态”。  
+注：企业应用不同于互联网应用，网络可控，可以区分内外网。互联网应用用户和服务都是一张网，无法区分内外网。  
+多系统应用间的AccessToken兑换另外的AccessToken？  
+<a href="doc/架构/认证模式/3基于OpaqueAccessToken的JWT.png"><img src="doc/架构/认证模式/3基于OpaqueAccessToken的JWT.png" width="40%"></a>  
+<br>  
+<a href="doc/架构/认证模式/3基于OpaqueAccessToken的JWT-ms.png"><img src="doc/架构/认证模式/3基于OpaqueAccessToken的JWT-ms.png" width="40%"></a>  
+<br>  
+
+## 集成方案选择  
+<a href="doc/架构/集成方案选择.png"><img src="doc/架构/集成方案选择.png" width="50%"></a>  
+<br>  
 
 ## 安装教程  
 EASecurity应用程序共分3部分：  
@@ -43,7 +55,7 @@ EASecurity应用程序共分3部分：
 <br>  
 
 - **3.&nbsp;&nbsp;客户端应用：**  
-&nbsp;&nbsp;&nbsp;&nbsp;客户端应用为各项目自主研发的应用系统（以下简称应用系统）。为终端用户提供业务处理。对于应用系统的开发语言目前只Java，对于框架没有要求，可以是微服务架构、单体应用，可以是Spring体系也可以是纯Java的应用系统。EASecurity平台为不同的技术体系研发了多个集成组件，选择合适的进行集成即可。集成步骤详见[《framework集成》](doc/部署/framework.md)。
+&nbsp;&nbsp;&nbsp;&nbsp;客户端应用为各项目自主研发的应用系统（以下简称应用系统）。为终端用户提供业务处理。对于应用系统的开发语言目前只Java，对于框架没有要求，可以是微服务架构、单体应用，可以是Spring体系也可以是纯Java的应用系统。EASecurity平台为不同的技术体系研发了多个集成组件，选择合适的进行集成即可。集成步骤详见[《framework集成》](doc/部署/framework.md)。  
 <br>  
 
 ## 使用说明  
