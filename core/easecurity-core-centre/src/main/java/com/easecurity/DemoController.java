@@ -24,7 +24,7 @@ import com.easecurity.core.utils.ServletUtils;
 @RestController
 @RequestMapping("/demo")
 public class DemoController {
-    
+
     @Resource
     Map<String, RedisTemplate<Object, Object>> otherRedises;
     @Autowired
@@ -37,28 +37,28 @@ public class DemoController {
 
     @RequestMapping("/queryData")
     public List<MenuDo> queryData() {
-	return menuService.loadAll();
+        return menuService.loadAll();
     }
 
     @RequestMapping("/queryData2")
     public List<MenuDo> queryData2() {
-	return menuService.loadAll();
+        return menuService.loadAll();
     }
 
     @RequestMapping("/queryData3")
     @EaSecuredIP
     public UserDo queryData3(HttpServletRequest request) {
-	UserDetails user = ServletUtils.getCurrentUserDetails();
-	// 获取身份
-	UserDo userDo = userService.getUserDoById(user.id);
-	request.getSession().setAttribute("userdo", userDo);
-	System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
-	System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
-	System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus == UserEnum.PdStatus.ENABLED));
-	otherRedises.get("redis1").opsForValue().set("userdo1", userDo);
-	redisUtil.set("userdo2", userDo, "redis2");
-	redisUtil.set("userdo", userDo);
-	return userDo;
+        UserDetails user = ServletUtils.getCurrentUser();
+        // 获取身份
+        UserDo userDo = userService.getUserDoById(user.id);
+        request.getSession().setAttribute("userdo", userDo);
+        System.out.println("----## userDo.getAllIdentities()=" + userDo.allIdentities());
+        System.out.println("----## userDo.user.pStatus=" + userDo.user.pdStatus);
+        System.out.println("----## userDo.user.pStatus=" + (userDo.user.pdStatus == UserEnum.PdStatus.ENABLED));
+        otherRedises.get("redis1").opsForValue().set("userdo1", userDo);
+        redisUtil.set("userdo2", userDo, "redis2");
+        redisUtil.set("userdo", userDo);
+        return userDo;
     }
 
 //    @PostMapping("/api/addData")

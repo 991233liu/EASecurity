@@ -1,5 +1,6 @@
 package com.easecurity.admin.core.b
 
+import com.easecurity.admin.core.r.Role
 import com.easecurity.admin.core.r.RoleGroup
 import com.easecurity.admin.core.r.RoleUser
 import com.easecurity.util.JsonUtils
@@ -19,7 +20,7 @@ class User extends com.easecurity.core.basis.b.User {
         pd length: 100, nullable: true
         acStatus nullable: true
         pdStatus nullable: true
-        identities length: 4000, nullable: true
+        identities nullable: true
         userinfo nullable: true
         lastLoginTtime nullable: true
         pdErrorTimes nullable: true
@@ -32,6 +33,7 @@ class User extends com.easecurity.core.basis.b.User {
         id generator: 'uuid'
         acStatus enumType: "ordinal"
         pdStatus enumType: "ordinal"
+		identities type: 'text'
 //	    password column: '`password`'
         version false
     }
@@ -94,6 +96,17 @@ class User extends com.easecurity.core.basis.b.User {
             fullNameBf.append(roleUser.role.fullName)
             if (!roleGroups.contains(roleUser.role.roleGroup)) roleGroups.add(roleUser.role.roleGroup)
         }
+		RoleGroup userRoleGroup = RoleGroup.findByCode("user")
+		roleGroups.add(userRoleGroup)
+		Role userRole = Role.findByRoleGroupId(userRoleGroup.id)
+		idBf.append(",")
+		idBf.append(userRole.id)
+		codeBf.append(",")
+		codeBf.append(userRole.code)
+		nameBf.append(",")
+		nameBf.append(userRole.name)
+		fullNameBf.append(",")
+		fullNameBf.append(userRole.fullName)
         if (!roleGroups.isEmpty()) {
             identities.roleGroup = [:]
             identities.roleGroup.id = roleGroups*.id.join(",")
@@ -108,6 +121,7 @@ class User extends com.easecurity.core.basis.b.User {
             identities.role.fullName = fullNameBf.substring(1)
         }
         user.identities = JsonUtils.objectToJson(identities)
+		System.out.println("-----## updateIdentities.identities=" + user.identities)
         user.save()
     }
 }

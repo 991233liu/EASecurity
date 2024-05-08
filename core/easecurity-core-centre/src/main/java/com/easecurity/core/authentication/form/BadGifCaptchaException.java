@@ -12,11 +12,11 @@ public class BadGifCaptchaException extends BadCredentialsException {
     private static final long serialVersionUID = -2942898986889589602L;
 
     public BadGifCaptchaException(String msg) {
-	super(msg);
+        super(msg);
     }
 
     public BadGifCaptchaException(String msg, Throwable cause) {
-	super(msg, cause);
+        super(msg, cause);
     }
 
 }

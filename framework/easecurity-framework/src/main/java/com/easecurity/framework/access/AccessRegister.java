@@ -1,8 +1,9 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.framework.access;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.easecurity.core.basis.UriDo;
 import com.easecurity.framework.EaSecurityConfiguration;
+import com.easecurity.util.JsonUtils;
 
 /**
  * 控制列表加载方法。每分钟从远端拉取一次最新控制列表，如果无变化，则不重载。
@@ -67,8 +69,9 @@ public class AccessRegister {
      */
     private synchronized void getAllEas() {
 	if (eaSecurityConfiguration != null) { // 类没有初始化完成时，不能拉！
-	    // TODO 返回false后，做点什么呢？
-	    checkAndUpdate();
+	    boolean result = checkAndUpdate();
+	    if(!result)
+		log.error("从SecurityCentre检查并更新控制列表失败。");
 	    // 不能为null，防止后续的方法报错
 	    allEas = allEas == null ? new HashMap<>() : allEas;
 	}
@@ -79,7 +82,7 @@ public class AccessRegister {
      */
     @SuppressWarnings("unchecked")
     private boolean checkAndUpdate() {
-	ObjectInputStream ois = null;
+	BufferedReader br = null;
 	HashMap<String, Object> map = null;
 	try {
 	    String uri = eaSecurityConfiguration.server.getUrl() + "/data/alleas?lastModified=" + lastModified;
@@ -88,8 +91,14 @@ public class AccessRegister {
 	    connection.connect();
 	    int state = connection.getResponseCode();
 	    if (state == 200) { // 列表发生变化，读取新的控制列表
-		ois = new ObjectInputStream(connection.getInputStream());
-		map = (HashMap<String, Object>) ois.readObject();
+		StringBuilder sb = new StringBuilder();
+		String line;
+		br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		while ((line = br.readLine()) != null) {
+		    sb.append(line);
+		}
+		String str = sb.toString().trim();
+		map = (HashMap<String, Object>) JsonUtils.jsonToObject(str);
 		lastModified = (String) map.get("lastModified");
 		// TODO 未完待续
 		allEas = map;
@@ -101,12 +110,10 @@ public class AccessRegister {
 	    }
 	} catch (IOException e) {
 	    log.error("拉取控制列表时，数据流读取异常:", e);
-	} catch (ClassNotFoundException e) {
-	    log.error("拉取控制列表时，反序列化异常:", e);
 	} finally {
-	    if (ois != null)
+	    if (br != null)
 		try {
-		    ois.close();
+		    br.close();
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
@@ -157,7 +164,7 @@ public class AccessRegister {
 		return false;
 	    }
 	} catch (IOException e) {
-	    log.error("发送UriDo到远端服务器时，数据流推送异常:", e);
+	    log.error("发送UriDo到远端服务器时，数据流推送异常:" + lUriDo.uri.uri, e);
 	} finally {
 	    if (null != oos) {
 		try {

@@ -3,7 +3,11 @@ package com.easecurity.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author liulufeng
  * 
  */
-// TODO 暂时不支持注释符
+// TODO 暂时不支持注释
 public class JsonUtils {
     private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
 
@@ -35,6 +39,11 @@ public class JsonUtils {
     private static final char dakuohao_e = ']';
     private static final char douhao = ',';
 
+    private static DateFormat df10 = new SimpleDateFormat("yyyy-MM-dd");
+    private static DateFormat df19 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static DateFormat df23 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static DateFormat df24 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
     /**
      * 解析json串为java常用数据类型
      * 
@@ -42,6 +51,8 @@ public class JsonUtils {
      * @return Object
      */
     public static Object jsonToObject(String jsonString) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
 	try {
 	    JsonBean jsonBean = new JsonBean(jsonString, null);
 	    return getValue(jsonBean, null, null);
@@ -60,14 +71,46 @@ public class JsonUtils {
      *                   com.sgcc.orderbuild.Data.class)
      * @return Object
      */
-    // TODO 目前最外层对象只支持map（即以“{”开头，以“}”结尾），不支持自定义。
     public static Object jsonToObject(String jsonString, Map<?, ?> alias) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
 	try {
 	    JsonBean jsonBean = new JsonBean(jsonString, alias);
 	    return getValue(jsonBean, null, null);
 	} catch (Exception e) {
 	    throw new IllegalArgumentException("Json解析错误。Json串原始信息如下：" + jsonString + "\n", e);
 	}
+    }
+
+    /**
+     * 解析json串为自定义数据类型。
+     * 
+     * @param jsonString 需要解析的 json字符串
+     * @param clazz      Class
+     * @return Class
+     */
+    public static <T> T jsonToObject(String jsonString, Class<T> clazz) {
+	return jsonToObject(jsonString, clazz, new HashMap<>());
+    }
+
+    /**
+     * 解析json串为自定义数据类型。
+     * 
+     * @param jsonString 需要解析的 json字符串
+     * @param clazz      Class
+     * @param alias      自定义的数据类型配置。Map的key为待转换的json中的key，Map的value为json中的value所对应的数据类型
+     *                   。例如：将名为data的属性转换为com.sgcc.orderbuild.Data，则：alias.put("data",
+     *                   "com.sgcc.orderbuild.Data") 或者 alias.put("data",
+     *                   com.sgcc.orderbuild.Data.class)
+     * @return Class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T jsonToObject(String jsonString, Class<T> clazz, @SuppressWarnings("rawtypes") Map alias) {
+	if (jsonString == null || jsonString.trim().isEmpty())
+	    return null;
+	jsonString = "{'data_root':" + jsonString + "}";
+	alias.put("data_root", clazz);
+	return (T) ((Map<String, Object>) jsonToObject(jsonString, alias)).get("data_root");
     }
 
     /**
@@ -572,6 +615,7 @@ public class JsonUtils {
      * @throws InstantiationException
      * @throws ClassNotFoundException
      */
+    @SuppressWarnings("unchecked")
     private static List<Object> toList(JsonBean jsonBean, Object bean, String beanKey) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 	List<Object> ret = new ArrayList<Object>();
 	char sep = jsonBean.getNextValidChar();
@@ -601,6 +645,24 @@ public class JsonUtils {
 	// 指针后移，跳过结束符
 	jsonBean.next();
 
+	if (ret.size() == 2) { // 反序列化是，如果此list带有类描述信息，则需要去掉描述层
+	    try {
+		// 这种序列化JSON的特点：["java.util.ArrayList",[……]]
+		if (ret.get(0) instanceof String) {
+		    String className = (String) ret.get(0);
+		    int index = className.indexOf(".");
+		    int lIndex = className.lastIndexOf(".");
+		    if (index > -1 && index != lIndex) {
+			Class<?> calzz = Class.forName(className);
+			if ("java.util.List".equals(className) || List.class.isAssignableFrom(calzz)) {
+			    return (List<Object>) ret.get(1);
+			}
+		    }
+		}
+	    } catch (Exception e) {
+		log.warn("这里有可能有错误，请联系管理员：{}：{}：{}", bean, beanKey, ret.get(0));
+	    }
+	}
 	return ret;
     }
 
@@ -629,6 +691,12 @@ public class JsonUtils {
 		try {
 		    cursor_start = jsonBean.cursor;
 		    key = getKey(jsonBean);
+		    if ("".equals(key)) {
+			if ('"' != sep && '\'' != sep)
+			    jsonBean.back();
+			cursor_start = jsonBean.cursor;
+			key = getKey(jsonBean);
+		    }
 		} catch (Exception e) {
 		    // 获取key时报错了，说明是空的map，但不是null。例如："data":{}
 		    jsonBean.cursor = cursor_start;
@@ -660,6 +728,23 @@ public class JsonUtils {
 
 	// 指针后移，跳过结束符
 	jsonBean.next();
+
+	if (ret.containsKey("@type") || ret.containsKey("@class")) { // 此map是使用‘@type’标签序列化的bean
+	    String clazz = ret.containsKey("@type") ? (String) ret.get("@type") : (String) ret.get("@class");
+	    Object bean = getBean(clazz);
+	    if (bean instanceof Map) { // 如果是map类型的，则不需要转
+		ret.remove("@type");
+		ret.remove("@class");
+	    } else { // 如果是bean类型的，则需要转bean
+		Map<String, Field> fields = getFields(bean);
+		for (Map.Entry<String, Object> entry : ret.entrySet()) {
+		    if (entry.getKey().equals("@type") || entry.getKey().equals("@class"))
+			continue;
+		    setPropertyValue(bean, fields.get(entry.getKey()), entry.getKey(), entry.getValue());
+		}
+		return bean;
+	    }
+	}
 	return ret;
     }
 
@@ -726,12 +811,15 @@ public class JsonUtils {
 	return bean;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void setPropertyValue(Object bean, Field field, String key, Object value) throws NumberFormatException, IllegalArgumentException, IllegalAccessException {
 	synchronized (field) { // 赋值时并发造成bug
 	    field.setAccessible(true);
 	    try {
-		Object type = field.getType();
-		if (bean.getClass() == type) {
+		Class<?> type = field.getType();
+		if (value == null) {
+		    field.set(bean, value);
+		} else if (bean.getClass() == type) {
 		    field.set(bean, value);
 		} else if (type == long.class || type == Long.class) {
 		    field.set(bean, Long.parseLong(value.toString()));
@@ -741,8 +829,53 @@ public class JsonUtils {
 		    field.set(bean, Integer.parseInt(value.toString()));
 		} else if (type == float.class || type == Float.class) {
 		    field.set(bean, Float.parseFloat(value.toString()));
+		} else if (type.isEnum()) {
+		    if (value instanceof String) {
+			Class type2 = type;
+			field.set(bean, Enum.valueOf(type2, (String) value));
+		    } else if (value instanceof Integer) {
+			Object[] enumConstants = type.getEnumConstants();
+			field.set(bean, enumConstants[(int) value]);
+		    } else {
+			log.error("这里发现一个无法处理的enum类型：{}：{}", type, value);
+		    }
 		} else if (type == String.class) {
 		    field.set(bean, value.toString());
+		} else if (type == Date.class) {
+		    if (value instanceof Integer || value instanceof Long) {
+			field.set(bean, new Date((long) value));
+		    } else if (value instanceof String) {
+			String value2 = (String) value;
+			if (value2.length() == 10)
+			    field.set(bean, df10.parse(value2));
+			else if (value2.length() == 19)
+			    field.set(bean, df19.parse(value2));
+			else if (value2.length() == 23)
+			    field.set(bean, df23.parse(value2));
+			else if (value2.length() == 24)
+			    field.set(bean, df24.parse(value2.replace("Z", "UTC")));
+			log.error("这里发现一个无法处理的Date类型：{}：{}", type, value);
+		    } else {
+			log.error("这里发现一个无法处理的Date类型：{}：{}", type, value);
+		    }
+		} else if (type == Instant.class) {
+		    if (value instanceof Integer || value instanceof Long) {
+			field.set(bean, new Date((long) value).toInstant());
+		    } else if (value instanceof String) {
+			String value2 = (String) value;
+			if (value2.length() == 10)
+			    field.set(bean, df10.parse(value2).toInstant());
+			else if (value2.length() == 19)
+			    field.set(bean, df19.parse(value2).toInstant());
+			else if (value2.length() == 23)
+			    field.set(bean, df23.parse(value2).toInstant());
+			else if (value2.length() == 24)
+			    field.set(bean, df24.parse(value2.replace("Z", "UTC")).toInstant());
+			else
+			    log.error("这里发现一个无法处理的Instant类型：{}：{}", type, value);
+		    } else {
+			log.error("这里发现一个无法处理的Instant类型：{}：{}", type, value);
+		    }
 		} else { // 其它未知情况，以后发现时再追加处理
 		    field.set(bean, value);
 		}
@@ -762,12 +895,12 @@ public class JsonUtils {
 				field.setAccessible(true);
 				log.info("重新赋值后，field.isAccessible()=" + field.isAccessible());
 			    }
-			    @SuppressWarnings("unchecked")
 			    Map.Entry<String, List<?>> temp = (Entry<String, List<?>>) temps.next();
 			    field.set(bean, temp.getValue());
 			}
 		    }
-		}
+		} else
+		    log.warn("这里有可能有错误，请联系管理员：{}：{}：{}", field, key, value);
 	    }
 	    field.setAccessible(false);
 	}
@@ -788,12 +921,14 @@ public class JsonUtils {
      * @param needSep  是否需要开始符
      */
     private static String to_String(JsonBean jsonBean, boolean needSep) {
-	char c = getValueFirstChar(jsonBean);
-	if ('"' != c && '\'' != c) {
+	char cStart = getValueFirstChar(jsonBean);
+	if ('"' != cStart && '\'' != cStart) {
 	    if (needSep)
-		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + c);
-	    else
+		throw new RuntimeException("String开始符错误：cursor=" + jsonBean.cursor + " sep=" + cStart);
+	    else {
+		cStart = '"';
 		jsonBean.back();
+	    }
 	}
 	StringBuffer ret = new StringBuffer();
 
@@ -801,9 +936,11 @@ public class JsonUtils {
 	jsonBean.next();
 
 	// 开始解析
+	char c;
 	while (jsonBean.cursor < jsonBean.strlength) {
 	    c = jsonBean.getCurrentChar();
-	    if ('"' == c || '\'' == c)
+//	    if ('"' == c || '\'' == c)
+	    if (cStart == c)
 		break; // 再次出现结束符时结束
 	    if (c == '\\' && jsonBean.getNextChar() == '"') { // value中间含有特殊字符"""
 		ret.append('"');
@@ -966,6 +1103,20 @@ public class JsonUtils {
 	    return t_bean;
 	} else
 	    return null;
+    }
+
+    /**
+     * 获取class所要转换的bean的实例。同时初始化实例中的所有属性
+     * 
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @SuppressWarnings("rawtypes")
+    private static Object getBean(String fullClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	Object clazz = Class.forName(fullClassName);
+	initBeanFields((Class) clazz);
+	return ((Class) clazz).newInstance();
     }
 
     private static class JsonBean {

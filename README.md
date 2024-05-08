@@ -4,6 +4,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;企业级应用安全中心（Enterprise Application Security Center，简称EASecurity）。  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;满足安全三要素CIA（保密性Confidentiality、完整性Integrity、可用性Availability），符合安全架构5A方法论（身份认证Authentication、授权Authorization、访问控制Access Control、可审计Auditable、资产保护Asset Protection）。  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;符合中国国内各大央企的安全管理要求，在保证开发人员易用性（符合国内编程人员使用习惯）前提下，最大程度的做到可配置和易管理。开发和运维分离，做到上线后运维维护权限变更不用再次发版。  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在企业中，人员的基本信息、账号信息、组织架构信息、权限（授权）信息，这些信息是与实体关系对应的，且不会因系统应用的不同而不同。这些信息，多数都涉及商业秘密，其查看及使用都应该被安全管控。旧的企业架构中，数据割裂非常严重。不同应用系统由不同厂商提供，运维操作人员不安全性较高，多数开发人员可以轻松的拿到企业正式数据，一不留神就会公开到互联网。EASecurity可以很好的规避以上问题。通过微服务的设计理念，配合OAuth2，可以安全的共享这些业务数据。既不影响业务系统的开发与应用（可以像调用本地接口一样的使用以上数据），又能做到安全管控。  
 
 ## 软件架构  
 软件架构说明：  

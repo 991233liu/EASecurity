@@ -20,9 +20,9 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  * RedisSession配置
  *
  */
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds=7200)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 7200)
 @Configuration
-public class RedisHttpSessionConfig{
+public class RedisHttpSessionConfig {
 //
 //    @Bean
 //    public CookieSerializer cookieSerializer() {

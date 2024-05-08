@@ -74,26 +74,26 @@
                 </div>
 				<div class="form-group has-feedback">
 					<p>
-						<!-- srchref为验证成功后的跳转地址 -->
-						<label>srchref</label>
-						<input type="text" name="srchref" value="/demo/login" id="srchref" />
-					</p>
-                </div>
-				<div class="form-group has-feedback">
-					<p>
-						<!-- ajaxsubmit为登录类型，默认使用cookie，token为一次性会话 -->
-						<label>ajaxsubmit</label>
-						<select name="ajaxsubmit" id="ajaxsubmit">
-							<option value="" selected="selected"></option>
-							<option value="token">token</option>
+						<!-- loginType为登录类型，默认使用cookie，token为一次性会话 -->
+						<label>loginType</label>
+						<select name="loginType" id="loginType">
+							<option value="cookie">session(cookie)</option>
+							<option value="accessToken" selected="selected">Access Token</option>
 						</select>
 					</p>
                 </div>
 				<div class="form-group has-feedback">
 					<p>
-						<!-- failurehref为验证失败后的跳转地址 -->
-						<label>failurehref</label>
-						<input type="text" name="failurehref" value="" id="failurehref" />
+						<!-- redirect_url为验证成功后的跳转地址 -->
+						<label>redirect_url</label>
+						<input type="text" name="redirect_url" value="http://128.0.0.1:8080/demo/queryData4" id="redirect_url" />
+					</p>
+                </div>
+				<div class="form-group has-feedback">
+					<p>
+						<!-- faile_url为验证失败后的跳转地址 -->
+						<label>faile_url</label>
+						<input type="text" name="faile_url" value="" id="faile_url" />
 					</p>
                 </div>
 				<div class="form-group has-feedback">
@@ -129,10 +129,10 @@
     <script>
 		$(document).ready(function() {
             flushLoginCaptcha();
-			var srchref = GetRequest('srchref');
-			if(srchref)$("#srchref").val(decodeURIComponent(srchref));
-			var failurehref = GetRequest('failurehref');
-			if(failurehref)$("#failurehref").val(decodeURIComponent(failurehref));
+			var redirect_url = GetRequest('redirect_url');
+			if(redirect_url)$("#redirect_url").val(decodeURIComponent(redirect_url));
+			var faile_url = GetRequest('faile_url');
+			if(faile_url)$("#faile_url").val(decodeURIComponent(faile_url));
         });
         $(function() {
             $('input').iCheck({

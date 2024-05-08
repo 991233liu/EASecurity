@@ -2,6 +2,7 @@
 package com.easecurity.core.basis.s;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * s_gif_captcha表：图片验证码。
@@ -10,24 +11,22 @@ import java.io.Serializable;
 public class GifCaptcha implements Serializable {
 
     private static final long serialVersionUID = 8968703859895801638L;
-    
+
     public Integer id;
-    /**
-     * SessionID
-     */
-    public String sessionId;
     /**
      * 验证码key
      */
-    public String key2;
+    public String gkey;
     /**
      * 验证码值
      */
-    public String value;
+    public String gvalue;
     /**
      * 有效期
      */
     public Long validTime;
+    
+    public Date dateCreated;
 
     public Integer getId() {
         return id;
@@ -37,28 +36,20 @@ public class GifCaptcha implements Serializable {
         this.id = id;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public String getGkey() {
+        return gkey;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setGkey(String gkey) {
+        this.gkey = gkey;
     }
 
-    public String getKey2() {
-        return key2;
+    public String getGvalue() {
+        return gvalue;
     }
 
-    public void setKey2(String key2) {
-        this.key2 = key2;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setGvalue(String gvalue) {
+        this.gvalue = gvalue;
     }
 
     public Long getValidTime() {
@@ -68,4 +59,13 @@ public class GifCaptcha implements Serializable {
     public void setValidTime(Long validTime) {
         this.validTime = validTime;
     }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
 }

@@ -50,19 +50,19 @@ public class ServletUtils {
      * @return ip地址
      */
     public static String getClientIpAddr(ServerHttpRequest request) {
-	if (null == request)
-	    return null;
-	String ip = request.getHeaders().getFirst("x-forwarded-for");
-	if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
-	    ip = request.getHeaders().getFirst("Proxy-Client-IP");
-	if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
-	    ip = request.getHeaders().getFirst("WL-Proxy-Client-IP");
-	if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
-	    ip = request.getHeaders().getFirst("X-Real-IP");
-	if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
-	    ip = request.getRemoteAddress().getHostString();
-	if (ip != null && ip.indexOf(",") > -1)
-	    ip = ip.substring(0, ip.indexOf(","));
-	return ip;
+        if (null == request)
+            return null;
+        String ip = request.getHeaders().getFirst("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
+            ip = request.getHeaders().getFirst("Proxy-Client-IP");
+        if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
+            ip = request.getHeaders().getFirst("WL-Proxy-Client-IP");
+        if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
+            ip = request.getHeaders().getFirst("X-Real-IP");
+        if (ip == null || ip.length() == 0 || "unknown ".equalsIgnoreCase(ip) || "null".equalsIgnoreCase(ip))
+            ip = request.getRemoteAddress().getHostString();
+        if (ip != null && ip.indexOf(",") > -1)
+            ip = ip.substring(0, ip.indexOf(","));
+        return ip;
     }
 }

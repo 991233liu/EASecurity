@@ -21,18 +21,18 @@ public class LogoutController {
 
     @RequestMapping("/logout")
     public void logout(ServerWebExchange exchange) throws IOException {
-	// 不启用session，使用UUID作为主键存入Redis，UUID值放到cookie中返回前台
-	ServerHttpRequest request = exchange.getRequest();
-	MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-	if (cookies != null && cookies.containsKey("SESSION_JWT")) {
-	    redisTemplate.delete("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
-	}
+        // 不启用session，使用UUID作为主键存入Redis，UUID值放到cookie中返回前台
+        ServerHttpRequest request = exchange.getRequest();
+        MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+        if (cookies != null && cookies.containsKey("SESSION_JWT")) {
+            redisTemplate.delete("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
+        }
 
-	// 如果认证中心主动的撤销了某个jwt的授权，则会将jwt.jti发送过来，要求客户端主动清理本地缓存
-	// jwt.jti信息会放到header中
-	String jti = request.getHeaders().getFirst("jti");
-	if (jti != null) {
-	    redisTemplate.delete("JWT:" + jti);
-	}
+        // 如果认证中心主动的撤销了某个jwt的授权，则会将jwt.jti发送过来，要求客户端主动清理本地缓存
+        // jwt.jti信息会放到header中
+        String jti = request.getHeaders().getFirst("jti");
+        if (jti != null) {
+            redisTemplate.delete("JWT:" + jti);
+        }
     }
 }

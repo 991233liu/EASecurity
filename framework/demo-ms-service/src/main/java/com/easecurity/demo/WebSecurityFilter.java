@@ -37,21 +37,22 @@ public class WebSecurityFilter extends AbsMSWebSecurityFilter {
 
     /**
      * 从HttpServletRequest中取出JWT密文，然后解码。
-     * 考虑到每次解码都很浪费时间，可以将密文hash值作为主键存入redis缓存（缓存有效期要尽量小）。 hash算法尽量选择hash256以上的
+     * 考虑到每次解码都很浪费时间，可以将req.getHeader("jwt.jti")值作为主键存入redis缓存（缓存有效期要尽量小）。
+     * 本demo中，不使用缓存，直接解密并验签。
      */
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServletRequest request) {
-	// 不使用缓存，直接解密
-	HttpServletRequest req = (HttpServletRequest) request;
-	String jwtStr = req.getHeader("Authorization");
-	if (jwtStr != null && jwtStr.indexOf("Bearer") > -1) {
-	    jwtStr = jwtStr.substring(jwtStr.indexOf("Bearer") + 6);
-	    try {
-		return loginService.getUserJWT(jwtStr, getRSAPublicKey());
-	    } catch (NoSuchAlgorithmException | InvalidKeySpecException | JWTExpirationException | IOException e) {
-		log.error("获取登录人授权信息时异常",e);
-	    }
-	}
-	return null;
+        // 不使用缓存，直接解密并验签
+        HttpServletRequest req = (HttpServletRequest) request;
+        String jwtStr = req.getHeader("authorization");
+        if (jwtStr != null && jwtStr.indexOf("Bearer") > -1) {
+            jwtStr = jwtStr.substring(jwtStr.indexOf("Bearer") + 6);
+            try {
+                return loginService.getUserJWT(jwtStr, getRSAPublicKey());
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException | JWTExpirationException | IOException e) {
+                log.error("获取登录人授权信息时异常", e);
+            }
+        }
+        return null;
     }
 }

@@ -1,0 +1,17 @@
+---
+# 企业安全中心相关配置
+easecurity:
+   server:
+      url: http://127.0.0.1/SecurityCentre
+      connectTimeout: 30000    # 与企业安全中心通信链接超时时间（单位毫秒）。默认30秒。
+      threadSleepTime: 60000   # 与企业安全中心通信间隔（单位毫秒）。默认1分钟
+   verification: dev   # 安全校验模式：dev(development)、prod(production)。在dev模式下，安全校验标签（功能）会正常执行，
+                         # 校验结果会输出到日志中（info级别），但是，无论校验结果如何，被保护（控制）的方法仍会被执行。
+                         # 默认为prod模式。
+   # jwt配置
+   jwt:
+      publicKey: classpath:app.pub
+#   noLoginUrl: /SecurityCentre/auth/login   # 未登录时的跳转页面
+#   noLoginMessage: "{\"code\":\"noLogin\",\"message\":\"noLogin\"}"   # 未登录时的返回信息，此时http.Status为403
+   noPermissionMessage: "{\"code\":\"noLogin\",\"message\":\"noLogin\"}"   # gateway中发现访问没有权限的接口时，返回的提示信息
+   

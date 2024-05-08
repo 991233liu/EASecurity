@@ -56,9 +56,9 @@ class LoginController extends grails.plugin.springsecurity.LoginController {
         String key = UUID.randomUUID().toString()
         String verCode = gifCaptcha.text().toLowerCase()
         DGifCaptcha dDifCaptcha1 = new DGifCaptcha()
-        dDifCaptcha1.sessionId = getSession().getId()
-        dDifCaptcha1.key2 = key
-        dDifCaptcha1.value = verCode
+//        dDifCaptcha1.sessionId = getSession().getId()
+//        dDifCaptcha1.key2 = key
+        dDifCaptcha1.gvalue = verCode
         dDifCaptcha1.validTime = System.currentTimeMillis() + validTime
         DGifCaptcha.withTransaction {
             dDifCaptcha1.save(flush: true)

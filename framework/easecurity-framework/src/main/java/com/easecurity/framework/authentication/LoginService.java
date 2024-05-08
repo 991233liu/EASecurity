@@ -92,8 +92,13 @@ public class LoginService {
      * @throws JWTExpirationException
      */
     public JWT getCurrentUserJWT(HttpServletRequest request, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
-	Cookie[] cookies = request.getCookies();
-	return getCurrentUserJWT(cookies, publicKey);
+	String at = getAccessToken(request);
+	if (at != null && !at.isEmpty()) { // 基于OAT的jwt
+	    return getCurrentUserJWT(null, at, publicKey);
+	} else { // 基于cookie的jwt
+	    Cookie[] cookies = request.getCookies();
+	    return getCurrentUserJWT(cookies, null, publicKey);
+	}
     }
 
     /**
@@ -106,15 +111,17 @@ public class LoginService {
      * @throws IOException
      * @throws JWTExpirationException
      */
-    public JWT getCurrentUserJWT(Cookie[] cookies, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
+    public JWT getCurrentUserJWT(Cookie[] cookies, String accessToken, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
 	if (cookies != null) {
 	    for (Cookie cookie : cookies) {
 		if (cookie.getName().equals("EASECURITY_S")) {
-		    return _getCurrentUserJWT(cookie, publicKey);
+		    String uri = eaSecurityConfiguration.server.getUrl() + "/jwt/currentUserJWT";
+		    return _getCurrentUserJWT(uri, cookie, null, publicKey);
 		}
 	    }
 	}
-	return _getCurrentUserJWT(null, publicKey);
+	String uri = eaSecurityConfiguration.server.getUrl() + "/jwt/getJWT";
+	return _getCurrentUserJWT(uri, null, accessToken, publicKey);
     }
 
     /**
@@ -183,45 +190,43 @@ public class LoginService {
 	return userDetails.get();
     }
 
-    private JWT _getCurrentUserJWT(Cookie cookie, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
-	if (cookie == null) { // TODO 未登录用户 或者 其它待开发的认证方式
-	    return null;
-	} else { // 存在cookie，从远端获取认证用户
-	    BufferedReader br = null;
-	    try {
-		String uri = eaSecurityConfiguration.server.getUrl() + "/auth/currentUserJWT";
-		HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-		connection = eaSecurityConfiguration.setDefaultConfig(connection);
-		connection.setRequestMethod("GET");
+    private JWT _getCurrentUserJWT(String uri, Cookie cookie, String accessToken, RSAPublicKey publicKey) throws IOException, JWTExpirationException {
+	BufferedReader br = null;
+	try {
+	    HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
+	    connection = eaSecurityConfiguration.setDefaultConfig(connection);
+	    connection.setRequestMethod("GET");
+	    if (cookie != null)
 		connection.addRequestProperty("Cookie", cookie.getName() + "=" + cookie.getValue());
-		connection.connect();
-		int state = connection.getResponseCode();
-		if (state == 200) { // 已登录用户
-		    StringBuilder sb = new StringBuilder();
-		    String line;
-		    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		    while ((line = br.readLine()) != null) {
-			sb.append(line);
-		    }
-		    String str = sb.toString().trim();
-		    return getUserJWT(str, publicKey);
-		} else if (state == 203) { // 匿名访问
-		    return null;
-		} else { // 服务器返回错误
-		    log.error("获取当前登录人时，服务器报错，getResponseCode:{}", state);
-		    return null;
+	    if (accessToken != null)
+		connection.addRequestProperty("access_token", accessToken);
+	    connection.connect();
+	    int state = connection.getResponseCode();
+	    if (state == 200) { // 已登录用户
+		StringBuilder sb = new StringBuilder();
+		String line;
+		br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		while ((line = br.readLine()) != null) {
+		    sb.append(line);
 		}
-	    } catch (IOException e) {
-		log.error("获取当前登录人时，数据流读取异常:", e);
-		throw e;
-	    } finally {
-		if (br != null)
-		    try {
-			br.close();
-		    } catch (IOException e) {
-			e.printStackTrace();
-		    }
+		String str = sb.toString().trim();
+		return getUserJWT(str, publicKey);
+	    } else if (state == 203) { // 匿名访问
+		return null;
+	    } else { // 服务器返回错误
+		log.error("获取当前登录人时，服务器报错，getResponseCode:{}", state);
+		return null;
 	    }
+	} catch (IOException e) {
+	    log.error("获取当前登录人时，数据流读取异常:", e);
+	    throw e;
+	} finally {
+	    if (br != null)
+		try {
+		    br.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	}
     }
 
@@ -252,6 +257,24 @@ public class LoginService {
 	} catch (ParseException | JOSEException e) {
 	    log.error("JWT 解码异常，jwtStr=" + jwtStr, e);
 	    throw new IOException("JWT 解码异常", e);
+	}
+	return null;
+    }
+    
+    /**
+     * 获取AccessToken（如果存在的话）
+     * 
+     * @param request
+     * @return
+     */
+    public String getAccessToken(HttpServletRequest request) {
+	String accessToken = request.getHeader("authorization");
+	if (accessToken != null && accessToken.indexOf("Bearer") > -1) {
+	    return accessToken.substring(accessToken.indexOf("Bearer") + 6).trim();
+	} else if (request.getHeader("access_token") != null && !request.getHeader("access_token").trim().isEmpty()) {
+	    return request.getHeader("access_token").trim();
+	} else if (request.getParameter("access_token") != null && !request.getParameter("access_token").trim().isEmpty()) {
+	    return request.getParameter("access_token").trim();
 	}
 	return null;
     }

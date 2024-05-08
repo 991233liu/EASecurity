@@ -17,7 +17,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.easecurity.core.authentication.JWT;
-import com.easecurity.framework.authentication.AbsWebSecurityFilter;
+import com.easecurity.framework.authentication.AbsGatwayWebSecurityFilter;
 
 import reactor.core.publisher.Mono;
 
@@ -26,14 +26,14 @@ import reactor.core.publisher.Mono;
  *
  */
 @Component
-public class WebSecurityFilter extends AbsWebSecurityFilter {
+public class WebSecurityFilter extends AbsGatwayWebSecurityFilter {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public int getOrder() {
-	return 0;
+        return 0;
     }
 
     /**
@@ -44,12 +44,12 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
      */
     @Override
     public JWT getCurrentUserJWTFromLocalStore(ServerHttpRequest request) {
-	MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-	System.out.println("--------# cookies" + cookies);
-	if (cookies != null && cookies.containsKey("SESSION_JWT")) {
-	    return (JWT) redisTemplate.opsForValue().get("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
-	}
-	return null;
+        MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+        System.out.println("--------# cookies" + cookies);
+        if (cookies != null && cookies.containsKey("SESSION_JWT")) {
+            return (JWT) redisTemplate.opsForValue().get("JWT:" + cookies.getFirst("SESSION_JWT").getValue());
+        }
+        return null;
     }
 
     /**
@@ -60,11 +60,11 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
      */
     @Override
     public void SaveUserJWT2LocalStore(ServerHttpRequest request, ServerHttpResponse response, JWT jwt) {
-	ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", jwt.jti);
-	cookieBuilder.path("/");
-	cookieBuilder.httpOnly(true);
-	response.addCookie(cookieBuilder.build());
-	redisTemplate.opsForValue().set("JWT:" + jwt.jti, jwt, 300, TimeUnit.SECONDS);
+        ResponseCookieBuilder cookieBuilder = ResponseCookie.from("SESSION_JWT", jwt.jti);
+        cookieBuilder.path("/");
+        cookieBuilder.httpOnly(true);
+        response.addCookie(cookieBuilder.build());
+        redisTemplate.opsForValue().set("JWT:" + jwt.jti, jwt, 300, TimeUnit.SECONDS);
     }
 
     /**
@@ -77,10 +77,10 @@ public class WebSecurityFilter extends AbsWebSecurityFilter {
      */
     @Override
     public Mono<Void> addJWT2ServiceRequest(String jwtStr, JWT jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
-	// TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
-	// JWT密文最小1K+
-	ServerHttpRequest host = exchange.getRequest().mutate().header("Authorization", "Bearer " + jwtStr).build();
-	ServerWebExchange build = exchange.mutate().request(host).build();
-	return chain.filter(build);
+        // TODO 每种服务器所支持的header大小都不一样，需要根据自己的实际情况考虑如何将JWT密文传递给后续应用
+        // JWT密文最小1K+
+        ServerHttpRequest host = exchange.getRequest().mutate().header("authorization", "Bearer " + jwtStr).header("jwt.jti", jwt.jti).build();
+        ServerWebExchange build = exchange.mutate().request(host).build();
+        return chain.filter(build);
     }
 }

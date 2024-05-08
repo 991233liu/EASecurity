@@ -40,43 +40,43 @@ public class UriAccessWebSecurityFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-	log.debug("---------# UriAccessWebSecurityFilter.filter in");
-	ServerHttpRequest request = exchange.getRequest();
-	ServerHttpResponse response = exchange.getResponse();
-	Mono<Void> mono = Mono.empty();
-	try {
-	    String uri = request.getURI().getPath();
-	    UserDetails user = loginService.getLocalUserDetails(null);
-	    String clientIp = ServletUtils.getClientIpAddr(request);
-	    log.debug("UriAccessWebSecurityFilter, uri={} loginUser={} clientIp={}", uri, user, clientIp);
+        log.debug("---------# UriAccessWebSecurityFilter.filter in");
+        ServerHttpRequest request = exchange.getRequest();
+        ServerHttpResponse response = exchange.getResponse();
+        Mono<Void> mono = Mono.empty();
+        try {
+            String uri = request.getURI().getPath();
+            UserDetails user = loginService.getLocalUserDetails(null);
+            String clientIp = ServletUtils.getClientIpAddr(request);
+            log.debug("UriAccessWebSecurityFilter, uri={} loginUser={} clientIp={}", uri, user, clientIp);
 
-	    if (uriAccessService.validation(uri, user, clientIp)) { // 有执行权限
-		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
-		    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
-		}
-		mono = chain.filter(exchange);
-	    } else { // 无执行权限
-		if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
-		    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", uri, user, eaSecurityConfiguration.verification);
-		}
-		response.setStatusCode(HttpStatus.FORBIDDEN);
-		DataBuffer data = response.bufferFactory().wrap(eaSecurityConfiguration.noPermissionMessage.getBytes());
-		mono = response.writeWith(Mono.just(data));
-	    }
-	} catch (Exception e) {
-	    log.error("UriAccessWebSecurityFilter 执行时出现异常：", e);
-	} finally {
-	    if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
-		mono = chain.filter(exchange);
-	}
+            if (uriAccessService.validation(uri, user, clientIp)) { // 有执行权限
+                if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+                    log.info("---## 恭喜你，权限校验通过。当前校验模式为{}", eaSecurityConfiguration.verification);
+                }
+                mono = chain.filter(exchange);
+            } else { // 无执行权限
+                if (eaSecurityConfiguration.isDevelopmentMode()) { // 开发模式
+                    log.info("---## 很遗憾，权限校验未通过。你收到了一次非法请求，被请求方法为{}，当前登录人为{}，当前校验模式为{}", uri, user, eaSecurityConfiguration.verification);
+                }
+                response.setStatusCode(HttpStatus.FORBIDDEN);
+                DataBuffer data = response.bufferFactory().wrap(eaSecurityConfiguration.noPermissionMessage.getBytes());
+                mono = response.writeWith(Mono.just(data));
+            }
+        } catch (Exception e) {
+            log.error("UriAccessWebSecurityFilter 执行时出现异常：", e);
+        } finally {
+            if (eaSecurityConfiguration.isDevelopmentMode()) // 开发模式
+                mono = chain.filter(exchange);
+        }
 
-	log.debug("---------# UriAccessWebSecurityFilter.filter out");
-	return mono;
+        log.debug("---------# UriAccessWebSecurityFilter.filter out");
+        return mono;
     }
 
     @Override
     public int getOrder() {
-	return 1;
+        return 1;
     }
 
 }

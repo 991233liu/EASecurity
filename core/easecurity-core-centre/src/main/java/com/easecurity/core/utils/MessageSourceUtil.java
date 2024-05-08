@@ -21,24 +21,24 @@ public class MessageSourceUtil {
     private MessageSource messageSource;
 
     public String getMessage(String code) {
-	return getMessage(code, code);
+        return getMessage(code, code);
     }
 
     public String getMessage(String code, String defaultMsg) {
-	return getMessage(code, null, defaultMsg);
+        return getMessage(code, null, defaultMsg);
     }
 
     public String getMessage(String code, Object[] args, String defaultMsg) {
-	return messageSource.getMessage(code, args, defaultMsg, getLocale());
+        return messageSource.getMessage(code, args, defaultMsg, getLocale());
     }
 
     private Locale getLocale() {
-	Locale locale = null;
-	HttpServletRequest request = ServletUtils.getRequest();
-	if (request != null)
-	    locale = request.getLocale();
-	if (locale == null)
-	    locale = LocaleContextHolder.getLocale();
-	return locale;
+        Locale locale = null;
+        HttpServletRequest request = ServletUtils.getRequest();
+        if (request != null)
+            locale = request.getLocale();
+        if (locale == null)
+            locale = LocaleContextHolder.getLocale();
+        return locale;
     }
 }

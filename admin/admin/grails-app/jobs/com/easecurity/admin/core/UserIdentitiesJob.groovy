@@ -19,6 +19,7 @@ class UserIdentitiesJob {
     def group = "User"
     def description = "定时，每5分钟一次，重新计算用户的identities字段。（没有变化的不会重新计算）"
 
+    // TODO lastUpdated is null 时一直为null，会反复执行
     def execute() {
         Date now = new Date();
         List<User> failList = []
@@ -69,11 +70,11 @@ class UserIdentitiesJob {
             else jobOrg = new JobUser(tabName: "Org", lastTime: now)
             jobOrg.save(failOnError: true)
 
-            if (jobOrgUser) jobOrg.lastTime = now
+            if (jobOrgUser) jobOrgUser.lastTime = now
             else jobOrgUser = new JobUser(tabName: "OrgUser", lastTime: now)
             jobOrgUser.save(failOnError: true)
 
-            if (jobRoleUser) jobOrg.lastTime = now
+            if (jobRoleUser) jobRoleUser.lastTime = now
             else jobRoleUser = new JobUser(tabName: "RoleUser", lastTime: now)
             jobRoleUser.save(failOnError: true)
 

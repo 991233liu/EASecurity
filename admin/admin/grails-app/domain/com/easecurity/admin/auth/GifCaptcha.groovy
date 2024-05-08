@@ -4,14 +4,14 @@ import grails.compiler.GrailsCompileStatic
 import groovy.transform.ToString
 
 @GrailsCompileStatic
-//@ToString(includes = 'key', includeNames = true, includePackage = false)
+@ToString(includes = 'gkey', includeNames = true, includePackage = false)
 class GifCaptcha extends com.easecurity.core.basis.s.GifCaptcha{
 
     static constraints = {
-        sessionId nullable: true
-        key2 nullable: true
-        value nullable: true
+        gkey nullable: true
+        gvalue nullable: true
         validTime nullable: true
+        dateCreated nullable: true
     }
 
     static mapping = {

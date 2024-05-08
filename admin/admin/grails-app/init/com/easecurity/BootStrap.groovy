@@ -30,10 +30,18 @@ class BootStrap {
             User.withTransaction {
                 RoleGroup roleGroup = new RoleGroup(name: '系统管理员', code: 'admin')
                 roleGroup.save(failOnError: true)
+                RoleGroup userRoleGroup = new RoleGroup(name: '系统用户', code: 'user')
+                userRoleGroup.save(failOnError: true)
+                RoleGroup anonymousRoleGroup = new RoleGroup(name: '未登录用户', code: 'anonymous')
+                anonymousRoleGroup.save(failOnError: true)
                 Org org = new Org(name: '根', code: 'root', type: OrgEnum.Type.ROOT, status: OrgEnum.Status.ENABLED, fullName: '/', fullCode: '/', fullPathid: '/')
                 org.save(failOnError: true)
                 Role role = new Role(org: org, roleGroup: roleGroup)
                 role.save(failOnError: true)
+                Role userRole = new Role(org: org, roleGroup: userRoleGroup)
+                userRole.save(failOnError: true)
+                Role anonymousRole = new Role(org: org, roleGroup: anonymousRoleGroup)
+                anonymousRole.save(failOnError: true)
                 // TODO 账号identities空
                 user = new User(account: 'admin', pd: '$2a$05$EzgpXxRZY/78MyUBA6ORfOsPQapPih36qlw8bdFmUBRLB25icMcOW', acStatus: UserEnum.AcStatus.ENABLED, pdStatus: UserEnum.PdStatus.ENABLED)
                 user.save(failOnError: true)
