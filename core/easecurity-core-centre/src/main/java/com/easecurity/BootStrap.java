@@ -1,7 +1,7 @@
-/** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.easecurity.core.basis.ServerService;
@@ -11,11 +11,12 @@ import com.easecurity.core.basis.ServerService;
  *
  */
 @Component
-public class BootStrap {
+public class BootStrap implements CommandLineRunner{
     @Autowired
-    ServerService serverService;
+    private ServerService serverService;
 
-    public void init() {
+    @Override
+    public void run(String... args) throws Exception {
         serverService.serverStarte();
     }
 }
