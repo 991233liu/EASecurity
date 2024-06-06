@@ -1,0 +1,10 @@
+import com.easecurity.admin.utils.*
+
+def _code = ServletUtils.flash.code
+def _message = ServletUtils.flash.message
+
+json {
+    error _code?:500
+    code _code?:500
+	message _message?:"Internal server error"
+}

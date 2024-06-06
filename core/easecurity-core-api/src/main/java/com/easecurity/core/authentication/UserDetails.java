@@ -2,6 +2,7 @@
 package com.easecurity.core.authentication;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import com.easecurity.core.basis.UserDo;
@@ -32,18 +33,26 @@ public class UserDetails implements Serializable {
     /**
      * 用户图标
      */
-    public String icon;
+    public String avatar;
+    /**
+     * email
+     */
+    public String email;
+    /**
+     * 最后登录时间
+     */
+    public Date lastLoginTtime;
 
     public UserDetails() {
     }
 
     public UserDetails(UserDo userDo) {
-	this.id = userDo.user.id;
-	this.account = userDo.user.account;
-	if (userDo.userinfo != null) {
-	    this.name = userDo.userinfo.name;
-	    this.icon = userDo.userinfo.icon;
-	}
+        this.id = userDo.user.id;
+        this.account = userDo.user.account;
+        if (userDo.userinfo != null) {
+            this.name = userDo.userinfo.name;
+            this.avatar = userDo.userinfo.avatar;
+        }
     }
 
     /**
@@ -51,15 +60,15 @@ public class UserDetails implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map<String, String>> allIdentitiesWithMap() {
-	if (_AllIdentitiesWithMap == null)
-	    _AllIdentitiesWithMap = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
-	return _AllIdentitiesWithMap;
+        if (_AllIdentitiesWithMap == null)
+            _AllIdentitiesWithMap = (Map<String, Map<String, String>>) JsonUtils.jsonToObject(identities);
+        return _AllIdentitiesWithMap;
     }
 
     private Map<String, Map<String, String>> _AllIdentitiesWithMap;
 
     @Override
     public String toString() {
-	return "[account=" + account + ", identities=" + identities + "]";
+        return "[account=" + account + ", identities=" + identities + "]";
     }
 }

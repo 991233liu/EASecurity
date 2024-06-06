@@ -13,9 +13,9 @@ import com.easecurity.core.basis.b.UserInfoEnum.*;
  *
  */
 public class UserInfo implements Serializable {
-    
+
     private static final long serialVersionUID = -938014939971884433L;
-    
+
     public String id;
     /**
      * user表主键
@@ -36,7 +36,15 @@ public class UserInfo implements Serializable {
     /**
      * 用户图标
      */
-    public String icon;
+    public String avatar;
+    /**
+     * email
+     */
+    public String email;
+    /**
+     * 电话
+     */
+    public String phone;
 
     public Date dateCreated;
     public Date lastUpdated;
@@ -81,12 +89,12 @@ public class UserInfo implements Serializable {
         this.status = status;
     }
 
-    public String getIcon() {
-        return icon;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Date getDateCreated() {
@@ -103,5 +111,21 @@ public class UserInfo implements Serializable {
 
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

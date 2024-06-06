@@ -1,0 +1,32 @@
+import groovy.transform.*
+import java.util.*
+import com.easecurity.admin.utils.*
+
+@Field Object object
+model {
+    Integer total
+    List expand
+    def deep
+}
+def _code = ServletUtils.flash.code
+def _message = ServletUtils.flash.message
+
+if (object && total) {	// 分页List
+	json {
+        code _code?:'200'
+        message _message?:"success"
+        data {
+            total total
+            items g.render(object, [expand: expand, deep: deep])
+        }
+	}
+} else {
+	json {
+        code _code?:'200'
+        message _message?:"success"
+        data g.render(object, [expand: expand, deep: deep])
+	}
+}
+
+
+

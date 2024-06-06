@@ -1,0 +1,12 @@
+import com.easecurity.admin.utils.*
+
+response.status 403
+
+def _code = ServletUtils.flash.code
+def _message = ServletUtils.flash.message
+
+json {
+    error _code?:403
+    code _code?:403
+    message _message?:"Forbidden"
+}

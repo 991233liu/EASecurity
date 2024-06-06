@@ -9,6 +9,17 @@ http://128.0.0.2/SecurityCentre/auth/loginTest.html
 <br>
 
 ## 其它（临时）  
+1.  生成秘钥：
+
+```bash 
+keytool -genkey -alias SecurityCentre -storetype PKCS12 -keyalg RSA -keystore app.pfx -keysize 4096 -validity 36500
+openssl pkcs12 -in app.pfx -nocerts -nodes -out app.key
+openssl rsa -in app.key -out app_pri.key
+openssl rsa -in app.key -pubout -out app_pub.key
+#因为RSA算法使用的是pkcs8模式补足，需要对提取的私钥进一步处理（可选）
+#openssl pkcs8 -in app_pri.key -out app_pri.p8 -outform der -nocrypt -topk8
+openssl pkcs8 -in app_pri.key -out app_pri.p8 -outform pem -nocrypt -topk8
+```
 
 #### OAT（OpaqueAccessToken）  
 数据结构： 

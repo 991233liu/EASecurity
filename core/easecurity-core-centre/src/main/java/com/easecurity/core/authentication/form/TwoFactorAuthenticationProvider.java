@@ -117,6 +117,6 @@ public class TwoFactorAuthenticationProvider extends AbstractUserDetailsAuthenti
 //		!(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED, authorities);
         return new SecurityCentreUserDetails(username, user.user.pd, user.user.acStatus == UserEnum.AcStatus.ENABLED, !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED),
                 !(user.user.pdStatus == UserEnum.PdStatus.EXPIRED), user.user.pdStatus == UserEnum.PdStatus.ENABLED, authorities, user.user.id, user.userinfo.name,
-                user.userinfo.icon, user.user.identities, user.user.lastLoginTtime, user.user.pdErrorTimes);
+                user.userinfo.avatar, user.user.identities, user.user.lastLoginTtime, user.user.pdErrorTimes);
     }
 }

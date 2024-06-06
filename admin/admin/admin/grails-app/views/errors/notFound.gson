@@ -1,0 +1,12 @@
+import com.easecurity.admin.utils.*
+
+response.status 404
+
+def _code = ServletUtils.flash.code
+def _message = ServletUtils.flash.message
+
+json {
+    error _code?:404
+    code _code?:404
+    message _message?:"Not Found"
+}

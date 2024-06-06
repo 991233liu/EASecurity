@@ -1,0 +1,9 @@
+import com.easecurity.admin.utils.*
+
+def _code = ServletUtils.flash.code
+def _message = ServletUtils.flash.message
+
+json {
+    code _code?:'200'
+	message _message?:"success"
+}

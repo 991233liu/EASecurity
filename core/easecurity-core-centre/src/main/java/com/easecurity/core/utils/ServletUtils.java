@@ -39,8 +39,10 @@ public class ServletUtils {
                 userDetails.identities = userDo.user.identities;
                 if (userDo.userinfo != null) {
                     userDetails.name = userDo.userinfo.name;
-                    userDetails.icon = userDo.userinfo.icon;
+                    userDetails.avatar = userDo.userinfo.avatar;
+                    userDetails.email = userDo.userinfo.email;
                 }
+                userDetails.lastLoginTtime = userDo.user.lastLoginTtime;
                 CacheUtil.setSessionCache("userDetails", userDetails);
             }
             return userDetails;

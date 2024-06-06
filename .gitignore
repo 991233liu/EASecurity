@@ -1,8 +1,11 @@
+workspace
+node_modules
 .gradle
 .idea
 .project
 .classpath
 .settings
+*.log
 bin
 build
 target
