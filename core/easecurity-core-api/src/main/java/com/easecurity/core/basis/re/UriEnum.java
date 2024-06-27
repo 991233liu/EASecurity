@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.re;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * Uri类下所有枚举类
  */
@@ -7,7 +9,7 @@ public class UriEnum {
     /**
      * 来源<br>
      */
-    public enum FromTo {
+    public enum FromTo implements BaseEnum {
         MANUALLY("10", "人工"), //
         SOURCECODE("20", "程序源代码");
 
@@ -28,7 +30,7 @@ public class UriEnum {
     /**
      * 状态<br>
      */
-    public enum Status {
+    public enum Status implements BaseEnum {
         ENABLED("10", "启用"), //
         EXPIRED("20", "过期");
 

@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.au;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * UriRoleGroup类下所有枚举类
  */
@@ -7,7 +9,7 @@ public class UriRoleGroupEnum {
     /**
      * 来源<br>
      */
-    public enum FromTo {
+    public enum FromTo implements BaseEnum {
         MANUALLY("10", "人工"), //
         SOURCECODE("20", "程序源代码");
 
@@ -27,7 +29,7 @@ public class UriRoleGroupEnum {
     /**
      * 状态<br>
      */
-    public enum Status {
+    public enum Status implements BaseEnum {
         ENABLED("10", "启用"), //
         DISABLED("20", "禁用");
 

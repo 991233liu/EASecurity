@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +14,7 @@ import com.easecurity.core.basis.b.OrgUser;
 import com.easecurity.core.basis.b.User;
 import com.easecurity.core.basis.b.UserInfo;
 import com.easecurity.core.basis.r.RoleUser;
+import com.easecurity.core.db.BeanPropertyRowMapper;
 import com.easecurity.core.redis.RedisUtil;
 
 /**
@@ -27,9 +27,9 @@ public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     @Autowired
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     String sql = "SELECT * FROM b_user where account = ?";
     String sql2 = "SELECT * FROM b_user_info where user_id = ?";
@@ -57,7 +57,7 @@ public class UserService {
                 userDo.userinfo = userInfos.get(0);
             else
                 userDo.userinfo = new UserInfo();
-//	    userDo.orgUsers = jdbcTemplate.query(sql3, new BeanPropertyRowMapper<>(OrgUser.class), userDo.user.id);
+            userDo.orgUsers = jdbcTemplate.query(sql3, new BeanPropertyRowMapper<>(OrgUser.class), userDo.user.id);
             userDo.roleUsers = jdbcTemplate.query(sql4, new BeanPropertyRowMapper<>(RoleUser.class), userDo.user.id);
             return userDo;
         } else {

@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.re;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * Menu类下所有枚举类
  */
@@ -8,7 +10,7 @@ public class MenuEnum {
     /**
      * 状态<br>
      */
-    public enum Status {
+    public enum Status implements BaseEnum {
         ENABLED("10", "启用"), //
         DISABLED("20", "禁用");
 
@@ -28,7 +30,7 @@ public class MenuEnum {
     /**
      * 显示状态<br>
      */
-    public enum DisplayStatus {
+    public enum DisplayStatus implements BaseEnum {
         DISPLAY("10", "始终显示"), //
         HIDDEN("20", "始终隐藏"), //
         DISABLEDHIDDEN("30", "禁用隐藏"), //
@@ -50,7 +52,7 @@ public class MenuEnum {
     /**
      * 类型<br>
      */
-    public enum AccessType {
+    public enum AccessType implements BaseEnum {
         ANONYMOUS("10", "匿名访问"), //
         LOGIN("20", "登录用户访问"), //
         AUTHORIZATION("30", "授权访问");
@@ -72,7 +74,7 @@ public class MenuEnum {
     /**
      * 菜单级别<br>
      */
-    public enum Level {
+    public enum Level implements BaseEnum {
         ROOT("root", "根"), //
         FIRST("10", "一级"), //
         SECOND("20", "二级"), //

@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.s;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * APISecret类下所有枚举类
  */
@@ -8,7 +10,7 @@ public class ApiSecretEnum {
     /**
      * 状态<br>
      */
-    public enum Status {
+    public enum Status implements BaseEnum {
         ENABLED("10", "启用"), //
         DISABLED("20", "禁用");
 

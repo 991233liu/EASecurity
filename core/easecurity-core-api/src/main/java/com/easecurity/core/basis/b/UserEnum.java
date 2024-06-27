@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.b;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * User类下所有枚举类
  */
@@ -8,7 +10,7 @@ public class UserEnum {
     /**
      * 用户状态<br>
      */
-    public enum AcStatus {
+    public enum AcStatus implements BaseEnum{
         ENABLED("10", "启用"), //
         DISABLED("20", "禁用"), //
         DEREGISTRATION("30", "注销"), //
@@ -30,7 +32,7 @@ public class UserEnum {
     /**
      * 密码状态<br>
      */
-    public enum PdStatus {
+    public enum PdStatus implements BaseEnum {
         ENABLED("10", "启用"), //
         EXPIRED("20", "过期"), //
         MAXTIMES("30", "超过尝试次数");

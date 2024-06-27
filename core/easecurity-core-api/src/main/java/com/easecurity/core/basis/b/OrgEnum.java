@@ -1,5 +1,7 @@
 package com.easecurity.core.basis.b;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * Org类下所有枚举类
  */
@@ -8,7 +10,7 @@ public class OrgEnum {
     /**
      * 类型<br>
      */
-    public enum Type {
+    public enum Type implements BaseEnum {
         ROOT("root", "根"), //
         COMPANY("10", "公司"), //
         DEPARTMENT("20", "部门"), //

@@ -1,11 +1,13 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.access.annotation;
 
+import com.easecurity.db.BaseEnum;
+
 /**
  * 授权方式
  *
  */
-public enum EasType {
+public enum EasType implements BaseEnum {
 
     /**
      * 默认配置，数据库和源码同时生效。如果源码中配置了授权，在admin平台运维时来自代码中的授权配置只能禁用不能修改。
