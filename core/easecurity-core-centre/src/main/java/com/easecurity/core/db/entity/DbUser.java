@@ -1,4 +1,4 @@
-package com.easecurity.core.basis;
+package com.easecurity.core.db.entity;
 
 import java.util.Date;
 
