@@ -31,7 +31,8 @@ spring:
         # one corner case where you do name = "blah" in a method internal to the class, the setter will not be called and
         # property will not be marked as dirty. Hence, changing it to setName("blah") resolves the issue.
         hibernateDirtyChecking: true
-        ddl-auto: validate
+        ddl-auto: none
+        # ddl-auto: validate
         cache:
           queries: false
           use_second_level_cache: false

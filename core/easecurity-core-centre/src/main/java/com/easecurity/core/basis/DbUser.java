@@ -2,22 +2,24 @@ package com.easecurity.core.basis;
 
 import java.util.Date;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.easecurity.core.basis.b.UserEnum.AcStatus;
 import com.easecurity.core.basis.b.UserEnum.PdStatus;
+import com.easecurity.core.db.BaseEnumConverter;
 
 @Entity
 @Table(name = "b_user")
-public class User extends com.easecurity.core.basis.b.User {
+public class DbUser extends com.easecurity.core.basis.b.User {
 
     private static final long serialVersionUID = 5558625260330954585L;
-    
+
     @Id
     public String id;
-    
+
     /**
      * 登录账号
      */
@@ -31,17 +33,19 @@ public class User extends com.easecurity.core.basis.b.User {
     /**
      * 账号状态
      */
+    @Convert(converter = AcStatusConverter.class)
     public AcStatus acStatus;
 
-//    /**
-//     * 密码状态
-//     */
-//    public PdStatus pdStatus;
-    
-//    /**
-//     * 身份串
-//     */
-//    public String identities;
+    /**
+     * 密码状态
+     */
+    @Convert(converter = PdStatusConverter.class)
+    public PdStatus pdStatus;
+
+    /**
+     * 身份串
+     */
+    public String identities;
     /**
      * 最后登录时间
      */
@@ -53,4 +57,18 @@ public class User extends com.easecurity.core.basis.b.User {
 
     public Date dateCreated;
     public Date lastUpdated;
+
+    public static class AcStatusConverter extends BaseEnumConverter<AcStatus> {
+
+        public AcStatusConverter() {
+            super(AcStatus.class);
+        }
+    }
+
+    public static class PdStatusConverter extends BaseEnumConverter<PdStatus> {
+
+        public PdStatusConverter() {
+            super(PdStatus.class);
+        }
+    }
 }
