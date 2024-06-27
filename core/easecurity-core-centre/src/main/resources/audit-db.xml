@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+	<!-- 将日志写入数据库 -->
+    <appender name="audit_db" class="com.assistant.MyDBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <dataSource class="org.apache.commons.dbcp.BasicDataSource">
+                <driverClassName>oracle.jdbc.OracleDriver</driverClassName>
+                <url>jdbc:oracle:thin:@20.206.6.220:1521/PETESTPDB</url>
+                <username>PETEST</username>
+                <password>petest@2023_</password>
+            </dataSource>
+        </connectionSource>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+	<logger name="audit" level="TRACE" additivity="false">
+		<appender-ref ref="audit_db" />
+	</logger>
+</included>
