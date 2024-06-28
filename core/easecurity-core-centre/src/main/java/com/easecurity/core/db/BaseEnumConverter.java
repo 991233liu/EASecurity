@@ -1,3 +1,4 @@
+/** Copyright © 2021-2050 刘路峰版权所有。 */
 package com.easecurity.core.db;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +10,11 @@ import javax.persistence.Converter;
 
 import com.easecurity.db.BaseEnum;
 
+/**
+ * 实现BaseEnum接口的通用枚举类型数据转换器（jpa模式下）
+ *
+ * @param <T>
+ */
 @Converter
 public class BaseEnumConverter<T extends Enum<T>> implements AttributeConverter<BaseEnum, String> {
 
@@ -43,18 +49,6 @@ public class BaseEnumConverter<T extends Enum<T>> implements AttributeConverter<
 
     @Override
     public BaseEnum convertToEntityAttribute(String code) {
-//        if (code == null) {
-//            return null;
-//        }
-//        System.out.println(code);
-//        System.out.println(code);
-//        System.out.println(code);
-//        System.out.println(code);
-//        return AcStatus.values()[0];
-////        return Stream.of(AcStatus.values())
-////          .filter(c -> c.getId().equals(code))
-////          .findFirst()
-////          .orElseThrow(IllegalArgumentException::new);
         if (code.isEmpty()) {
             // It's an empty enum identifier: reset the enum value to null.
             return null;

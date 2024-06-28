@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.easecurity.core.basis.b.User" table="b_user">
+		<id name="id"></id>
+		<property name="account" />
+		<property name="pd" />
+		<property name="acStatus" column="AC_STATUS">
+			<type name="com.easecurity.core.db.BaseEnumType">
+				<param name="enumClass">com.easecurity.core.basis.b.UserEnum$AcStatus</param>
+				<param name="useNamed">true</param><!-- true表示使用name映射，默认false使用ordinal映射 -->
+			</type>
+		</property>
+		<property name="pdStatus" column="PD_STATUS">
+			<type name="com.easecurity.core.db.BaseEnumType">
+                <param name="enumClass">com.easecurity.core.basis.b.UserEnum$PdStatus</param>
+                <param name="useNamed">true</param><!-- true表示使用name映射，默认false使用ordinal映射 -->
+			</type>
+		</property>
+		<property name="identities" />
+		<property name="lastLoginTtime" column="LAST_LOGIN_TTIME" />
+		<property name="pdErrorTimes" column="PD_ERROR_TIMES" />
+		<property name="dateCreated" column="DATE_CREATED" />
+		<property name="lastUpdated" column="LAST_UPDATED" />
+	</class>
+</hibernate-mapping>

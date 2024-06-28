@@ -23,6 +23,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://128.0.0.2:3306/easecurity?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF8
    jpa:
+      #typeContributors: com.easecurity.core.db.CustomTypeContributor # 打印 SQL 。生产环境，建议关闭
       show-sql: true # 打印 SQL 。生产环境，建议关闭
       # Hibernate 配置内容，对应 HibernateProperties 类
       hibernate:
