@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1">
+
+	<!-- <package>com.example.myapp.domain</package> -->
+
+	<!-- 定义实体 -->
+	<entity class="com.easecurity.core.basis.b.User" name="User">
+		<table name="b_user" />
+
+		<!-- 属性映射 -->
+		<attributes>
+			<id name="id">
+				<generated-value strategy="AUTO" />
+			</id>
+<!-- 			<basic name="account" /> -->
+<!-- 			<basic name="pd" /> -->
+			<basic name="acStatus">
+				<convert
+					converter="com.easecurity.core.db.entity.AcStatusConverter" />
+			</basic>
+			<basic name="pdStatus">
+				<convert
+					converter="com.easecurity.core.db.entity.PdStatusConverter" />
+			</basic>
+<!-- 			<basic name="identities" /> -->
+<!-- 			<basic name="lastLoginTtime" /> -->
+<!-- 			<basic name="pdErrorTimes" /> -->
+<!-- 			<basic name="dateCreated" /> -->
+<!-- 			<basic name="lastUpdated" /> -->
+		</attributes>
+	</entity>
+</entity-mappings>

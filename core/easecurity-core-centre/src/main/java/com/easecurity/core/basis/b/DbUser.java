@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.db.entity;
+package com.easecurity.core.basis.b;
 
 import java.util.Date;
 
