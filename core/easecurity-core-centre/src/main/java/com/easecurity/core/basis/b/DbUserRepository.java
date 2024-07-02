@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * user的数据库Repository
  *
  */
-public interface UserRepository extends JpaRepository<DbUser, String> {
+public interface DbUserRepository extends JpaRepository<DbUser, String> {
 
     DbUser findByAccount(String account);
 }
