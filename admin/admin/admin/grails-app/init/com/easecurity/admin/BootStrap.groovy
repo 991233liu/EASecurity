@@ -9,20 +9,22 @@ import com.easecurity.admin.core.r.Role
 import com.easecurity.admin.core.r.RoleGroup
 import com.easecurity.admin.core.r.RoleUser
 import com.easecurity.admin.core.re.Menu
+import com.easecurity.admin.core.b.Channel
+import com.easecurity.admin.core.b.InternalSystem
+import com.easecurity.admin.core.s.ApiSecret
+import com.easecurity.admin.core.s.Certificates
+import com.easecurity.core.basis.b.ChannelEnum
+import com.easecurity.core.basis.b.InternalSystemEnum
+import com.easecurity.core.basis.s.ApiSecretEnum
+import com.easecurity.core.basis.s.CertificatesEnum
 import com.easecurity.core.basis.b.OrgEnum
 import com.easecurity.core.basis.b.PostsEnum
 import com.easecurity.core.basis.b.UserEnum
 import com.easecurity.core.basis.b.UserInfoEnum
 import com.easecurity.core.basis.re.MenuEnum
+import grails.util.Environment
 
 class BootStrap {
-//	AnimalService animalService
-//	WeighingService weighingService
-//	PhotoService photoService
-//	@Autowired
-//	LdapUserService ldapUserService
-//	@Autowired
-//	LdapUserSyncService ldapUserSyncService
 
     def init = { servletContext ->
         if (User.count() == 0) {  // 系统全新安装时，初始化系统基础数据
@@ -66,112 +68,63 @@ class BootStrap {
                 userInfo.save(failOnError: true)
             }
         }
-//        UserAdmin user = new UserAdmin(user: 'admin', password: 'admin')
-//        user.save(failOnError: true)
-//        UserAdmin u = new UserAdmin(user: 'sherlock', password: 'elementary')
-//            BANKCARD.each { k, v ->
-//                u.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u))
-//            }
-//        u.save(failOnError: true)
-//
-//        UserAdmin u2 = new UserAdmin(user: 'user', password: 'user')
-//            BANKCARD.each { k, v ->
-//                u2.addToCoordinates(new SecurityCoordinate(position: k, value: v, user: u2))
-//            }
-//        u2.save(failOnError: true)
-//        Role role = new Role(authority: 'ROLE_USER')
-//        role.save(failOnError: true)
-//        new UserRole(user: user, role: role).save()
-//		if (Environment.current == Environment.DEVELOPMENT) {
-//			if (User.count()==0) {
-//				def adminRole = Role.findByAuthority("ROLE_ADMIN")?:new Role(authority: 'ROLE_ADMIN').save()
-//				def userRole = Role.findByAuthority("ROLE_USER")?:new Role(authority: 'ROLE_USER').save()
-//				def userPM = Role.findByAuthority("ROLE_PM")?:new Role(authority: 'ROLE_PM').save()
-//				def userPMO = Role.findByAuthority("ROLE_PMO")?:new Role(authority: 'ROLE_PMO').save()
-//
-//				def user = new User(username: 'user', password: 'user', firstname:"Gero", lastname:"Klinkmann", email:"user@gmail.com")
-//				user.save()
-//
-//				def admin = new User(username: 'admin', password: 'admin', firstname:"Ad", lastname:"Min", email:"admin@gmail.com")
-//				admin.save()
-//
-////				('test', 'test', '');
-//				(1..50).each{
-//					ldapUserSyncService.syncUser('liulf'+it, 'test', '')
-//				}
-////				ldapUserSyncService.syncUser('liulf77', 'test', '')
-//				ldapUserSyncService.syncUserNow([uid:'liulf77', username:'test'])
-//				ldapUserSyncService.syncUserNow([uid:'test', username:'test'])
-//				def test = LdapUser.findByUid('test')
-//				LdapUserRole.create(test, adminRole)
-//				LdapUserRole.create(test, userPM)
-//				LdapUserRole.create(test, userPMO)
-//
-//				UserRole.create(user, userRole)
-//				UserRole.create(admin, userRole)
-//				UserRole.create(admin, adminRole)
-//			}
-//
-//			if (Project.count()==0) {
-//				def liulf = LdapUser.findByUid('liulf77')
-//				def lf = new Staff(uid: 'liulf77', user: liulf)
-//				lf.save()
-//				def test = LdapUser.findByUid('test')
-//				def tt = new Staff(uid: 'test', user: test)
-//				tt.save()
-//				def sf = new StaffCost(staff: tt, year: 2020)
-//				sf.save()
-//				def project = new Project(code: 'SK2', name: '2020司库研发', fullName: '2020年中国联通财务公司司库系统研发迭代项目',
-//						outBudget: 8900000, inBudget: 2000000, fIntegral: 1500, pm: tt)
-//				project.save()
-//				def pjxq = new ProjectJira(project: project, code: 'SK2_XQ', name: '2020司库研发需求')
-//				pjxq.save()
-//				def pjkf = new ProjectJira(project: project, code: 'SK2_KF', name: '2020司库研发开发')
-//				pjkf.save()
-//				def pjbug = new ProjectJira(project: project, code: 'SK2_BUG', name: '2020司库研发BUG')
-//				pjbug.save()
-//				def pjsh = new ProjectJira(project: project, code: 'SK2_SH', name: '2020司库研发售后')
-//				pjsh.save()
-//				def pr = new ProjectRole(code: 'LD', name: '开发经理', bIntegral: 0.4)
-//				pr.save()
-//				def spr = new StaffProjectRole(project: project, staff: tt, projectRole: pr, bIntegral: 0.35)
-//				spr.save()
-//				def wr = WeeklyReport.create(tt, new Date())
-//				new DailyReport(jwCode:'SK2_KF1',jwName:'开发头寸管理',taskContent:'xxx类编码',taskTime:0.5f,phase: ReportEnum.ProjectPhase.编码阶段,
-//						process: ReportEnum.ProjectProcess.程序编码,projectJira:pjkf,staff:tt,staffProjectRole:spr,weeklyReport:wr).save(deepValidate:false)
-//			}
-//
-//			if (animalService.count()==0) {
-//
-//				// animals
-//				(1..20).each{
-//					Animal animal=new Animal(name: 'A'+it, cageNr: it.toInteger(),arrived:new java.sql.Date(new Date().time), approbation:'app1'
-//					,gender:'f',species:'c', createdBy:"juhu", lastUpdatedBy:"juhu")
-//				animalService.save(animal)
-//				}
-//
-//				// weighings
-//				Animal animal=animalService.get(1)
-//				(1..10).each{
-//					Weighing weighing=new Weighing(weighted: new java.sql.Date(new Date().time)
-//					,createdBy:"juhu", lastUpdatedBy:"juhu",weight:100+it.toInteger()*2,animal:animal)
-//					weighingService.save(weighing)
-//				}
-//
-//				// photos
-//				["a","b"].each{
-//					Photo photo=new Photo(created: new java.sql.Date(new Date().time)
-//					,createdBy:"juhu", name:"A4_${it}.JPG",animal:animal)
-//					photoService.save(photo)
-//				}
-//
-//			}
-//		}
-//
-//		// TODO 执行所有service、domain类的bootStrapInit方法，参见BroToolkitGrailsPlugin.groovy
-//		ldapUserSyncService.bootStrapInit()
+        initInternalSystem()
+        initChannel()
     }
 
     def destroy = {
+    }
+
+	def initInternalSystem = {
+        // 开发过程中，多次修改初始化数据，在某个时间节点前的数据清空，重新执行初始化。
+        if ((Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST) && InternalSystem.count() > 0) {
+            if (System.currentTimeMillis() < 1716739199000) { // 2024-05-26 23:59:59 前的时间
+                InternalSystem.withTransaction {
+                    InternalSystem.executeUpdate("delete ApiSecret")
+                    InternalSystem.executeUpdate("delete Certificates")
+                    InternalSystem.executeUpdate("delete InternalSystem")
+                    InternalSystem.executeUpdate("delete Channel")
+                }
+            }
+        }
+        if (InternalSystem.count() == 0) {  // 初始化系统
+            InternalSystem.withTransaction {
+                InternalSystem admin = new InternalSystem(sysid: 'admin', cname: 'admin平台', name: 'admin', status: InternalSystemEnum.Status.ENABLED);
+                admin.save(failOnError: true)
+                InternalSystem sc = new InternalSystem(sysid: 'SecurityCentre', cname: '认证中心', name: 'SecurityCentre', status: InternalSystemEnum.Status.ENABLED);
+                sc.save(failOnError: true)
+                InternalSystem gateway = new InternalSystem(sysid: 'gateway', cname: 'API网关', name: 'gateway', status: InternalSystemEnum.Status.ENABLED);
+                gateway.save(failOnError: true)
+                InternalSystem app = new InternalSystem(sysid: 'app', cname: 'app微服务应用', name: 'app', status: InternalSystemEnum.Status.ENABLED);
+                app.save(failOnError: true)
+
+//                RSAKey rsaKey = Jwks.generateRsa()
+//                Certificates scCertificates = new Certificates(internalSystem: sc, publicKey: rsaKey.toPublicJWK().toJSONString(), privateKey: rsaKey.toPrivateKey().getAlgorithm(), type: CertificatesEnum.Type.RSA, status: CertificatesEnum.Status.ENABLED)
+//                scCertificates.save(failOnError: true)
+
+//                ApiSecret gatewayApi = new ApiSecret(internalSystem: gateway, skey: UUID.randomUUID().toString().replaceAll("-", ""), secret: Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-", "").getBytes()), status: ApiSecretEnum.Status.ENABLED)
+                ApiSecret adminApi = new ApiSecret(internalSystem: admin, skey: "7ce55a1e3a2d4903bd62090c5967a742", secret: "OGI4YzRmYWVkZTVkNGNlZmI2NDY2NjQxMTgxYTQ0Yjk=", status: ApiSecretEnum.Status.ENABLED)
+                adminApi.save(failOnError: true)
+                ApiSecret gatewayApi = new ApiSecret(internalSystem: gateway, skey: "3dc801db8e9c482bbe3be007bdc651b9", secret: "YzUyN2JkZWU5MTI0NGU3NTlhNTUwNDkxODVhMDg2ZDU=", status: ApiSecretEnum.Status.ENABLED)
+                gatewayApi.save(failOnError: true)
+                ApiSecret appApi = new ApiSecret(internalSystem: app, skey: "68f6523a41e24d17a40fcf55ed8eaca8", secret: "MWM4NTBkMGIxNzcyNDI1OTgwYTJlZmUwYTE0ZDRhYzg=", status: ApiSecretEnum.Status.ENABLED)
+                appApi.save(failOnError: true)
+            }
+        }
+    }
+
+    def initChannel = {
+        if (Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST) {
+            if (Channel.count() == 0) {  // 初始化渠道
+                Channel.withTransaction {
+                    Channel test = new Channel(appid: '6d882088', cname: '测试渠道', name: 'test', status: ChannelEnum.Status.ENABLED)
+                    test.save(failOnError: true)
+                    ApiSecret testApiSecret = new ApiSecret(channel: test, skey: "messaging-client", secret: "secret", options: '{"tokenSettings":{"authorizationCodeTimeToLive":300,"accessTokenTimeToLive":300,"refreshTokenTimeToLive":300}}', status: ApiSecretEnum.Status.ENABLED)
+                    testApiSecret.save(failOnError: true)
+                    Certificates testCertificates = new Certificates(channel: test, keyId: "226688", publicKey: "b0e1a1f36fa8e9da5656f6dbe39a516f616bd9b3a7971806f53f35ff00b6e7ba", privateKey: "e38b997cb325db83a56ea188de3a7568", status: CertificatesEnum.Status.ENABLED, type: CertificatesEnum.Type.AES)
+                    testCertificates.save(failOnError: true)
+                }
+            }
+        }
     }
 }
