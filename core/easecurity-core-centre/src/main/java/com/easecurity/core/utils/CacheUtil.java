@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
 import com.easecurity.core.authentication.LoginService;
-import com.easecurity.core.redis.RedisUtil;
 
 /**
  * 缓存统一管理服务。系统中所有session缓存和Redis缓存，统一从这里进出。 运维时，可使用此类统一运维。

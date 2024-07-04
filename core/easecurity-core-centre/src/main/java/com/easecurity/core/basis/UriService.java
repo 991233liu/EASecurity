@@ -10,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.easecurity.core.db.BeanPropertyRowMapper;
+import com.easecurity.core.utils.RedisUtil;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.easecurity.core.access.annotation.EasType;
 import com.easecurity.core.basis.au.*;
 import com.easecurity.core.basis.re.Uri;
-import com.easecurity.core.redis.RedisUtil;
 
 /**
  * 接口（访问）访问控制服务

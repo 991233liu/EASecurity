@@ -95,7 +95,7 @@ public class OtherRedisesConfig implements EnvironmentAware {
             ObjectProvider<RedisConnectionFactory> redisConnectionFactory2) {
         Map<String, RedisTemplate<Object, Object>> otherRedises = new HashMap<String, RedisTemplate<Object, Object>>();
         // 如果存在多Redis配置时，则建立多Redis链接
-        if (otherRedisProperties != null && otherRedisProperties.getDatasources() != null && !otherRedisProperties.getDatasources().isEmpty()) {
+        if (otherRedisProperties != null && otherRedisProperties.getEnable() && otherRedisProperties.getDatasources() != null && !otherRedisProperties.getDatasources().isEmpty()) {
             otherRedisProperties.getDatasources().forEach((String k, CustomRedisProperties v) -> {
                 RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
                 Map<String, RedisSerializer<Object>> serializer1 = redisSerializer2(k, v);
@@ -156,11 +156,9 @@ public class OtherRedisesConfig implements EnvironmentAware {
         if (serializerKey == null || serializerKey.isEmpty())
             return null;
         RedisSerializer<Object> serializer = null;
-        // TODO 后面再完善所有类型
         switch (serializerKey) {
         case "StringRedisSerializer":
             return new StringRedisSerializer();
-//		    break;
         case "GenericJackson2JsonRedisSerializer":
             serializer = new GenericJackson2JsonRedisSerializer(om);
             break;
@@ -169,14 +167,10 @@ public class OtherRedisesConfig implements EnvironmentAware {
             jackson2JsonRedisSerializer.setObjectMapper(om);
             serializer = jackson2JsonRedisSerializer;
             break;
-
         default:
             // TODO 自定义的
             if (serializerKey.indexOf(".") > 0) {
                 // TODO OemRedisSerializer
-
-            } else {
-                // TODO 报错
             }
             break;
         }
@@ -189,7 +183,7 @@ public class OtherRedisesConfig implements EnvironmentAware {
     @Override
     public void setEnvironment(Environment environment) {
         // 如果配置文件不包含相关配置，则不进行任何操作
-        if (!environment.containsProperty(REDISES_PREFIX)) {
+        if (!environment.containsProperty("redises.enable")) {
             return;
         }
         otherRedisProperties = Binder.get(environment).bind(REDISES_PREFIX, OtherRedisProperties.class).get();

@@ -18,7 +18,7 @@ import com.easecurity.core.basis.MenuService;
 import com.easecurity.core.basis.UserDo;
 import com.easecurity.core.basis.UserService;
 import com.easecurity.core.basis.b.UserEnum;
-import com.easecurity.core.redis.RedisUtil;
+import com.easecurity.core.utils.RedisUtil;
 import com.easecurity.core.utils.ServletUtils;
 
 @RestController

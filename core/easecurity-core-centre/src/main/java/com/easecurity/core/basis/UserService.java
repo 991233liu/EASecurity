@@ -15,7 +15,7 @@ import com.easecurity.core.basis.b.User;
 import com.easecurity.core.basis.b.UserInfo;
 import com.easecurity.core.basis.r.RoleUser;
 import com.easecurity.core.db.BeanPropertyRowMapper;
-import com.easecurity.core.redis.RedisUtil;
+import com.easecurity.core.utils.RedisUtil;
 
 /**
  * 人员查询相关服务和密码管理服务。

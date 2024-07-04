@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.easecurity.core.db.BeanPropertyRowMapper;
+import com.easecurity.core.utils.RedisUtil;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,6 @@ import com.easecurity.core.authentication.UserDetails;
 import com.easecurity.core.basis.au.MenuOrg;
 import com.easecurity.core.basis.re.Menu;
 import com.easecurity.core.basis.re.MenuEnum.*;
-import com.easecurity.core.redis.RedisUtil;
 import com.easecurity.util.JsonUtils;
 
 /**

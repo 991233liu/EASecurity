@@ -109,26 +109,14 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     }
 
-//    if (ClassUtils.isPresent("io.lettuce.core.RedisClient", null)
-//		&& this.redisConnectionFactory instanceof LettuceConnectionFactory) {
-//	return ((LettuceConnectionFactory) this.redisConnectionFactory).getDatabase();
-//}
-//if (ClassUtils.isPresent("redis.clients.jedis.Jedis", null)
-//		&& this.redisConnectionFactory instanceof JedisConnectionFactory) {
-//	return ((JedisConnectionFactory) this.redisConnectionFactory).getDatabase();
-//}
-//return RedisIndexedSessionRepository.DEFAULT_DATABASE;
-
     @SuppressWarnings("rawtypes")
     private RedisSerializer getRedisSerializer(String serializerKey, ObjectMapper om) {
         if (serializerKey == null || serializerKey.isEmpty())
             return null;
         RedisSerializer<Object> serializer = null;
-        // TODO 后面再完善所有类型
         switch (serializerKey) {
         case "StringRedisSerializer":
             return new StringRedisSerializer();
-//	    break;
         case "GenericJackson2JsonRedisSerializer":
             serializer = new GenericJackson2JsonRedisSerializer(om);
             break;
@@ -137,14 +125,10 @@ public class RedisConfig extends CachingConfigurerSupport {
             jackson2JsonRedisSerializer.setObjectMapper(om);
             serializer = jackson2JsonRedisSerializer;
             break;
-
         default:
             // TODO 自定义的
             if (serializerKey.indexOf(".") > 0) {
                 // TODO OemRedisSerializer
-
-            } else {
-                // TODO 报错
             }
             break;
         }

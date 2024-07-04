@@ -1,5 +1,5 @@
 /** Copyright © 2021-2050 刘路峰版权所有。 */
-package com.easecurity.core.redis;
+package com.easecurity.core.utils;
 
 import java.util.Collection;
 import java.util.List;
@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -18,12 +19,17 @@ import org.springframework.util.CollectionUtils;
  *
  */
 @Component
+@SuppressWarnings("unchecked")
 public class RedisUtil {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-    @Resource
-    Map<String, RedisTemplate<Object, Object>> otherRedises;
+    @Autowired
+    @SuppressWarnings("rawtypes")
+    private RedisTemplate redisTemplate;
+    
+    @Autowired
+    @Nullable
+    @Qualifier("otherRedises")
+    private Map<String, RedisTemplate<Object, Object>> otherRedises;
 
     /**
      * 指定缓存失效时间
@@ -121,7 +127,6 @@ public class RedisUtil {
      * 
      * @param key 可以传一个值 或多个
      */
-    @SuppressWarnings("unchecked")
     public void del(String... key) {
         if (key != null && key.length > 0) {
             if (key.length == 1) {
@@ -138,7 +143,6 @@ public class RedisUtil {
      * @param redisName 指定的Redis连接名称
      * @param key       可以传一个值 或多个
      */
-    @SuppressWarnings("unchecked")
     public void del(String redisName, String... key) {
         if (key != null && key.length > 0) {
             if (key.length == 1) {
