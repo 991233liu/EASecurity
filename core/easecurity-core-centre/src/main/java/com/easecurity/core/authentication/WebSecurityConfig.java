@@ -50,125 +50,63 @@ public class WebSecurityConfig {
     @Value("${easecurity.jwt.token.issuer}")
     private String issuer;
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
-    
+
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
-                new OAuth2AuthorizationServerConfigurer();
-        authorizationServerConfigurer
-                .authorizationEndpoint(authorizationEndpoint ->
-                        authorizationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI))
-                .oidc(Customizer.withDefaults());   // Enable OpenID Connect 1.0
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
+        authorizationServerConfigurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI)) //
+                .oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
 
-        RequestMatcher endpointsMatcher = authorizationServerConfigurer
-                .getEndpointsMatcher();
+        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
 
         http
 //            .addFilterBefore(webSecurityFilter, SecurityContextHolderFilter.class)
 //            .addFilterAfter(webSecurityRegisteredUserFilter, SecurityContextHolderFilter.class)
-            .requestMatcher(endpointsMatcher)
-            .authorizeRequests(authorizeRequests ->
-                authorizeRequests.anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
-            .exceptionHandling(exceptions ->
-                exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-            )
-            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-            .apply(authorizationServerConfigurer);
+                .requestMatcher(endpointsMatcher).authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt).apply(authorizationServerConfigurer);
         return http.build();
     }
-    
-    @Bean 
+
+    @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
-            throws Exception {
-        http
-              .authorizeRequests().antMatchers("/", "/auth/**", "/jwt/**", "/token/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/data/**").permitAll().antMatchers("/**")
-              .authenticated().and().formLogin().loginPage("/auth/login").loginProcessingUrl("/login").permitAll().successHandler(loginSuccessHandler)
-              .failureHandler(loginFailureHandler)
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/", "/auth/**", "/jwt/**", "/token/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/data/**").permitAll() //
+                .antMatchers("/**").authenticated() //
+                .and() //
+                .formLogin().loginPage("/auth/login").loginProcessingUrl("/login").permitAll() //
+                .successHandler(loginSuccessHandler) //
+                .failureHandler(loginFailureHandler) //
 //          .failureForwardUrl("/auth/login?aa=aa")
 //          .failureUrl("/auth/login?aa=aa")
 //          .authenticationDetailsSource(authenticationDetailsSource)
-              .and().logout().logoutUrl("/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/auth/login?logout")
-              .addLogoutHandler(logoutHandler).and().sessionManagement().maximumSessions(1)
+                .and() //
+                .logout().logoutUrl("/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/auth/login?logout") //
+                .addLogoutHandler(logoutHandler) //
+                .and() //
+                .sessionManagement().maximumSessions(1);
 //          .maxSessionsPreventsLogin(true)   // 当session达到最大有效数的时候，不再允许相同的账户登录。
 //          .expiredSessionStrategy(null) // 当session过期时的处理
-              .and()
-              // TODO CSRF攻击被关闭了。如何防御？？？
-              .and().csrf().disable();
 
-      // 自定义的并发控制器
-      http.formLogin().and().sessionManagement().addObjectPostProcessor(new ObjectPostProcessor<ConcurrentSessionControlAuthenticationStrategy>() {
+        http.oauth2ResourceServer().jwt();
 
-          @Override
-          @SuppressWarnings("unchecked")
-          public ConcurrentSessionControlAuthenticationStrategy postProcess(ConcurrentSessionControlAuthenticationStrategy object) {
-              return getConcurrentSessionControlAuthenticationStrategy(object);
-          }
+        http.csrf(csrf -> csrf.ignoringAntMatchers("/data/**"));
+//        http.csrf().disable();
 
-      });
-      return http.build();
-////        http
-////            .authorizeRequests()
-//////            .antMatchers("/token/**").hasAuthority("messaging-client")
-//////        .mvcMatchers("/token/**").access("hasAuthority('SCOPE_messaging-client')")
-////            .anyRequest().authenticated()
-////            .and()
-////            .oauth2ResourceServer().jwt();
-////        http.formLogin(Customizer.withDefaults());
-////        http.csrf().disable();
-////        return http.build();
-//        http
-//        .authorizeRequests(authorizeRequests ->
-//            authorizeRequests.antMatchers("/", "/auth/**", "/jwt/**", "/token/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/data/**").permitAll()
-//            .anyRequest().authenticated()
-//        )
-//        .oauth2ResourceServer().jwt();
-//        http.csrf(csrf -> csrf.ignoringAntMatchers("/data/**"));
-////        http.csrf().disable();
-//        http.formLogin(Customizer.withDefaults())
-//        .formLogin().loginPage("/auth/login").loginProcessingUrl("/login").permitAll().successHandler(loginSuccessHandler)
-//        .failureHandler(loginFailureHandler);
-//        return http.build();
+        // 自定义的并发控制器
+        http.formLogin().and().sessionManagement().addObjectPostProcessor(new ObjectPostProcessor<ConcurrentSessionControlAuthenticationStrategy>() {
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public ConcurrentSessionControlAuthenticationStrategy postProcess(ConcurrentSessionControlAuthenticationStrategy object) {
+                return getConcurrentSessionControlAuthenticationStrategy(object);
+            }
+
+        });
+        return http.build();
     }
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-////	super.configure(http);
-//        http
-////        .headers()
-////            .cacheControl()
-////            .contentTypeOptions()
-////            .httpStrictTransportSecurity()
-////            .xssProtection()
-////            .and()
-//                .authorizeRequests().antMatchers("/", "/auth/**", "/jwt/**", "/token/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/data/**").permitAll().antMatchers("/**")
-//                .authenticated().and().formLogin().loginPage("/auth/login").loginProcessingUrl("/login").permitAll().successHandler(loginSuccessHandler)
-//                .failureHandler(loginFailureHandler)
-////            .failureForwardUrl("/auth/login?aa=aa")
-////            .failureUrl("/auth/login?aa=aa")
-////            .authenticationDetailsSource(authenticationDetailsSource)
-//                .and().logout().logoutUrl("/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/auth/login?logout")
-//                .addLogoutHandler(logoutHandler).and().sessionManagement().maximumSessions(1)
-////            .maxSessionsPreventsLogin(true)	// 当session达到最大有效数的时候，不再允许相同的账户登录。
-////            .expiredSessionStrategy(null)	// 当session过期时的处理
-//                .and()
-//                // TODO CSRF攻击被关闭了。如何防御？？？
-//                .and().csrf().disable();
-//
-//        // 自定义的并发控制器
-//        http.formLogin().and().sessionManagement().addObjectPostProcessor(new ObjectPostProcessor<ConcurrentSessionControlAuthenticationStrategy>() {
-//
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public ConcurrentSessionControlAuthenticationStrategy postProcess(ConcurrentSessionControlAuthenticationStrategy object) {
-//                return getConcurrentSessionControlAuthenticationStrategy(object);
-//            }
-//
-//        });
-//    }
 
     /**
      * 自定义的并发控制器
@@ -194,12 +132,12 @@ public class WebSecurityConfig {
         }
         return null;
     }
-    
-    @Bean 
+
+    @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().issuer(this.issuer).build();
     }
-    
+
     @Bean
     public OAuth2AuthorizationConsentService authorizationConsentService() {
         // Will be used by the ConsentController

@@ -16,7 +16,7 @@ easecurity:
       privateKey: classpath:app.key
       publicKey: classpath:app.pub
       token:
-         issuer: http://security-centre/sc
+         issuer: http://security-centre/SecurityCentre
    async.task:
       corePoolSize: 5   # 核心线程数（默认线程数）
       maxPoolSize: 10   # 最大线程数

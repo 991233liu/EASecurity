@@ -38,6 +38,7 @@
                 <h5 id="errormessage"></h5>
             </div>
             <form action='/SecurityCentre/login' method='POST' id='loginForm' class='cssform' autocomplete='off'>
+                <input type="hidden"  th:value="${_csrf.token}"  name="_csrf"  th:if="${_csrf}"/>
                 <div class="form-group has-feedback">
                     <input type="text" name="username" value="" class="form-control" placeholder="Username" id="username" />
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

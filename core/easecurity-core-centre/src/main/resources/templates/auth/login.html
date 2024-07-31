@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,12 +38,13 @@
                 用户名或者密码不正确
             </p>
             <form action='/SecurityCentre/login' method='POST' id='loginForm' class='cssform' autocomplete='off'>
+            	<input type="hidden"  th:value="${_csrf.token}"  name="_csrf"  th:if="${_csrf}"/>
                 <div class="form-group has-feedback">
                     <input type="text" name="username" value="" class="form-control" placeholder="Username" id="username" />
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="password" name="password" class="form-control" placeholder="Password" value="" id="password" />
+                    <input type="password" name="password" class="form-control" placeholder="Password" value="11111111" id="password" />
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
                 

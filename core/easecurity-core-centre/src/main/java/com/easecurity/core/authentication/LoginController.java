@@ -54,7 +54,7 @@ class LoginController {
         } else if (logout != null) {
             mav.addObject("message", messageSourceUtil.getMessage("LoginController.logout", "Succeed logout"));
         } else if ((redirect_url != null && !"".equals(redirect_url)) || ((faile_url != null && !"".equals(faile_url)))) {
-            mav.setViewName("/auth/login_ajax.html");
+//            mav.setViewName("/auth/login_ajax.html");
         }
         return mav;
     }
