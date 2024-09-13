@@ -12,7 +12,7 @@ public class Certificates implements Serializable {
 
     private static final long serialVersionUID = 2222408229214616651L;
     
-    public Integer id;
+    public String id;
     /**
      * 渠道id
      */
@@ -49,11 +49,11 @@ public class Certificates implements Serializable {
     public Date dateCreated;
     public Date lastUpdated;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

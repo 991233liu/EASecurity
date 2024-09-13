@@ -30,6 +30,7 @@ class Certificates extends com.easecurity.core.basis.s.Certificates {
 
     static mapping = {
         table 's_certificates'
+        id generator: 'com.easecurity.admin.core.UUID8IdentifierGenerator'
         type enumType: "identity"
         status enumType: "identity"
         channelId insertable: false

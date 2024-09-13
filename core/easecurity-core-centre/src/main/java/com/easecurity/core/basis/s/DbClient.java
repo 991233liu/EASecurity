@@ -25,7 +25,7 @@ public class DbClient extends ApiSecret {
     private static final long serialVersionUID = -7058613146596994775L;
     
     @Id
-    public Integer id;
+    public String id;
     /**
      * 渠道id
      */

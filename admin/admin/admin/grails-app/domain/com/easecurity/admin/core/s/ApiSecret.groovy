@@ -28,6 +28,7 @@ class ApiSecret extends com.easecurity.core.basis.s.ApiSecret {
 
     static mapping = {
         table 's_api_secret'
+        id generator: 'com.easecurity.admin.core.UUID8IdentifierGenerator'
         status enumType: "identity"
         channelId insertable: false
         channelId updateable: false

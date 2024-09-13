@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +47,20 @@ public class DbClientService implements RegisteredClientRepository {
 
     @Override
     public RegisteredClient findById(String id) {
-        return buildRegisteredClient(dbClientRepository.getReferenceById(Integer.parseInt(id)));
+        Optional<DbClient> client = dbClientRepository.findById(id);
+        if (client != null && client.isPresent())
+            return buildRegisteredClient(client.get());
+        else
+            return null;
     }
 
     @Override
     public RegisteredClient findByClientId(String clientId) {
-        return buildRegisteredClient(dbClientRepository.findBySkey(clientId));
+        Optional<DbClient> client = dbClientRepository.findById(clientId);
+        if (client != null && client.isPresent())
+            return buildRegisteredClient(client.get());
+        else
+            return null;
     }
 
     public Map<String, String> getAllEnabledClientInfo() {
@@ -97,7 +106,7 @@ public class DbClientService implements RegisteredClientRepository {
      * @return
      */
     private RegisteredClient buildRegisteredClient(DbClient dbClient) {
-        if (dbClient == null || dbClient.status == Status.DISABLED)
+        if (dbClient == null || dbClient.id == null || dbClient.status == Status.DISABLED)
             return null;
         try {
 //            MessageDigest md = MessageDigest.getInstance("MD5");
@@ -117,9 +126,9 @@ public class DbClientService implements RegisteredClientRepository {
                     .setting("aud", aud) //
                     .build();
 
-            RegisteredClient registeredClient = RegisteredClient.withId(String.valueOf(dbClient.id)) //
-                    .clientId(dbClient.skey) //
-                    .clientSecret("{noop}" + dbClient.secret) //
+            RegisteredClient registeredClient = RegisteredClient.withId(dbClient.id) //
+                    .clientId(dbClient.id) //
+                    .clientSecret("{noop}" + dbClient.getSkey()) //
 //                    .clientSecret("{noop}" + ByteUtils.toHexString(digestBytes)) //
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) //
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) //
