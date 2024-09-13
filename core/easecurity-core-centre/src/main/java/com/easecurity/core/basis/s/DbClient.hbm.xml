@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.easecurity.core.basis.s.DbClient"
+		table="s_api_secret">
+		<id name="id"></id>
+		<property name="channelId" />
+		<property name="internalSystemId" />
+		<property name="skey" />
+		<property name="secret" />
+		<property name="options" />
+		<property name="status">
+			<type name="com.easecurity.core.db.BaseEnumType">
+				<param name="enumClass">com.easecurity.core.basis.s.ApiSecretEnum$Status</param>
+				<param name="useNamed">true</param><!-- true表示使用name映射，默认false使用ordinal映射 -->
+			</type>
+		</property>
+		<property name="dateCreated" />
+		<property name="lastUpdated" />
+	</class>
+</hibernate-mapping>

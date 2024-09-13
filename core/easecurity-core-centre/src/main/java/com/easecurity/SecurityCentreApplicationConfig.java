@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -35,7 +36,7 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
  */
 @Configuration
 public class SecurityCentreApplicationConfig implements WebMvcConfigurer {
-    
+
     @Value("${easecurity.jwt.publicKey}")
     private RSAPublicKey key;
     @Value("${easecurity.jwt.privateKey}")
@@ -66,9 +67,7 @@ public class SecurityCentreApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        RSAKey rsaKey = new RSAKey.Builder(this.key)
-                .privateKey(this.priv)
-                .keyID("2c41611d-b0ae-416f-ad26-02ad02ee9a94") // 如果为随机数，则每次重启后之前的token全部失效
+        RSAKey rsaKey = new RSAKey.Builder(this.key).privateKey(this.priv).keyID("2c41611d-b0ae-416f-ad26-02ad02ee9a94") // 如果为随机数，则每次重启后之前的token全部失效
 //                .keyID(UUID.randomUUID().toString())
                 .build();
         JWKSet jwkSet = new JWKSet(rsaKey);
@@ -79,7 +78,7 @@ public class SecurityCentreApplicationConfig implements WebMvcConfigurer {
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
-    
+
     @Bean
     public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
         Set<JWSAlgorithm> jwsAlgs = new HashSet<>();
@@ -87,12 +86,30 @@ public class SecurityCentreApplicationConfig implements WebMvcConfigurer {
         jwsAlgs.addAll(JWSAlgorithm.Family.EC);
         jwsAlgs.addAll(JWSAlgorithm.Family.HMAC_SHA);
         ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        JWSKeySelector<SecurityContext> jwsKeySelector =
-                new JWSVerificationKeySelector<>(jwsAlgs, jwkSource);
+        JWSKeySelector<SecurityContext> jwsKeySelector = new JWSVerificationKeySelector<>(jwsAlgs, jwkSource);
         jwtProcessor.setJWSKeySelector(jwsKeySelector);
-        // Override the default Nimbus claims set verifier as NimbusJwtDecoder handles it instead
+        // Override the default Nimbus claims set verifier as NimbusJwtDecoder handles
+        // it instead
         jwtProcessor.setJWTClaimsSetVerifier((claims, context) -> {
         });
         return new NimbusJwtEncoder(jwkSource);
+    }
+
+    /**
+     * 自定义hibernate配置
+     */
+    @Bean
+    public HibernatePropertiesCustomizer hibernatePropertiesCustomizer() {
+        return (hibernateProperties -> {
+            // 启用hibernate扫描
+            hibernateProperties.remove("hibernate.archive.scanner");
+            /**
+             * jpa默认了一些参数（强制的）: {hibernate.id.new_generator_mappings=true,
+             * hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy,
+             * hibernate.resource.beans.container=org.springframework.orm.hibernate5.SpringBeanContainer@246df37b,
+             * hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy,
+             * hibernate.archive.scanner=org.hibernate.boot.archive.scan.internal.DisabledScanner}
+             */
+        });
     }
 }

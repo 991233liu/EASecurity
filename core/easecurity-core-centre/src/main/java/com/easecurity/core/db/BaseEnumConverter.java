@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 import com.easecurity.db.BaseEnum;
 
@@ -15,7 +14,7 @@ import com.easecurity.db.BaseEnum;
  *
  * @param <T>
  */
-@Converter
+//@Converter
 public class BaseEnumConverter<T extends Enum<T>> implements AttributeConverter<BaseEnum, String> {
 
     private final Class<T> enumType;
