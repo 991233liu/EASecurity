@@ -47,7 +47,11 @@ public class MBeanUtils {
             if (outString != null)
                 outString.append("\njvm_bootClassPath:").append(mxbean.getBootClassPath());
         } catch (Exception e) {
-            e.printStackTrace();
+            // 在JDK 9 及更高版本中，由于引入了Java平台模块系统（JPMS），RuntimeMXBean.getBootClassPath() 方法已被移除。
+            String classPath = System.getProperty("java.class.path");
+            result.put("jvm_bootClassPath", classPath);
+            if (outString != null)
+                outString.append("\njvm_bootClassPath:").append(classPath);
         }
 
         result.put("jvm_startTime", String.valueOf(mxbean.getStartTime()));
